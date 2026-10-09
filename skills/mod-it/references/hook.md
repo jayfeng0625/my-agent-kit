@@ -19,9 +19,11 @@ When the hook's own parser judges some inputs differently from the mod's parser,
 
 The `.catch` answers the decision the hook gave when it crashed (often `ask`).
 
+A hook that reads a tool input field beyond the one the declarations name (such as Bash's `run_in_background`) needs proof that the engine passes it: a throwaway mod that echoes `e.input` settles it in one live run.
+
 ## The oracle
 
-A settings hook reads its payload on stdin. Write the payload to a file with the Write tool and pipe the file, since a live guard may block a shell command whose text names the strings it guards:
+A hook that reads git, files or the environment answers per directory, so drive its exported check function with its own self-test fakes; importing it may run its `main()`, so close stdin. Otherwise pipe a payload: a settings hook reads its payload on stdin. Write the payload to a file with the Write tool and pipe the file, since a live guard may block a shell command whose text names the strings it guards:
 
 ```sh
 node <old hook> < payload.json

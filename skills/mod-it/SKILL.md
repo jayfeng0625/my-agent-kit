@@ -21,7 +21,7 @@ Read the source and whatever wires or cites it. Sort it into one kind, and read 
 | Rule | prose whose trigger code can check: a command shape, a message format, a scope kept read-only | real violations and real compliant cases from git history and session transcripts | [`references/rule.md`](references/rule.md) |
 | Pointer | a line of the form "before you touch X, read Y", or a context section that applies in one repository | the trigger: the doc arrives when it fires, and at no other time | [`references/pointer.md`](references/pointer.md) |
 
-Plain knowledge (domain docs, recipes), skills, subagents and setup scripts stay as they are; say so and stop when the source is one of those. Port a source that mixes kinds one piece at a time.
+Plain knowledge (domain docs, recipes), skills, subagents and setup scripts stay as they are; say so and stop when the source is one of those. Port a source that mixes kinds one piece at a time. A hook that enforces a prose rule ports as a hook, since its answers are the sharper oracle.
 
 Invoke the `plugin-authoring` skill. Its folder for new mods does not apply here: a port writes into the mods folder of step 2.
 
@@ -43,12 +43,13 @@ A guard (a hook or a rule on `tool.check`) is wired this way:
 
 - On a pass return `next(e)`. On a verdict, read `await next(e)` and return whichever of the two is stricter, so a settings deny still wins over the mod's ask.
 - Give the registration the `.catch` that `plugin-authoring` shows, answering the decision the kind file names.
-- Reach files, processes, environment and the repository through `$`, behind one small interface that tests fake. Scope a repository's rules with `$.session.repo()` and its `remote`.
+- Reach files, processes, environment and the repository through `$`, behind one small interface that tests fake. Every read on it stays required: a new read goes into the interface, its answer into the registration, and its default into one shared test fake. Scope a repository's rules with `$.session.repo()` and its `remote`.
 
 ## 4. Prove it
 
 Read [`references/testing.md`](references/testing.md) before writing a test. Done when the kind file's proof holds, and all of these:
 
+- Every older suite in a shared mod still tests its own rule. When a new rule also judges an older case, check what the old hooks answered together, and set that suite's input so it isolates its own rule.
 - The suite goes red with the port switched off for one run, then green again. In a mod shared with other rules, remove only the new rule. In a new mod, make a copy whose pure decide function passes everything.
 - Wiring tests drive the event chain through `$`. For a guard they cover a verdict, a pass that keeps the engine's verdict, and the `.catch` path; when the rule can ask, also a settings deny that beats the mod's ask. A shared mod's existing `.catch` test covers a new rule.
 - The mod check passes: validate, type-check, tests.

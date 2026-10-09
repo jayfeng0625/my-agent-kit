@@ -12,7 +12,7 @@ A test registers each event once: a second `on` for the same event fails with "r
 
 ## Live check
 
-The prompt goes on stdin, because `--allowedTools` takes every following word as a tool name. `--setting-sources user` keeps project hooks out, so an old hook cannot answer for the mod:
+The prompt goes on stdin, because `--allowedTools` takes every following word as a tool name. `--setting-sources` loads only the source the old hook does not live in, so it cannot answer for the mod: `user` for a hook in project settings, as below, and `project` for a hook in user settings.
 
 ```sh
 echo 'Run exactly this one Bash command, once, then reply with only the raw result or the exact denial text: <harmless input>' \
