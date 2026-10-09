@@ -21,6 +21,8 @@ echo 'Run exactly this one Bash command, once, then reply with only the raw resu
 
 The control is the same run without `--plugin-dir`. The `env` block of user settings overrides the process environment, so the `--settings` override is how both runs leave out a mod that already sits in the mods folder.
 
+- A no-op the old hook falsely denies (`echo <guarded words>`) makes a good input: the mod denies it, and the control runs it harmlessly.
+- When every input that passes would write somewhere outside the machine (an MCP save, a push), run only inputs the mod denies, aimed at a target that does not exist, and skip the control. Say so in the report.
 - Pick an input no permission rule names. A plugin can apply the project's permission deny rules even under `--setting-sources user`, and then both runs deny.
 - A denial can name several plugins, built-in ones (such as `cc-plugin-sec-default`) included. Match the mod's own name in the text.
 - Run from a directory of the repository a scoped rule applies to, and once from outside it.

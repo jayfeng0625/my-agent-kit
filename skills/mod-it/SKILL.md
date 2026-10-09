@@ -33,7 +33,7 @@ Done when the source has one kind and each behaviour maps to one event.
 
 The mods folder is the directory `CLAUDE_CODE_PLUGIN_DIRS` names in the `env` block of `~/.claude/settings.json`; Claude Code loads each child folder that holds `.claude-plugin/plugin.json`. When the folder has `bin/new` and `bin/check`, scaffold with `bin/new <name>` and check with `bin/check <name>`. Otherwise lay out the files and run the checks `plugin-authoring` names. With no such folder, ask the user where mods live.
 
-Port into an existing mod when one already hooks the same tool and event. Each rule is a file of its own, and the rule list names every rule. Its order picks the reason a verdict shows when two rules agree, so place the new rule on purpose and pin the reason with a test.
+Port into an existing mod when one already hooks the same tool and event. There each rule is a file of its own, and the rule list names every rule. Its order picks the reason a verdict shows when two rules agree. Separate settings hooks give no order to copy, so place the new rule on purpose and pin the reason with a test. A new mod with one rule keeps its pure decide function in one module beside the registration.
 
 ## 3. Model, then port
 
@@ -49,8 +49,8 @@ A guard (a hook or a rule on `tool.check`) is wired this way:
 
 Read [`references/testing.md`](references/testing.md) before writing a test. Done when the kind file's proof holds, and all of these:
 
-- The suite goes red with the port switched off for one run, then green again. In a mod shared with other rules, remove only the new rule; in a new mod, empty the rule list or drop the scope.
-- Wiring tests drive the event chain through `$`. For a guard they cover a verdict, a pass that keeps the engine's verdict, and the `.catch` path; when the rule can ask, also a settings deny that beats the mod's ask.
+- The suite goes red with the port switched off for one run, then green again. In a mod shared with other rules, remove only the new rule. In a new mod, make a copy whose pure decide function passes everything.
+- Wiring tests drive the event chain through `$`. For a guard they cover a verdict, a pass that keeps the engine's verdict, and the `.catch` path; when the rule can ask, also a settings deny that beats the mod's ask. A shared mod's existing `.catch` test covers a new rule.
 - The mod check passes: validate, type-check, tests.
 
 ## 5. Prove it live
@@ -61,7 +61,7 @@ Run a headless session with the mod and a control without it, using inputs whose
 
 1. Retire the source as the kind file says.
 2. Find every other copy of what you retired: other checkouts of the same repository (worktrees), and any script that provisions a checkout's settings. Report each copy and how it converges: a provisioning script that copies the main checkout's entry fixes it at the next provision, and until then both answer.
-3. Run the live input once more in a default session, with no flags, from the directory the mod applies to. Done when the mod's effect shows.
+3. Run the live input once more in a default session, with no flags, from the directory the mod applies to, once the mod sits in the mods folder and the source is retired. Done when the mod's effect shows.
 4. Format the mod's changed files. A mods folder may have no formatter of its own; then use the host repository's formatter through stdin, so its ignore rules do not skip the file.
 5. Commit the mod in its repository. When the file you edited to retire the source is git-ignored, the host repository has nothing to commit; say so in the report.
 

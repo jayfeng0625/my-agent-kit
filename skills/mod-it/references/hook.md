@@ -13,9 +13,9 @@ The old hook is the oracle: its behaviour is the spec, and its self-test is the 
 
 ## Port
 
-Carry the hook's logic across unchanged, condition by condition. A behaviour change belongs in a later commit; this port has none.
+Carry the hook's logic across unchanged, condition by condition. A behaviour change belongs in a later commit; this port has none. A settings matcher is an unanchored regex (`save_(issue|comment)` also selects `save_issue_label`), so carry it verbatim as the mod's matcher and pin its reach with a test.
 
-When the hook's own parser judges some inputs differently from the mod's parser, keep the hook's parsing inside its rule and judge from the raw input. Find the differences by running each doubtful input through both parsers, and list them in the report as the work for that later commit.
+When the hook's own parser judges some inputs differently from the mod's parser, keep the hook's parsing inside its rule and judge from the raw input. Find the differences by running each doubtful input through both parsers, applying the rule's own judgement to each parser's words, and list them in the report as the work for that later commit.
 
 The `.catch` answers the decision the hook gave when it crashed (often `ask`).
 
