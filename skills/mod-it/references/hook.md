@@ -17,7 +17,9 @@ Carry the hook's logic across unchanged, condition by condition. A behaviour cha
 
 When the hook's own parser judges some inputs differently from the mod's parser, keep the hook's parsing inside its rule and judge from the raw input. Find the differences by running each doubtful input through both parsers, applying the rule's own judgement to each parser's words, and list them in the report as the work for that later commit.
 
-The `.catch` answers the decision the hook gave when it crashed (often `ask`).
+The `.catch` answers the decision the hook gave when it crashed (often `ask`). A shared mod has one `.catch` for every rule; report each hook whose crash answer differs from it.
+
+A hook that judges paths relative to the home directory gets pinned cases under a second home, one holding a regex metacharacter (`/home/u.v2`).
 
 A hook that reads a tool input field beyond the one the declarations name (such as Bash's `run_in_background`) needs proof that the engine passes it: a throwaway mod that echoes `e.input` settles it in one live run.
 
