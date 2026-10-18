@@ -4,15 +4,17 @@ commit: 0148b78c56c72a1b8412055913c79f767095b217
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
+extra_files:
+  subagents/poteto-agent.md: pstack/agents/poteto-agent.md
 merge_guidance: |
   Claude Code port. Frontmatter: `name: poteto-mode` (identifier); the Cursor mode keys
   `mode`, `icon`, `color`, and `reminder` are dropped (Claude Code has no modes; user's
   choice). `disable-model-invocation: true` stays as upstream sets it.
-  subagents/poteto-agent.md is upstream pstack/agents/poteto-agent.md, outside this
-  manifest's path, so upstream-diff.ts does not track it; diff it by hand on each merge.
+  subagents/poteto-agent.md tracks pstack/agents/poteto-agent.md through extra_files.
   Local edits there: `background: true` for `is_background`, `general-purpose` for
   `generalPurpose`, and the SKILL.md paths (the subagent reads the file because Claude Code
-  cannot preload a skill with disable-model-invocation). /setup-pstack installs it.
+  cannot preload a skill with disable-model-invocation). This repo drops setup-pstack, so nothing registers it in
+  ~/.claude/agents/ until the user links it.
   Models: one model and optional effort per role entry (see setup-pstack); defaults `opus`
   for code, judgment, and prose, `hardest tasks` `fable`. Playbook delegates spawn
   `poteto-agent`, whose local frontmatter `model: opus`, `effort: high` (user's choice,

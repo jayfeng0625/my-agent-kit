@@ -60,7 +60,11 @@ function setup(t: TestContext) {
   let runs = 0;
   const repo = {
     root: repoDir,
-    addSkill(name: string, manifest: { commit: string; tags?: string[]; mergeGuidance?: string }, files: Files) {
+    addSkill(
+      name: string,
+      manifest: { commit: string; tags?: string[]; mergeGuidance?: string; extraFiles?: Record<string, string> },
+      files: Files,
+    ) {
       writeFiles(join(repoDir, "skills", name), files);
       this.writeManifest(name, {
         repo: upstream.url,
@@ -70,6 +74,7 @@ function setup(t: TestContext) {
         license: "MIT",
         tags: manifest.tags ?? [],
         merge_guidance: manifest.mergeGuidance,
+        extra_files: manifest.extraFiles,
       });
     },
     writeManifest(name: string, fields: Record<string, unknown>) {
@@ -190,6 +195,44 @@ test("a skill whose path is gone at upstream HEAD is reported as missing upstrea
   assert.equal(diff.status, 0);
 });
 
+test("extra_files compares upstream files outside the skill path at their local paths", (t) => {
+  const { upstream, repo } = setup(t);
+  const pinned = upstream.commit({ "skills/arena/SKILL.md": "arena v1\n", "agents/sicko.md": "sicko v1\n" });
+  upstream.commit({ "agents/sicko.md": "sicko v2\n" });
+  repo.addSkill("arena", { commit: pinned, extraFiles: { "subagents/sicko.md": "agents/sicko.md" } }, {
+    "SKILL.md": "arena v1\n",
+    "subagents/sicko.md": "sicko v1\n",
+  });
+
+  const status = repo.run("status", "arena");
+  const diff = repo.run("diff", "arena");
+  const { upstreamChanges, localEdits } = sections(diff.stdout);
+
+  assert.equal(status.stderr, "");
+  assert.equal(status.stdout, "arena: changed upstream (upstream 1 files, local 0 files)\n");
+  assert.equal(diff.stderr, "");
+  assert.match(upstreamChanges, /^diff --git a\/subagents\/sicko\.md b\/subagents\/sicko\.md$/m);
+  assert.match(upstreamChanges, /^-sicko v1\n\+sicko v2$/m);
+  assert.equal(localEdits.trim(), "(none)");
+  assert.equal(diff.status, 0);
+});
+
+test("a skill whose extra file is gone at upstream HEAD is reported as missing upstream", (t) => {
+  const { upstream, repo } = setup(t);
+  const pinned = upstream.commit({ "skills/arena/SKILL.md": "arena v1\n", "agents/sicko.md": "sicko v1\n" });
+  upstream.commit({ "agents/sicko.md": null });
+  repo.addSkill("arena", { commit: pinned, extraFiles: { "subagents/sicko.md": "agents/sicko.md" } }, {
+    "SKILL.md": "arena v1\n",
+    "subagents/sicko.md": "sicko v1\n",
+  });
+
+  const status = repo.run("status", "arena");
+
+  assert.equal(status.stderr, "");
+  assert.equal(status.stdout, "arena: missing upstream (agents/sicko.md not found at HEAD)\n");
+  assert.equal(status.status, 0);
+});
+
 test("a blob fetch into the clone starts no background maintenance", (t) => {
   const { upstream, repo } = setup(t);
   const pinned = upstream.commit({ "skills/arena/SKILL.md": "arena v1\n" });
@@ -296,6 +339,11 @@ for (const { title, fields, error } of [
     title: "merge guidance that is not a string",
     fields: { ...validFields, merge_guidance: ["a"] },
     error: "upstream/arena.yaml: merge_guidance must be a non-empty string",
+  },
+  {
+    title: "extra files that are not a map of paths",
+    fields: { ...validFields, extra_files: ["agents/sicko.md"] },
+    error: "upstream/arena.yaml: extra_files must map local paths to upstream paths",
   },
 ]) {
   test(`a manifest with ${title} is rejected`, (t) => {

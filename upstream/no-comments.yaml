@@ -4,10 +4,11 @@ commit: 0148b78c56c72a1b8412055913c79f767095b217
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
+extra_files:
+  subagents/comment-sicko.md: pstack/agents/comment-sicko.md
 merge_guidance: |
-  subagents/comment-sicko.md is upstream pstack/agents/comment-sicko.md, outside this
-  manifest's path, so upstream-diff.ts does not track it. On each merge, diff it by hand
-  against pstack/agents/comment-sicko.md at the new head. Local edits: `model: opus`, `effort: medium` (the user's choice, 2026-10-04). This repo drops setup-pstack and architect (2026-10-18):
+  subagents/comment-sicko.md tracks pstack/agents/comment-sicko.md through extra_files.
+  Local edits there: `model: opus`, `effort: medium` (the user's choice, 2026-10-04). This repo drops setup-pstack and architect (2026-10-18):
   a global symlink installs the subagent at ~/.claude/agents/comment-sicko.md, and step 1's
   fallback names that link. Step 3's `/architect` sentence and step 6's "architect sketch"
   are cut; keep them out on each merge. Upstream dropped step 1's missing-type fallback;
