@@ -4,7 +4,7 @@ Agent skills, and the global Claude Code setup that goes with them.
 
 ## What's in the repo
 
-- `skills/`: 69 skills. Each one installs through the [skills CLI](https://github.com/vercel-labs/skills) for Claude Code, Codex, and other agents.
+- `skills/`: 70 skills. Each one installs through the [skills CLI](https://github.com/vercel-labs/skills) for Claude Code, Codex, and other agents.
 - `global/`: the files that link into `~/.claude/`.
 	- `CLAUDE.md`: the output rule and ways of working that load in every session.
 	- `references/read-before-implementation.md`: the red, green, review, refactor, and scope steps to follow before implementing.
@@ -49,7 +49,7 @@ Restart Claude Code to load the new `CLAUDE.md` and subagents. The links point a
 Most skills come from other repos. Each pulled skill keeps its upstream `LICENSE`, and its manifest names the author.
 
 - [mattpocock/skills](https://github.com/mattpocock/skills), by Matt Pocock: 23 skills.
-- [cursor/plugins](https://github.com/cursor/plugins): 40 pstack skills by Lauren Tan, and 3 cursor-team-kit skills by Eric Zakariasson.
+- [cursor/plugins](https://github.com/cursor/plugins): 41 pstack skills by Lauren Tan, and 3 cursor-team-kit skills by Eric Zakariasson.
 - [lisbeth718/agent-setup](https://github.com/lisbeth718/agent-setup), by Mari Luukkainen: the `brief` skill. The output rule and em-dash line in `global/CLAUDE.md`, and `global/references/read-before-implementation.md`, adapt the same repo.
 
 `mod-it` and `pr` are local skills.
