@@ -1,0 +1,17 @@
+repo: https://github.com/mattpocock/skills
+path: skills/engineering/code-review
+commit: 49dd158d1076134a641b33efb035946536778336
+author: Matt Pocock
+license: MIT
+tags: [mattpocock, engineering]
+merge_guidance: |
+  Renamed locally from code-review (the user's choice, 2026-10-18), since a personal
+  code-review skill shadows Claude Code's built-in /code-review and its /review alias. Local
+  edits: the folder name, the `name:` field, and `display_name` in agents/openai.yaml. Pulled
+  skills that call it (tdd, implement-spec) use `standards-review`; rename any new upstream
+  reference when merging.
+  The description is local (2026-10-18): it triggers only on checking a diff against the
+  standards or the spec, and names the built-in /code-review for bug hunting, so plain
+  "review this branch/PR" requests reach the built-in. Upstream's "Use when the user wants to
+  review a branch, a PR, work-in-progress changes, or asks to review since X" stays out.
+  `/setup-matt-pocock-skills` becomes `/setup-issue-tracker` (see setup-issue-tracker).

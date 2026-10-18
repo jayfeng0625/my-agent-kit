@@ -1,6 +1,6 @@
 ---
-name: code-review
-description: "Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this repo's documented coding standards?) and Spec (does the code match what the originating issue/spec asked for?). Runs both reviews in parallel sub-agents and reports them side by side. Use when the user wants to review a branch, a PR, work-in-progress changes, or asks to \"review since X\"."
+name: standards-review
+description: "Check the changes since a fixed point against this repo's documented coding standards and against the originating issue or spec, in two parallel sub-agents. Use when asked to check a diff against the standards or the spec. A bug-hunting review is the built-in /code-review."
 metadata:
   tags: [review, standards, subagents]
 ---

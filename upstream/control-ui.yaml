@@ -4,3 +4,6 @@ commit: e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a
 author: Eric Zakariasson
 license: MIT
 tags: [cursor-team-kit, verification]
+merge_guidance: |
+  "evidence for `verify-this`" becomes "evidence for a project's `verify-<app>` skill"
+  (2026-10-18): verify-this is not in this repo, and create-verification-skill makes verify-<app>.

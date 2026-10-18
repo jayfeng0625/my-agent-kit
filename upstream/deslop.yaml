@@ -7,3 +7,5 @@ tags: [cursor-team-kit, code]
 merge_guidance: |
   SKILL.md says "against main or master branch" where upstream says "against main"
   (the user's edit, 2026-10-04). Keep it when merging.
+  `disable-model-invocation: true` is local (2026-10-18): the description carries no trigger,
+  and the built-in /simplify covers model-run cleanup. Keep it.

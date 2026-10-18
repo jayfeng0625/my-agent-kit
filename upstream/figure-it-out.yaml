@@ -6,3 +6,7 @@ license: MIT
 tags: [pstack, workflow]
 merge_guidance: |
   Claude Code port: upstream's "reasoning level and fast or standard speed" becomes "effort".
+  This repo drops architect and arena (2026-10-18). Phase B's one-way-door bullet points to
+  DESIGN-IT-TWICE.md in codebase-design, and its harness bullet adds create-verification-skill;
+  keep both on each merge. Principle references use full names (`**principle-<name>** skill`)
+  where upstream writes `**<name>** principle skill`; convert new ones the same way.

@@ -13,3 +13,5 @@ merge_guidance: |
   AskQuestion became AskUserQuestion, which takes 2-4 options and `multiSelect`. Transcripts
   are ~/.claude/projects/<project>/<session-id>.jsonl.
   Upstream's "reasoning level and fast or standard speed" becomes "effort".
+  The intro and step 5 add the **writing-for-agents** skill beside skill-creator (2026-10-18),
+  since the user's global CLAUDE.md routes skill writing through it. Keep it on each merge.

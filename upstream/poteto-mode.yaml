@@ -13,8 +13,8 @@ merge_guidance: |
   subagents/poteto-agent.md tracks pstack/agents/poteto-agent.md through extra_files.
   Local edits there: `background: true` for `is_background`, `general-purpose` for
   `generalPurpose`, and the SKILL.md paths (the subagent reads the file because Claude Code
-  cannot preload a skill with disable-model-invocation). This repo drops setup-pstack, so nothing registers it in
-  ~/.claude/agents/ until the user links it.
+  cannot preload a skill with disable-model-invocation). This repo drops setup-pstack; global/agents/poteto-agent.md
+  links it into ~/.claude/agents/ when global/ is installed.
   Models: one model and optional effort per role entry (see setup-pstack); defaults `opus`
   for code, judgment, and prose, `hardest tasks` `fable`. Playbook delegates spawn
   `poteto-agent`, whose local frontmatter `model: opus`, `effort: high` (user's choice,
@@ -42,7 +42,7 @@ merge_guidance: |
   Two path and routing edits from a 2026-10-07 retro: the Principles intro gives the leaf
   path (`principle-<name>/SKILL.md` beside `poteto-mode/`), since agents read
   `poteto-mode/principle-*/` and failed; and the poteto-agent rule also covers subagents
-  that an invoked skill spawns without naming a type (simplify, code-review), after a user
+  that an invoked skill spawns without naming a type (simplify, standards-review), after a user
   had to correct general-purpose simplify reviewers. poteto-agent.md's "sits beside it"
   sentence names the same leaf path.
   From the 0148b78 merge: the Principles intro keeps upstream's kebab-case naming rule and

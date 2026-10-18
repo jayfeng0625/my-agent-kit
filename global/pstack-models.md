@@ -2,12 +2,6 @@
 # Entry: `<model> [effort]`. Model: opus, fable, sonnet, or haiku (the Agent tool's `model` values). Effort: low, medium, high, xhigh, or max (its `effort` values). An entry with no effort runs at the session's effort.
 # `inherit` as a model: the entry runs on the parent session's model (omit `model`).
 # Routing: explorers and investigators on sonnet; everything else on opus.
-feature, refactoring: opus medium
-bug-fix: opus medium
-perf-issue: opus high
-hillclimb: opus medium
-judgment and prose: opus medium
-hardest tasks: fable medium
 how explorer: sonnet medium
 how explainer: opus medium
 why investigators: sonnet medium

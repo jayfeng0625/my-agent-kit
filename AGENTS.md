@@ -8,13 +8,13 @@ The repo is public on GitHub and installs through the skills CLI (`npx skills`, 
 
 - Each skill lives at `skills/<name>/`, the layout the CLI discovers.
 - A change reaches installed copies only after it is pushed and the user runs `npx skills update`. The CLI updates GitHub-sourced installs only; a local-path install is a one-off copy.
-- `global/` holds the user's global Claude Code files, symlinked into `~/.claude/`: `CLAUDE.md`, `references/`, and `pstack-models.md` (the per-role models that pstack skills read). The output rule and em-dash line in `CLAUDE.md`, and `references/read-before-implementation.md`, adapt Mari Luukkainen's lisbeth718/agent-setup; credit stays here, out of the loaded files.
+- `global/` holds the user's global Claude Code files, symlinked into `~/.claude/`: `CLAUDE.md`, `references/`, `pstack-models.md` (the per-role models that pstack skills read), and `agents/` (links to the subagents that skills spawn by `subagent_type`: no-comments' `comment-sicko` and poteto-mode's `poteto-agent`). The output rule and em-dash line in `CLAUDE.md`, and `references/read-before-implementation.md`, adapt Mari Luukkainen's lisbeth718/agent-setup; credit stays here, out of the loaded files.
 
 ## Skill folder standard
 
 Each `skills/<name>/` holds:
 
-- `SKILL.md`, written Claude-first. Frontmatter uses Claude Code fields (`name`, `description`, and `disable-model-invocation` or `argument-hint` when needed), plus `metadata.tags`: labels describing what the skill does, for discovery once installed. The body names Claude Code tools (`Skill`, `Agent`, `AskUserQuestion`) and `.claude/` paths.
+- `SKILL.md`, written Claude-first. Frontmatter uses Claude Code fields (`name`, `description`, and `disable-model-invocation`, `argument-hint`, or `paths` when needed), plus `metadata.tags`: labels describing what the skill does, for discovery once installed. The body names Claude Code tools (`Skill`, `Agent`, `AskUserQuestion`) and `.claude/` paths.
 - `agents/openai.yaml`, for Codex. It sets `interface.display_name` and `interface.short_description`. It sets `policy.allow_implicit_invocation: false` exactly when `SKILL.md` sets `disable-model-invocation: true`.
 - `LICENSE`, for a skill pulled from another repo: that repo's license text, so the notice ships with every install.
 

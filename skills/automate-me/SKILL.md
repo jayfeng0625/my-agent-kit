@@ -10,7 +10,7 @@ metadata:
 
 A guided flow for turning the user's working conventions into a skill agents will follow. The output is one `-mode` skill tailored to them (e.g. `jay-mode`, `priya-mode`).
 
-This skill orchestrates three others: an inline mining pass (see step 1), Anthropic's `skill-creator` from the skill-creator plugin (authoring), and the **unslop** skill (prose discipline). It sequences them. It doesn't replace them.
+This skill orchestrates three others: an inline mining pass (see step 1), Anthropic's `skill-creator` from the skill-creator plugin with the **writing-for-agents** skill (authoring), and the **unslop** skill (prose discipline). It sequences them. It doesn't replace them.
 
 ## Flow
 
@@ -76,7 +76,7 @@ Use Anthropic's `skill-creator` skill to author the skill. Placement:
 
 ### 5. Iterate on prose
 
-Apply the **unslop** skill and `skill-creator`'s writing guidelines to every line.
+Apply the **unslop** skill, the **writing-for-agents** skill, and `skill-creator`'s writing guidelines to every line.
 
 Show the draft to the user and take feedback. Expect multiple iterations. Cut ruthlessly. A mode skill is not a manual.
 

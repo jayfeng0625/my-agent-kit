@@ -6,3 +6,6 @@ license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
   `/setup-matt-pocock-skills` becomes `/setup-issue-tracker` (see setup-issue-tracker).
+  `code-review` becomes `standards-review` (see standards-review).
+  Step 4's tdd call adds "taking the ticket's acceptance criteria as tdd's pre-agreed seams"
+  (2026-10-18): tdd asks the user to confirm seams, and a background implementer cannot ask.

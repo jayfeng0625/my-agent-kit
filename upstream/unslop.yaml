@@ -4,3 +4,6 @@ commit: 0148b78c56c72a1b8412055913c79f767095b217
 author: Lauren Tan
 license: MIT
 tags: [pstack, writing]
+merge_guidance: |
+  Rule 13 allows parentheses (2026-10-18): "Use periods, commas, or parentheses" where upstream
+  says "Use periods or commas only (no parentheses, ...)", to match the user's global CLAUDE.md.

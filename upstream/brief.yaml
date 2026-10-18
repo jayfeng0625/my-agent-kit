@@ -4,3 +4,6 @@ commit: d083a22c130c39abf2986efbd83b3846c71a3f99
 author: Mari Luukkainen
 license: MIT
 tags: [agent-setup, communication]
+merge_guidance: |
+  `disable-model-invocation: true` is local (2026-10-18): global/CLAUDE.md loads this file by
+  path on every session, so an auto-invocable description only duplicated it. Keep it.

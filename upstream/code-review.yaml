@@ -1,8 +1,0 @@
-repo: https://github.com/mattpocock/skills
-path: skills/engineering/code-review
-commit: 49dd158d1076134a641b33efb035946536778336
-author: Matt Pocock
-license: MIT
-tags: [mattpocock, engineering]
-merge_guidance: |
-  `/setup-matt-pocock-skills` becomes `/setup-issue-tracker` (see setup-issue-tracker).
