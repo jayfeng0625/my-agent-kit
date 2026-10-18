@@ -1,14 +1,16 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/why
-commit: e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a
+commit: 0148b78c56c72a1b8412055913c79f767095b217
 author: Lauren Tan
 license: MIT
 tags: [pstack, explain]
 merge_guidance: |
-  Claude Code port. Role lines come from ~/.claude/pstack-models.md (see setup-pstack);
+  Claude Code port. Role lines come from ~/.claude/pstack-models.md when the user has one (this repo drops setup-pstack);
   `why investigators` and `why synthesizer` default to `opus`, and
   a rejected model runs on `inherit`. MCP discovery reads `mcp__<server>__<tool>` names
   from the session's tools, in place of Cursor's tools map and `mcps/` directory. Upstream's
   `readonly: false` notes became "the `general-purpose` type carries the session's MCP tools" (it omits `tools`); Claude
   Code's read-only agent types keep MCP tools, so the Cursor warning about Ask mode does not
-  carry over. "cursor location" on line 25 means the editor cursor and stays.
+  carry over. "cursor location" on line 25 means the editor cursor and stays. Upstream's
+  "reasoning level and fast or standard speed" becomes "effort", and its slug-fallback
+  sentence is dropped, since a rejected model already runs on `inherit`.

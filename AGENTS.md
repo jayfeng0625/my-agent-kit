@@ -8,6 +8,7 @@ The repo is public on GitHub and installs through the skills CLI (`npx skills`, 
 
 - Each skill lives at `skills/<name>/`, the layout the CLI discovers.
 - A change reaches installed copies only after it is pushed and the user runs `npx skills update`. The CLI updates GitHub-sourced installs only; a local-path install is a one-off copy.
+- `global/` holds the user's global Claude Code files, symlinked into `~/.claude/`: `CLAUDE.md` and `references/`.
 
 ## Skill folder standard
 

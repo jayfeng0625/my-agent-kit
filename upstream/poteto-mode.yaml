@@ -1,6 +1,6 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/poteto-mode
-commit: e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a
+commit: 0148b78c56c72a1b8412055913c79f767095b217
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
@@ -43,3 +43,18 @@ merge_guidance: |
   that an invoked skill spawns without naming a type (simplify, code-review), after a user
   had to correct general-purpose simplify reviewers. poteto-agent.md's "sits beside it"
   sentence names the same leaf path.
+  From the 0148b78 merge: the Principles intro keeps upstream's kebab-case naming rule and
+  adds the leaf path. Upstream's "Match the model to the job" became "Match the effort to
+  the job": steps move the Agent `effort` from the role line's effort (`high` when the line
+  names none), and the fast-mode, `-fast` slug, and slug-family sentences are dropped since
+  a spawn has no speed setting. Playbook lines "Pick each subagent's reasoning level and
+  fast or standard speed" read "Pick each subagent's effort". poteto-agent.md's
+  `~/.cursor/plugins/` search with the plugin.json version pick became a read of
+  ~/.claude/skills/poteto-mode/SKILL.md, then the project's .claude/skills copy (installs may
+  symlink into ~/.agents/skills); "Task spawn" became "Agent spawn". Orchestrate: the Agent
+  schema field is `isolation`, workers stay local in worktrees, chain rebases run one at a
+  time. autopilot-full's "Assume the VM dies" became "Assume the owner dies".
+  scripts/check-plan.test.ts uses the same ported marker as check-plan.mjs. The scripts run
+  under bun (`bun test` in scripts/), outside this repo's npm test and tsconfig; bun's
+  auto-install leaves scripts/node_modules, which breaks upstream-diff.ts (ENOBUFS), so
+  delete it before diffing.

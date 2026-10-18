@@ -1,11 +1,13 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/how
-commit: e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a
+commit: 0148b78c56c72a1b8412055913c79f767095b217
 author: Lauren Tan
 license: MIT
 tags: [pstack, explain]
 merge_guidance: |
-  Claude Code port. Role lines come from ~/.claude/pstack-models.md (see setup-pstack).
+  Claude Code port. Role lines come from ~/.claude/pstack-models.md when the user has one (this repo drops setup-pstack).
   `how explorer` and `how explainer` default to `opus` (the user's choice); `inherit` replaces `auto` and `inherit-parent`; a
   rejected model runs on `inherit`. Task became the Agent tool, `generalPurpose` became
-  `general-purpose`, and `readonly: true` became a brief that says the subagent edits no files.
+  `general-purpose`, and `readonly: true` became a brief that says the subagent edits no files. Upstream's
+  "reasoning level and fast or standard speed" becomes "effort", and its slug-fallback
+  sentence is dropped.

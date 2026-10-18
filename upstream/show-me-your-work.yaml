@@ -1,9 +1,10 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/show-me-your-work
-commit: e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a
+commit: 0148b78c56c72a1b8412055913c79f767095b217
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
 merge_guidance: |
   Claude Code port. The end-of-run check reads ~/.claude/projects/<project>/${CLAUDE_SESSION_ID}.jsonl
   with the Read tool, an exact path with no glob, in place of Cursor's agent-transcripts/ directory.
+  Upstream's "reasoning level and fast or standard speed" becomes "effort".
