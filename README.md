@@ -1,16 +1,16 @@
 # my-agent-kit
 
-Agent skills and a global Claude Code setup, installed together on every machine.
+Agent skills, and the global Claude Code setup that goes with them.
 
 ## What's in the repo
 
 - `skills/`: 69 skills. Each one installs through the [skills CLI](https://github.com/vercel-labs/skills) for Claude Code, Codex, and other agents.
 - `global/`: the files that link into `~/.claude/`.
 	- `CLAUDE.md`: the output rule and ways of working that load in every session.
-	- `references/read-before-implementation.md`: the red, green, review, refactor loop.
+	- `references/read-before-implementation.md`: the red, green, review, refactor, and scope steps to follow before implementing.
 	- `pstack-models.md`: the model and effort for each subagent role that the `how` and `why` skills spawn.
 	- `agents/`: links to the subagents that skills spawn by type (`comment-sicko`, `poteto-agent`).
-- `upstream/`: one manifest per skill pulled from another repo. A manifest records the source repo, the commit, and the local changes that the next merge must keep.
+- `upstream/`: one manifest per skill pulled from another repo. A manifest records the source repo and the commit the skill was last merged from. Some also carry merge guidance: the local changes that the next merge must keep.
 
 To check the skill count, run `ls skills | wc -l`.
 
@@ -20,9 +20,13 @@ To check the skill count, run `ls skills | wc -l`.
 npx skills add jayfeng0625/my-agent-kit -g
 ```
 
-To get changes after they merge, run `npx skills update`.
+The CLI asks which skills and agents to install. To install every skill with no prompts, add `-s '*' -y`.
+
+To get changes after they merge, run `npx skills update -g`.
 
 ## Link the global files
+
+If `~/.claude/` already has a `CLAUDE.md`, `references/`, `pstack-models.md`, or `agents/`, move it out first. `ln -sfn` replaces a file at the link path, and puts the link inside a directory that is already there.
 
 Clone the repo, then link its `global/` files into `~/.claude/`:
 
@@ -37,8 +41,8 @@ Restart Claude Code to load the new `CLAUDE.md` and subagents. The links point a
 
 `AGENTS.md` has the rules: the skill folder standard, the manifest format, and the writing rules.
 
-- To merge new upstream changes into pulled skills, run `/sync-upstream` in Claude Code from the repo root.
-- Before you commit, run `npm test` and `npm run typecheck`.
+- To merge new upstream changes into pulled skills, run `/sync-upstream --all` in Claude Code from the repo root. To merge only some skills, pass their names or `--tag <tag>`.
+- Before you commit, run `npm test` and `npm run typecheck`. Run `npm install` once first.
 
 ## Credits
 
