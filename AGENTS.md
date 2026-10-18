@@ -8,7 +8,7 @@ The repo is public on GitHub and installs through the skills CLI (`npx skills`, 
 
 - Each skill lives at `skills/<name>/`, the layout the CLI discovers.
 - A change reaches installed copies only after it is pushed and the user runs `npx skills update`. The CLI updates GitHub-sourced installs only; a local-path install is a one-off copy.
-- `global/` holds the user's global Claude Code files, symlinked into `~/.claude/`: `CLAUDE.md` and `references/`.
+- `global/` holds the user's global Claude Code files, symlinked into `~/.claude/`: `CLAUDE.md`, `references/`, and `pstack-models.md` (the per-role models that pstack skills read). The output rule and em-dash line in `CLAUDE.md`, and `references/read-before-implementation.md`, adapt Mari Luukkainen's lisbeth718/agent-setup; credit stays here, out of the loaded files.
 
 ## Skill folder standard
 
