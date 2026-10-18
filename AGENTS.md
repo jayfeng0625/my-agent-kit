@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This repo publishes agent skills.
+This repo publishes agent skills and the user's global Claude Code setup.
 
 ## Distribution
 
