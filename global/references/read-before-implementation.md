@@ -1,4 +1,4 @@
-# Red-green-refactor
+# Read before implementation
 
 Apply the loop to the code and to the scope of the work.
 

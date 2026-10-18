@@ -1,0 +1,6 @@
+repo: https://github.com/lisbeth718/agent-setup
+path: skills/brief
+commit: d083a22c130c39abf2986efbd83b3846c71a3f99
+author: Mari Luukkainen
+license: MIT
+tags: [agent-setup, communication]
