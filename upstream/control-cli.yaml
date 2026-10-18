@@ -1,6 +1,6 @@
 repo: https://github.com/cursor/plugins
 path: cursor-team-kit/skills/control-cli
-commit: e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a
+commit: f9be7aa00c2b2bf4b13562143a6918445e06b99d
 author: Eric Zakariasson
 license: MIT
 tags: [cursor-team-kit, verification]

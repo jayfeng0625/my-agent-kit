@@ -1,6 +1,6 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/no-comments
-commit: 0148b78c56c72a1b8412055913c79f767095b217
+commit: f9be7aa00c2b2bf4b13562143a6918445e06b99d
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
