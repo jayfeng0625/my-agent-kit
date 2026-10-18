@@ -1,5 +1,0 @@
-interface:
-  display_name: "Poteto Help"
-  short_description: "Pick the pstack skill, playbook, or principle for a task"
-policy:
-  allow_implicit_invocation: false

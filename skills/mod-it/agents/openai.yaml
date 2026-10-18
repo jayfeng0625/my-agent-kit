@@ -1,0 +1,5 @@
+interface:
+  display_name: "Mod it"
+  short_description: "Turn a Claude Code hook, rule or pointer into a mod"
+policy:
+  allow_implicit_invocation: false

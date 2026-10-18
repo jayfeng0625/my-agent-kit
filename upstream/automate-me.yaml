@@ -1,6 +1,6 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/automate-me
-commit: e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a
+commit: 0148b78c56c72a1b8412055913c79f767095b217
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
@@ -12,3 +12,6 @@ merge_guidance: |
   .claude/skills/<skill-name>/SKILL.md (code.claude.com/docs/en/skills, "Where skills live").
   AskQuestion became AskUserQuestion, which takes 2-4 options and `multiSelect`. Transcripts
   are ~/.claude/projects/<project>/<session-id>.jsonl.
+  Upstream's "reasoning level and fast or standard speed" becomes "effort".
+  The intro and step 5 add the **writing-for-agents** skill beside skill-creator (2026-10-18),
+  since the user's global CLAUDE.md routes skill writing through it. Keep it on each merge.

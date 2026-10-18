@@ -1,0 +1,6 @@
+repo: https://github.com/cursor/plugins
+path: pstack/skills/create-formal-verification-skill
+commit: 0148b78c56c72a1b8412055913c79f767095b217
+author: Lauren Tan
+license: MIT
+tags: [pstack, verification]

@@ -11,6 +11,8 @@ type Manifest = {
   commit: string;
   tags: string[];
   merge_guidance?: string;
+  /** Local path in the skill folder, mapped to an upstream path outside `path`. */
+  extra_files?: Record<string, string>;
 };
 
 type GitOptions = { env?: Record<string, string>; input?: string };
@@ -33,12 +35,17 @@ function validateManifest(file: string, data: unknown): Manifest {
   for (const key of requiredStrings) {
     if (!isText(fields[key])) throw new Error(`${file}: ${key} must be a non-empty string`);
   }
-  const { tags, merge_guidance } = fields;
+  const { tags, merge_guidance, extra_files } = fields;
   if (!Array.isArray(tags) || !tags.every((tag) => typeof tag === "string")) {
     throw new Error(`${file}: tags must be a list of strings`);
   }
   if (merge_guidance !== undefined && !isText(merge_guidance)) {
     throw new Error(`${file}: merge_guidance must be a non-empty string`);
+  }
+  const isPathMap = (value: unknown) =>
+    typeof value === "object" && value !== null && !Array.isArray(value) && Object.values(value).every(isText);
+  if (extra_files !== undefined && !isPathMap(extra_files)) {
+    throw new Error(`${file}: extra_files must map local paths to upstream paths`);
   }
   return fields as Manifest;
 }
@@ -85,6 +92,8 @@ type Skill = {
   pinnedTree: string;
   headTree: string | null;
   localTree: string;
+  /** The upstream path that is gone at HEAD, when headTree is null. */
+  missingPath: string;
 };
 
 function treeExists(clone: string, treeish: string) {
@@ -112,15 +121,36 @@ function inspectSkill(root: string, temp: string, name: string, manifest: Manife
   git(skillDir, ["--git-dir", gitDir, "--work-tree", skillDir, "add", "--all"], { env: localEnv });
   const localTree = git(skillDir, ["--git-dir", gitDir, "write-tree"], { env: localEnv });
 
-  const headTree = `${clone.head}:${manifest.path}`;
+  const pinned = upstreamTree(temp, `${name}.pinned`, manifest, clone, manifest.commit);
+  const head = upstreamTree(temp, `${name}.head`, manifest, clone, clone.head);
   return {
     name,
     manifest,
     clone,
-    pinnedTree: `${manifest.commit}:${manifest.path}`,
-    headTree: treeExists(clone.dir, headTree) ? headTree : null,
+    pinnedTree: pinned.tree ?? `${manifest.commit}:${manifest.path}`,
+    headTree: head.tree,
     localTree,
+    missingPath: head.missingPath,
   };
+}
+
+/** The skill folder at `commit`, with each extra file laid over it at its local path. */
+function upstreamTree(temp: string, label: string, manifest: Manifest, clone: Clone, commit: string) {
+  const folder = `${commit}:${manifest.path}`;
+  if (!treeExists(clone.dir, folder)) return { tree: null, missingPath: manifest.path };
+  const extras = Object.entries(manifest.extra_files ?? {});
+  if (extras.length === 0) return { tree: folder, missingPath: manifest.path };
+
+  const env = { GIT_INDEX_FILE: join(temp, `${label}.index`) };
+  git(clone.dir, ["read-tree", folder], { env });
+  for (const [localPath, upstreamPath] of extras) {
+    // ls-tree reads trees only, so the partial clone fetches no blob here.
+    const entry = git(clone.dir, ["ls-tree", commit, "--", upstreamPath]);
+    if (entry === "") return { tree: null, missingPath: upstreamPath };
+    const [mode = "", , sha = ""] = entry.split(/\s+/);
+    git(clone.dir, ["update-index", "--add", "--cacheinfo", `${mode},${sha},${localPath}`], { env });
+  }
+  return { tree: git(clone.dir, ["write-tree", "--missing-ok"], { env }), missingPath: manifest.path };
 }
 
 /** A lazy fetch from diff would cost a round trip per skill. */
@@ -147,7 +177,7 @@ function countFiles(skill: Skill, from: string, to: string) {
 }
 
 function missingNote(skill: Skill) {
-  return `${skill.manifest.path} not found at HEAD`;
+  return `${skill.missingPath} not found at HEAD`;
 }
 
 function printStatus(skill: Skill) {

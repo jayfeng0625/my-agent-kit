@@ -1,0 +1,1 @@
+../../skills/poteto-mode/subagents/poteto-agent.md

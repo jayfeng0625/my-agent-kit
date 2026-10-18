@@ -1,18 +1,20 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/poteto-mode
-commit: e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a
+commit: 0148b78c56c72a1b8412055913c79f767095b217
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
+extra_files:
+  subagents/poteto-agent.md: pstack/agents/poteto-agent.md
 merge_guidance: |
   Claude Code port. Frontmatter: `name: poteto-mode` (identifier); the Cursor mode keys
   `mode`, `icon`, `color`, and `reminder` are dropped (Claude Code has no modes; user's
   choice). `disable-model-invocation: true` stays as upstream sets it.
-  subagents/poteto-agent.md is upstream pstack/agents/poteto-agent.md, outside this
-  manifest's path, so upstream-diff.ts does not track it; diff it by hand on each merge.
+  subagents/poteto-agent.md tracks pstack/agents/poteto-agent.md through extra_files.
   Local edits there: `background: true` for `is_background`, `general-purpose` for
   `generalPurpose`, and the SKILL.md paths (the subagent reads the file because Claude Code
-  cannot preload a skill with disable-model-invocation). /setup-pstack installs it.
+  cannot preload a skill with disable-model-invocation). This repo drops setup-pstack; global/agents/poteto-agent.md
+  links it into ~/.claude/agents/ when global/ is installed.
   Models: one model and optional effort per role entry (see setup-pstack); defaults `opus`
   for code, judgment, and prose, `hardest tasks` `fable`. Playbook delegates spawn
   `poteto-agent`, whose local frontmatter `model: opus`, `effort: high` (user's choice,
@@ -40,6 +42,21 @@ merge_guidance: |
   Two path and routing edits from a 2026-10-07 retro: the Principles intro gives the leaf
   path (`principle-<name>/SKILL.md` beside `poteto-mode/`), since agents read
   `poteto-mode/principle-*/` and failed; and the poteto-agent rule also covers subagents
-  that an invoked skill spawns without naming a type (simplify, code-review), after a user
+  that an invoked skill spawns without naming a type (simplify, standards-review), after a user
   had to correct general-purpose simplify reviewers. poteto-agent.md's "sits beside it"
   sentence names the same leaf path.
+  From the 0148b78 merge: the Principles intro keeps upstream's kebab-case naming rule and
+  adds the leaf path. Upstream's "Match the model to the job" became "Match the effort to
+  the job": steps move the Agent `effort` from the role line's effort (`high` when the line
+  names none), and the fast-mode, `-fast` slug, and slug-family sentences are dropped since
+  a spawn has no speed setting. Playbook lines "Pick each subagent's reasoning level and
+  fast or standard speed" read "Pick each subagent's effort". poteto-agent.md's
+  `~/.cursor/plugins/` search with the plugin.json version pick became a read of
+  ~/.claude/skills/poteto-mode/SKILL.md, then the project's .claude/skills copy (installs may
+  symlink into ~/.agents/skills); "Task spawn" became "Agent spawn". Orchestrate: the Agent
+  schema field is `isolation`, workers stay local in worktrees, chain rebases run one at a
+  time. autopilot-full's "Assume the VM dies" became "Assume the owner dies".
+  scripts/check-plan.test.ts uses the same ported marker as check-plan.mjs. The scripts run
+  under bun (`bun test` in scripts/), outside this repo's npm test and tsconfig; bun's
+  auto-install leaves scripts/node_modules, which breaks upstream-diff.ts (ENOBUFS), so
+  delete it before diffing.

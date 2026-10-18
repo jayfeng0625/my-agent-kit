@@ -1,0 +1,5 @@
+interface:
+  display_name: "Brief"
+  short_description: "Minimal replies: answer first, load-bearing facts only"
+policy:
+  allow_implicit_invocation: false

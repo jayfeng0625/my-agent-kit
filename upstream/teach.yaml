@@ -1,10 +1,6 @@
-repo: https://github.com/cursor/plugins
-path: pstack/skills/teach
-commit: e43c7ee26e0038c6c1fa8380dd34ce86ff94cb2a
-author: Lauren Tan
+repo: https://github.com/mattpocock/skills
+path: skills/productivity/teach
+commit: 49dd158d1076134a641b33efb035946536778336
+author: Matt Pocock
 license: MIT
-tags: [pstack, explain]
-merge_guidance: |
-  Claude Code has no built-in image-generation tool, so step 5 uses one only when the
-  session has one, and falls back to an ASCII sketch. Kept as `teach`; mattpocock's `teach`
-  is excluded from this repo by the user's choice.
+tags: [mattpocock, productivity]
