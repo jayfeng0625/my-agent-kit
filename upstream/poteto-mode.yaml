@@ -15,7 +15,7 @@ merge_guidance: |
   `generalPurpose`, and the SKILL.md paths (the subagent reads the file because Claude Code
   cannot preload a skill with disable-model-invocation). This repo drops setup-pstack; global/agents/poteto-agent.md
   links it into ~/.claude/agents/ when global/ is installed.
-  Models: one model and optional effort per role entry (see setup-pstack); defaults `opus`
+  Models: one model and optional effort per role entry, read from ~/.claude/pstack-models.md; defaults `opus`
   for code, judgment, and prose, `hardest tasks` `fable`. Playbook delegates spawn
   `poteto-agent`, whose local frontmatter `model: opus`, `effort: high` (user's choice,
   2026-10-07) covers a spawn that passes neither. Role lines in ~/.claude/pstack-models.md,
@@ -60,3 +60,26 @@ merge_guidance: |
   under bun (`bun test` in scripts/), outside this repo's npm test and tsconfig; bun's
   auto-install leaves scripts/node_modules, which breaks upstream-diff.ts (ENOBUFS), so
   delete it before diffing.
+  pstack's architect, arena, interrogate, swarm, reflect, and setup-pstack skills are not
+  ported (user's choice, 2026-10-18). Their routes:
+  - architect becomes codebase-design; steps that ask for parallel design exploration name its
+    DESIGN-IT-TWICE.md.
+  - arena becomes the Prototype playbook, with the prototype skill named for logic or UI
+    questions (SKILL.md trigger, feature.md step 4, where the root picks with no cross-judge).
+    eval.md inlines arena's Phase B and C clauses; its judge runs on a model no candidate used,
+    since every Agent model is a Claude model. orchestrate.md's contested decomposition is
+    settled by parallel subagent drafts. worktree-cleanup.md names verification-lane,
+    prototype, and repro trees.
+  - interrogate becomes grilling for a contested design (SKILL.md trigger, feature.md step 7;
+    grilling interviews the human by design) and the built-in /code-review for PR review
+    (opening-a-pr.md, the multi-phase-plan reading list).
+  - swarm fan-outs are bespoke: SKILL.md drops the swarm trigger, playbooks describe lanes as
+    parallel subagents, and "swarm" stays only as the generic noun and the `swarm workers`
+    role. opening-a-pr.md's links and recitals name the verification artifact.
+  - reflect is dropped; the user runs retro by hand. SKILL.md's routed-skill lists keep `how`
+    and `why`.
+  - setup-pstack mentions point at ~/.claude/pstack-models.md and the poteto-agent link in
+    ~/.claude/agents/.
+  SKILL.md adds a typescript-best-practices trigger and a diagnosing-bugs trigger limited to its
+  Phases 1 and 2, pointed to from bug-fix step 1 and perf-issue step 1. ketchup is ported as
+  its own upstream skill.

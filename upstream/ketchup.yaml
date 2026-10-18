@@ -1,0 +1,10 @@
+repo: https://github.com/cursor/plugins
+path: pstack/skills/ketchup
+commit: 8ad8a41fe418f7c948540641cf1d8649fba99db7
+author: Lauren Tan
+license: MIT
+tags: [pstack, workflow]
+merge_guidance: |
+  Claude Code port. pstack's bro skill is not ported, so the `/bro` voice sentence states the
+  voice directly. Cursor's `/visualize` has no skill in this repo, so a chart stays
+  unnamed.
