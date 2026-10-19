@@ -3,7 +3,8 @@
 //   node break-proof.mjs [--timeout <seconds>] <file> <search> <replace> -- <command...>
 //   node break-proof.mjs [--timeout <seconds>] --table <breaks.tsv> -- <command...>
 //
-// A table row is `<file>\t<search>\t<replace>`, and each row's break runs alone. It exits 0 when the command fails under
+// A table row is `<file>\t<search>\t<replace>`, and each row's break runs alone. Its search and replace cells decode `\n`,
+// `\t` and `\\` (the path cell stays raw) and keep any other backslash literal. It exits 0 when the command fails under
 // every break, 1 when it passes under one, and 2 when a break cannot apply, a file cannot be read or written, the command
 // outlives the timeout (300 seconds by default), a signal ends the command or the run, or a backup from a run that never
 // restored is still on disk. The search must match exactly once, so a line that a formatter has rewrapped fails loudly.
@@ -22,13 +23,18 @@ if (head[0] === '--timeout') {
     timeoutSeconds = Number(head[1])
     head = head.slice(2)
 }
+const ESCAPES = { '\\n': '\n', '\\t': '\t', '\\\\': '\\' }
+const table = head[0] === '--table' && head.length === 2
 let breaks = [head]
-if (head[0] === '--table' && head.length === 2) {
+if (table) {
     try {
         breaks = readFileSync(head[1], 'utf-8')
             .split(/\r?\n/)
             .filter((row) => row.trim())
-            .map((row) => row.split('\t'))
+            .map((row) => {
+                const [file, ...cells] = row.split('\t')
+                return [file, ...cells.map((cell) => cell.replace(/\\[nt\\]/g, (escape) => ESCAPES[escape]))]
+            })
     } catch (error) {
         console.error(`The table cannot be read: ${error.message}`)
         process.exit(2)
@@ -106,7 +112,13 @@ const prove = async ([file, search, replace]) => {
         matches++
     }
     if (matches !== 1) {
-        console.error(`The search matches ${matches} times in ${file}, and a break needs exactly one match: ${search}`)
+        const hint =
+            matches > 1
+                ? '\nAdd a neighbouring line to the search, written as \\n in a table.'
+                : table && /[\n\t\\]/.test(search)
+                  ? '\nA table cell decodes \\n, \\t and \\\\, so a literal backslash is written \\\\.'
+                  : ''
+        console.error(`The search matches ${matches} times in ${file}, and a break needs exactly one match: ${JSON.stringify(search)}${hint}`)
         return 2
     }
     const backup = `${file}.break-proof-orig`
@@ -154,11 +166,12 @@ const prove = async ([file, search, replace]) => {
     const lines = stripVTControlCharacters(result.output).split('\n')
     const failures = lines.filter((line) => /^\s*(×|✖|not ok\b|FAIL\b)|AssertionError|Error:|^\s*Tests\s+\d/.test(line))
     console.log((failures.length > 0 ? failures : lines.slice(-20)).join('\n'))
+    const label = `${JSON.stringify(search)} => ${JSON.stringify(replace)}`
     if (result.status === 0) {
-        console.error(`The command passed under the break ${search} => ${replace}, so no test has shown that it can fail. ${file} is restored.`)
+        console.error(`The command passed under the break ${label}, so no test has shown that it can fail. ${file} is restored.`)
         return 1
     }
-    console.log(`The command failed under the break ${search} => ${replace} with exit ${result.status}. ${file} is restored.`)
+    console.log(`The command failed under the break ${label} with exit ${result.status}. ${file} is restored.`)
     return 0
 }
 
