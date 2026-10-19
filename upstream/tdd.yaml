@@ -6,3 +6,4 @@ license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
   `code-review` becomes `standards-review` (see standards-review).
+  Local edits add the test-case trigger to the description and exempt stable unit or format facts from the tautology rule.
