@@ -1,0 +1,5 @@
+interface:
+  display_name: "Bug-hunting Mode"
+  short_description: "Reproduce, root-cause and fix bugs, perf issues and failed CI, or diagnose from runtime and trace forensics"
+policy:
+  allow_implicit_invocation: false
