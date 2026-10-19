@@ -1,0 +1,5 @@
+interface:
+  display_name: "Impl Mode"
+  short_description: "Implement tickets with the smallest diff and one real proof"
+policy:
+  allow_implicit_invocation: false

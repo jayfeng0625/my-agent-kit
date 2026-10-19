@@ -8,7 +8,7 @@ The repo is public on GitHub and installs through the skills CLI (`npx skills`, 
 
 - Each skill lives at `skills/<name>/`, the layout the CLI discovers.
 - A change reaches installed copies only after it is pushed and the user runs `npx skills update`. The CLI updates GitHub-sourced installs only; a local-path install is a one-off copy.
-- `global/` holds the user's global Claude Code files, symlinked into `~/.claude/`: `CLAUDE.md`, `references/`, `pstack-models.md` (the per-role models that pstack skills read), and `agents/` (links to the subagents that skills spawn by `subagent_type`: no-comments' `comment-sicko` and poteto-mode's `poteto-agent`). The output rule and em-dash line in `CLAUDE.md`, and `references/read-before-implementation.md`, adapt Mari Luukkainen's lisbeth718/agent-setup; credit stays here, out of the loaded files.
+- `global/` holds the user's global Claude Code files, symlinked into `~/.claude/`: `CLAUDE.md`, `references/` (including `mode-core.md`, the shared rules every `-mode` skill loads), `pstack-models.md` (the per-role models that pstack skills and `-mode` skills read), and `agents/` (the subagents that skills spawn by `subagent_type`: `mode-agent` lives here, and no-comments' `comment-sicko` and poteto-mode's `poteto-agent` are links). The output rule and em-dash line in `CLAUDE.md`, and `references/read-before-implementation.md`, adapt Mari Luukkainen's lisbeth718/agent-setup; credit stays here, out of the loaded files.
 
 ## Skill folder standard
 
@@ -54,5 +54,7 @@ These rules apply to prose authored in this repo. Commands, code, identifiers, a
 ## Repo tooling
 
 Repo-only skills live in `.claude/skills/`, with their scripts beside them. The CLI scans that folder too, so each one sets `metadata.internal: true` to stay out of installs.
+
+Repo checks that are not skills live in `.claude/checks/` as `*.test.ts` files, which `npm test` runs.
 
 Node runs the TypeScript directly, with no build step; `tsconfig.json` allows erasable syntax only. Check with `npm test` and `npm run typecheck`.
