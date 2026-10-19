@@ -6,3 +6,4 @@ license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
   `/setup-matt-pocock-skills` becomes `/setup-issue-tracker` (see setup-issue-tracker).
+  Local edits count an issue named by a handoff or brief as a reference, read recorded decisions on parent and related tickets, and drop criteria a recorded user decision declined.
