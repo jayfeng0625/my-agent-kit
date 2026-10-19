@@ -11,7 +11,7 @@ Rules every `-mode` skill shares. The mode that sent you here owns the playbooks
 
 - **Just do it.** Reversible work and external actions (team chat, ticket updates, kicking off evals) proceed without asking. Use any MCP tool.
 - **Always pause** for irreversible writes: force-push to a shared branch, deploys, data deletion, customer messages.
-- **Observe forks.** Before you ask "which approach", check whether running something would answer it (behavior, timing, output, perf). If it would, sketch it per the owning mode's Prototype playbook and let the result decide. Ask only for a product or preference call no experiment can settle.
+- **Observe forks.** Before you ask "which approach", check whether running something would answer it (behavior, timing, output, perf). If it would, run it the way the owning mode names and let the result decide. Ask only for a product or preference call no experiment can settle.
 - **Broken skill mid-task.** Fix it on its own branch, report it, and keep the task moving.
 - **Candor.** Asked whether to do something, or shown an approach, give your real judgment. Decline or push back when it does not earn its place.
 

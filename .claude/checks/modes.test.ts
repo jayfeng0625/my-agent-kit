@@ -28,6 +28,10 @@ for (const mode of taskModes) {
     assert.match(opening ?? "", /^Read `~\/\.claude\/references\/mode-core\.md`/);
   });
 
+  test(`${mode} names how mode-core's Observe forks runs`, () => {
+    assert.match(body, /Observe forks/);
+  });
+
   test(`${mode} names only playbooks that exist`, () => {
     const named = (text: string) => [...text.matchAll(/`(playbooks\/[\w-]+\.md)`/g)].map((match) => match[1] ?? "");
     assert.ok(named(body).length > 0);
