@@ -11,3 +11,4 @@ merge_guidance: |
   `general-purpose`, and `readonly: true` became a brief that says the subagent edits no files. Upstream's
   "reasoning level and fast or standard speed" becomes "effort", and its slug-fallback
   sentence is dropped.
+  Local User Proposal section in the explainer prompt carries the user's plan verbatim; the explainer judges it within the user's constraints and labels any orchestrator alternative.
