@@ -20,4 +20,6 @@ When two or more fixes that share one premise have failed the same gate, suspect
 
 **Stop:** Do not start the next fix before the premise is written down and tested.
 
+**A premise stated with a choice.** When the user invokes this principle on a premise that backs a choice, such as "B is simplest", write the premise down and name the cheapest measurement that could falsify it. For two variants, that is the measured rate of the disputed outcome under each. Run it before you apply the choice. Reading the code cannot falsify a rate.
+
 This principle is distinct from [Redesign from First Principles](../principle-redesign-from-first-principles/SKILL.md), which rebuilds a design around a new requirement. It questions a fact the current design assumes.
