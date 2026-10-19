@@ -9,9 +9,11 @@ metadata:
 
 Write a handoff document summarising the current conversation so a fresh agent can continue the work. Save to the temporary directory of the user's OS (`$TMPDIR`, else `/tmp`; `%TEMP%` on Windows) - not the current workspace.
 
-Include a "suggested skills" section in the document, naming which skills the next agent should call the Skill tool for.
+Include a "suggested skills" section in the document, naming which skills the next agent should call the Skill tool for. A skill whose SKILL.md sets `disable-model-invocation: true` cannot be loaded with the Skill tool, so list it apart, as `/<name>` for the user to type.
 
 Do not duplicate content already captured in other artifacts (specs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
+
+The handoff file is temporary, so record each durable finding where the next session will look, and reference it from the handoff. A gotcha that will outlive the current branch goes in the repo doc or skill that owns its command, or to the user as a proposed edit.
 
 Redact any sensitive information, such as API keys, passwords, or personally identifiable information.
 
