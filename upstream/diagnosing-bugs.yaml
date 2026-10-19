@@ -9,3 +9,4 @@ merge_guidance: |
   control-cli, loop 4 names control-ui, the perf branch links benchmark-checklist, and Phase 5's
   "Flag this for the next phase" (no later phase takes it) becomes "Flag it in the final report
   and suggest `/improve-codebase-architecture` to the user".
+  Local edits trigger on a failed CI run or a flaky test, and read job annotations before the failed log.

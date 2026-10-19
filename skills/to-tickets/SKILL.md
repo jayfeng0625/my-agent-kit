@@ -16,7 +16,7 @@ The issue tracker and triage label vocabulary should have been provided to you. 
 
 ### 1. Gather context
 
-Work from whatever is already in the conversation context. If the user passes a reference (a spec path, an issue number or URL) as an argument, fetch it and read its full body and comments.
+Work from whatever is already in the conversation context. If the user passes a reference (a spec path, an issue number or URL) as an argument, fetch it and read its full body and comments. An issue that a handoff or brief names counts as such a reference. Read the decisions recorded on its parent and related tickets too, and leave out any acceptance criterion or step that a recorded user decision already declined.
 
 ### 2. Explore the codebase (optional)
 

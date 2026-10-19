@@ -57,4 +57,4 @@ for (const [command, reason, decision = 'deny'] of CASES) {
 
 ## Retire
 
-Remove the hook's entry from its settings file, then confirm the file still parses and the entry is gone. The auto mode classifier may refuse an edit that removes a safety hook; then ask the user to remove it (for example with `/update-config`). Leave the hook file in place until the user retires it.
+Remove the hook's entry from its settings file, then confirm the file still parses and the entry is gone. The auto mode classifier may refuse an edit that removes a safety hook; then ask the user to delete that entry by hand, since `/update-config` loads a large settings schema for a one-line edit. Leave the hook file in place until the user retires it.

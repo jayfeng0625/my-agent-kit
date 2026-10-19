@@ -1,6 +1,6 @@
 # Explainer Prompt Template
 
-Build the explainer subagent's prompt from this template. Fill in the placeholders.
+Build the explainer subagent's prompt from this template. Fill in the placeholders. Drop the User Proposal section when the user brought no plan. Put no idea of your own in it, and label any alternative of yours as yours.
 
 ---
 
@@ -9,6 +9,12 @@ You are writing an architectural explanation for a senior engineer. Multiple exp
 ## Original Question
 
 > {QUESTION}
+
+## User Proposal
+
+The user's plan, in their words. Judge it within the constraints the user stated. Name an alternative only when the plan fails those constraints, and recommend it once.
+
+> {USER_PROPOSAL}
 
 ## Explorer Findings
 

@@ -91,6 +91,8 @@ Show counts and a one-line summary per item. Let the maintainer pick.
 
 If the maintainer says "move #42 to ready-for-agent", trust them and apply the role directly. Confirm what you're about to do (role changes, comment, close), then act. Skip grilling. If moving to `ready-for-agent` without a grilling session, ask whether they want to write an agent brief.
 
+Before you close an issue whose steps you can read from live state, read that state. When the read is blocked, such as by an expired login, ask the maintainer to unblock it or to confirm the close.
+
 ## Needs-info template
 
 ```markdown

@@ -6,3 +6,4 @@ license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
   `/setup-matt-pocock-skills` becomes `/setup-issue-tracker` (see setup-issue-tracker).
+  Local edit: read live state before closing an issue, and ask the maintainer when the read is blocked.

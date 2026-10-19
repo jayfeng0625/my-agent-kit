@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.
+description: Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", asks you to assess a failed CI job or run URL or a flaky test, or reports something broken/throwing/failing/slow.
 metadata:
   tags: [debugging, performance]
 ---
@@ -16,6 +16,10 @@ When exploring the codebase, read `GLOSSARY.md` (if it exists) to get a clear me
 This skill has you show commands, outputs and captured artifacts. **Redact every secret first**: write `<REDACTED>` in its place. Build loops against env vars, so the credential stays in the environment rather than in what you show. Captured artifacts carry auth headers: quote only the lines that carry the signal.
 
 If the redacted output is not enough to diagnose the bug, say so and ask the user.
+
+## A failed CI job
+
+Read the job's annotations first: `gh api repos/<owner>/<repo>/check-runs/<job-id>/annotations` lists each failure with its file, line and message in one call. Read `gh run view --job <job-id> --log-failed` only for what the annotations leave out.
 
 ## Phase 1: Build a feedback loop
 
