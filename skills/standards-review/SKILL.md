@@ -22,6 +22,11 @@ Whatever the user said is the fixed point (a commit SHA, branch name, tag, `main
 
 Capture the diff command once: `git diff <fixed-point>...HEAD` (three-dot, so the comparison is against the merge-base). Also note the list of commits via `git log <fixed-point>..HEAD --oneline`.
 
+Two cases change the pin:
+
+- **Uncommitted work.** Diff the working tree against the merge-base: `git diff $(git merge-base <fixed-point> HEAD)`. Three-dot diffs only commits.
+- **An open PR that is not checked out.** Read `gh pr view <N> --json baseRefName,headRefOid`, run `git fetch origin pull/<N>/head`, and diff `git diff origin/<base>...<headRefOid>`.
+
 Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`) and the diff is non-empty. A bad ref or empty diff should fail here, not inside two parallel sub-agents.
 
 ### 2. Identify the spec source
@@ -32,6 +37,8 @@ Look for the originating spec, in this order:
 2. A path the user passed as an argument.
 3. A spec file under `docs/`, `specs/`, or `.scratch/` matching the branch name or feature.
 4. If nothing is found, ask the user where the spec is. If they say there isn't one, the **Spec** sub-agent will skip and report "no spec available".
+
+The user's own words about the change, quoted verbatim, are part of the spec. A requirement you derived goes in a separate `Proposed by the orchestrator` list.
 
 ### 3. Identify the standards sources
 
@@ -64,14 +71,17 @@ Issue both sub-agent calls together, in the foreground, and aggregate the report
 **Standards sub-agent prompt** should include:
 
 - The full diff command and commit list.
+- The user's own words about the change, quoted verbatim, from step 2.
 - The list of standards-source files you found in step 3, **plus the smell baseline from step 3** pasted in full (the sub-agent has no other access to it).
-- The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. Under 400 words."
+- The brief: "Report, per file/hunk where relevant, (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls: documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. A verdict that depends on the author's intent or on the user's request, such as an equivalent type spelling, a cast or a deliberate deviation, is a judgement call, reported with the question to ask. Under 400 words."
 
 **Spec sub-agent prompt** should include:
 
 - The diff command and commit list.
 - The path or fetched contents of the spec.
-- The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep); (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Under 400 words."
+- The user's own words about the change, quoted verbatim, from step 2.
+- The `Proposed by the orchestrator` list, if any.
+- The brief: "Report: (a) requirements the spec asked for that are missing or partial; (b) behaviour in the diff that wasn't asked for (scope creep); (c) requirements that look implemented but where the implementation looks wrong. Quote the spec line for each finding. Treat each `Proposed by the orchestrator` entry as possible scope creep. Under 400 words."
 
 If the spec is missing, skip the Spec sub-agent and note this in the final report.
 

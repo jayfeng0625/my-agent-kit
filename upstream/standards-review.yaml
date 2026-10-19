@@ -15,3 +15,4 @@ merge_guidance: |
   "review this branch/PR" requests reach the built-in. Upstream's "Use when the user wants to
   review a branch, a PR, work-in-progress changes, or asks to review since X" stays out.
   `/setup-matt-pocock-skills` becomes `/setup-issue-tracker` (see setup-issue-tracker).
+  Local edits pass the user's words verbatim, keep orchestrator-derived requirements in a separate list, report intent-dependent verdicts as judgement calls, and pin uncommitted work and unchecked-out PRs.
