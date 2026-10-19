@@ -4,12 +4,13 @@ Agent skills, and the global Claude Code setup that goes with them.
 
 ## What's in the repo
 
-- `skills/`: 70 skills. Each one installs through the [skills CLI](https://github.com/vercel-labs/skills) for Claude Code, Codex, and other agents.
+- `skills/`: 71 skills. Each one installs through the [skills CLI](https://github.com/vercel-labs/skills) for Claude Code, Codex, and other agents.
 - `global/`: the files that link into `~/.claude/`.
 	- `CLAUDE.md`: the output rule and ways of working that load in every session.
 	- `references/read-before-implementation.md`: the red, green, review, refactor, and scope steps to follow before implementing.
-	- `pstack-models.md`: the model and effort for each subagent role that the `how` and `why` skills spawn.
-	- `agents/`: links to the subagents that skills spawn by type (`comment-sicko`, `poteto-agent`).
+	- `references/mode-core.md`: the todolist, autonomy, subagent, reply, and comment rules that every `-mode` skill loads.
+	- `pstack-models.md`: the model and effort for each subagent role that the `how` and `why` skills and the `-mode` skills spawn.
+	- `agents/`: the subagents that skills spawn by type. `mode-agent` lives here; `comment-sicko` and `poteto-agent` link into their skills.
 - `upstream/`: one manifest per skill pulled from another repo. A manifest records the source repo and the commit the skill was last merged from. Some also carry merge guidance: the local changes that the next merge must keep.
 
 To check the skill count, run `ls skills | wc -l`.
@@ -52,8 +53,8 @@ Most skills come from other repos. Each pulled skill keeps its upstream `LICENSE
 - [cursor/plugins](https://github.com/cursor/plugins): 41 pstack skills by Lauren Tan, and 3 cursor-team-kit skills by Eric Zakariasson.
 - [lisbeth718/agent-setup](https://github.com/lisbeth718/agent-setup), by Mari Luukkainen: the `brief` skill. The output rule and em-dash line in `global/CLAUDE.md`, and `global/references/read-before-implementation.md`, adapt the same repo.
 
-`mod-it` and `pr` are local skills.
+`mod-it`, `pr`, and `impl-mode` are local skills. `impl-mode` adapts pstack's poteto-mode playbooks and keeps its MIT `LICENSE`, and `global/references/mode-core.md` and `global/agents/mode-agent.md` adapt the same skill. `impl-mode` needs the global files linked, since it loads `mode-core.md` and spawns `mode-agent`.
 
 ## License
 
-MIT. See [`LICENSE`](LICENSE), which also carries the lisbeth718/agent-setup notice for the two adapted `global/` files.
+MIT. See [`LICENSE`](LICENSE), which also carries the lisbeth718/agent-setup and pstack notices for the adapted `global/` files.
