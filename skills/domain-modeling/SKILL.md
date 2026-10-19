@@ -59,6 +59,8 @@ When domain relationships are being discussed, stress-test them with specific sc
 
 When the user states how something works, check whether the code agrees. If you find a contradiction, surface it: "Your code cancels entire Orders, but you just said partial cancellation is possible. Which is right?"
 
+Check each behaviour claim already in `GLOSSARY.md` the same way before you write near it or keep it, and remove one the code contradicts.
+
 ### Update GLOSSARY.md inline
 
 When a term is resolved, update `GLOSSARY.md` right there. Don't batch these up: capture them as they happen. Use the format in [GLOSSARY-FORMAT.md](./GLOSSARY-FORMAT.md).
