@@ -1,0 +1,5 @@
+interface:
+  display_name: "Research Mode"
+  short_description: "Investigate, assess, triage and explain with every claim traced to a source"
+policy:
+  allow_implicit_invocation: false
