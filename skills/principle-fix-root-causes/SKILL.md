@@ -13,7 +13,7 @@ When debugging, fix the fault, not the place where it surfaced. The symptom is w
 **Why:** A symptom fix hides the evidence and leaves the fault free to surface somewhere else. Each one makes the system harder to reason about, because the code now carries a workaround for a bug that nobody named.
 
 **Pattern:**
-- Reproduce first.
+- Reproduce first. Before you call a failure pre-existing, reproduce it on the baseline too (**principle-prove-it-works**).
 - Ask "why" at each step until the answer is a wrong decision in the code, not a consequence of an earlier one.
 - When stuck, instrument. Read the actual error and the actual state. Do not guess.
 - Ask whether the state that triggered the symptom is legitimate. If the system may be in that state, the code that broke on it is the root cause, and handling the state there is the fix. If the state should never exist, a check where it broke hides the bug. Find what produced the state. Guards, retries, swallowed errors, clamped values, and discarded state are the usual ways to hide a bug.

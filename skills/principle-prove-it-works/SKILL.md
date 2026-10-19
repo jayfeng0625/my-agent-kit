@@ -17,6 +17,12 @@ Check the real thing, not a proxy:
 - Read the actual value, not a cached or derived representation
 - When verification fails, suspect the observation method before suspecting the system
 
+## Name the system the signal came from
+
+A verdict such as pre-existing, fixed, done or works in the target environment cites a runtime signal read from the system it names. Matching config, an assumed target and a ticket status are proxies.
+
+To call a failure pre-existing, run the same repro on the baseline, or compare one runtime signal of the mechanism between a baseline run and the failing run.
+
 ## Script the check when you can
 
 The strongest proof is a deterministic script that re-runs the same comparison, not a one-time eyeball. Write the script, run it, and keep its output as an artifact a reviewer can re-run instead of trusting your word.
