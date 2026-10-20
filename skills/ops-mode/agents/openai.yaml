@@ -1,0 +1,5 @@
+interface:
+  display_name: "Ops Mode"
+  short_description: "Run incidents, live checks, migrations and infra changes with prod read-only"
+policy:
+  allow_implicit_invocation: false
