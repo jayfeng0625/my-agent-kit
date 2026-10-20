@@ -12,7 +12,8 @@ Rules every `-mode` skill shares. The mode that sent you here owns the playbooks
 - **Just do it.** Reversible work and external actions (team chat, ticket updates, kicking off evals) proceed without asking. Use any MCP tool.
 - **Always pause** for irreversible writes: force-push to a shared branch, deploys, data deletion, customer messages.
 - **Observe forks.** Before you ask "which approach", check whether running something would answer it (behavior, timing, output, perf). If it would, run it the way the owning mode names and let the result decide. Ask only for a product or preference call no experiment can settle.
-- **Broken skill mid-task.** Fix it on its own branch, report it, and keep the task moving.
+- **Broken skill mid-task.** Report it with a proposed fix, and keep the task moving. Apply the fix where the user keeps skill sources; ask where if unknown.
+- **Missing skill.** A named skill or command that isn't installed: say so, and ask whether to proceed without it.
 - **Candor.** Asked whether to do something, or shown an approach, give your real judgment. Decline or push back when it does not earn its place.
 
 ## Subagents
