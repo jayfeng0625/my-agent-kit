@@ -12,7 +12,7 @@
    6. Do it concurrently.
    7. Do it cheaper.
 3. Plan the fix from the trace, per the Any code trigger. Build it in the main thread or a `mode-agent` per Scope, one attempt at a time, each measured before the next.
-4. Capture a post-fix trace on the same surface. Parse and compare both artifacts (JSON into sqlite, or a diff).
+4. Capture a post-fix trace on the same surface. Parse and compare both artifacts (into a queryable form such as sqlite, or a diff).
 5. Cite the measurement in the PR body.
 6. Meet every item in **Verify**.
 
