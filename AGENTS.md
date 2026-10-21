@@ -58,3 +58,17 @@ Repo-only skills live in `.claude/skills/`, with their scripts beside them. The 
 Repo checks that are not skills live in `.claude/checks/` as `*.test.ts` files, which `npm test` runs.
 
 Node runs the TypeScript directly, with no build step; `tsconfig.json` allows erasable syntax only. Check with `npm test` and `npm run typecheck`.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in Linear, team `JA`, project `my-agent-kit`, through the `linear` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five triage roles are `JA` workflow states. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
