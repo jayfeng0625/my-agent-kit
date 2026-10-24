@@ -18,6 +18,8 @@ Each `skills/<name>/` holds:
 - `agents/openai.yaml`, for Codex. It sets `interface.display_name` and `interface.short_description`. It sets `policy.allow_implicit_invocation: false` exactly when `SKILL.md` sets `disable-model-invocation: true`.
 - `LICENSE`, for a skill pulled from another repo: that repo's license text, so the notice ships with every install.
 
+A `-mode` skill holds method and Claude Code harness facts; project, forge and vendor specifics come from the project's loaded context (CLAUDE.md, docs/agents), and the mode asks when that context names nothing.
+
 ## Upstream skills
 
 A skill pulled from another repo has a manifest at `upstream/<name>.yaml`. It lives outside `skills/` because the CLI installs every file in a skill folder, and the manifest serves this repo's workflow only.

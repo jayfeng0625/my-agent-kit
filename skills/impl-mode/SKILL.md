@@ -19,12 +19,12 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 ## Triggers
 
-- **Ticket first.** Read the ticket, the decisions on its parent and related tickets, and the threads on linked PRs, verbatim. Each plan item maps to a ticket sentence. A capability the ticket does not ask for goes to the user as an option, and no brief asks for it until the user accepts it.
+- **Ticket first.** Read the ticket, the decisions on its parent and related tickets, and the threads on linked PRs, verbatim. With no ticket, ask where the requirement lives. Each plan item maps to a ticket sentence. A capability the ticket does not ask for goes to the user as an option, and no brief asks for it until the user accepts it.
 - **Any code.** Name the data shape first and pick its organizing structure per **principle-model-the-domain**. Use the plainest type that holds it.
-- **Code crossing a function boundary.** The **codebase-design** skill's `DESIGN-IT-TWICE.md` before implementing.
+- **Code crossing a function boundary.** The **codebase-design** skill before implementing.
 - **`.ts` or `.tsx`.** The **typescript-best-practices** skill.
 - **Any test.** The **tdd** skill, plus **Tests** below.
-- **A bug surfaced mid-task.** Phases 1 and 2 of the **diagnosing-bugs** skill before any fix. The fix then follows Feature, with the red loop as its test.
+- **A bug surfaced mid-task.** The **diagnosing-bugs** skill's red loop and minimal repro before any fix. The fix then follows Feature, with the red loop as its test.
 - **Large or cross-cutting effort** (a migration across many call sites, an ambitious multi-part change). The **figure-it-out** skill.
 - **Contested design.** The **grilling** skill before shipping.
 - **Prose.** The **unslop** skill. Docs and commit messages also take `/technical-writing`. PR bodies take the **pr** skill alone.
@@ -77,9 +77,9 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 Done means all four hold.
 
-1. **One real proof.** Run the change on the real artifact the ticket names: the repo's `verify-<app>` skill when it has one, else a live API call, a `control-cli` or `control-ui` drive, or a `/claude-in-chrome` session. Behavior tests count only when the change has no runnable surface. One proof that would go red if the change were wrong, then stop. An inconclusive result, or a proof on the wrong surface, is a fail to flag.
+1. **One real proof.** Run the change on the real artifact the ticket names, with the verify or drive tooling the project context names; ask which surface and tool if it names none. Behavior tests count only when the change has no runnable surface. One proof that would go red if the change were wrong, then stop. An inconclusive result, or a proof on the wrong surface, is a fail to flag.
 2. **Tests proven red.** Each new or changed test went red under a break.
 3. **Fresh review.** A fresh-context `mode-agent` runs `/code-review` over the diff. Fix accepted findings and re-review, until a round comes back clean or after 3 rounds.
-4. **Hand-off.** A reviewed, committed branch and a PR body written with the **pr** skill. The user runs the push and `gh pr create`.
+4. **Hand-off.** A reviewed, committed branch and a PR body written with the **pr** skill. The user pushes and opens the PR.
 
 **Reply:** what you built and for whom, what you chose and why, the diff stat, a VERIFIED list (ran it, saw the output) and a REASONED list (read it, believe it), and a Deferred list of improvements you noticed and skipped.
