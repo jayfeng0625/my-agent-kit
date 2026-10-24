@@ -4,7 +4,7 @@ Rules every `-mode` skill shares. The mode that sent you here owns the playbooks
 
 ## Playbooks and principles
 
-- Open a todolist whose first items are the matched playbook's steps, copied verbatim, before any task-specific todos. A step you choose not to do stays in the list with a one-line `skip: <reason>`.
+- Open a todolist (your todo tool, or a checklist file in a scratch dir outside the repo when you have none) whose first items are the matched playbook's steps, copied verbatim, before any task-specific todos. A step you choose not to do stays in the list with a one-line `skip: <reason>`.
 - A principle leaf is the skill at `~/.claude/skills/principle-<name>/SKILL.md`, where `<name>` is the principle's title in kebab case, hyphens kept and other punctuation dropped. Read a leaf in full before you apply it. In your reply, name each principle that shaped a decision and the choice it changed, citing only leaves you read this session.
 
 ## Autonomy
