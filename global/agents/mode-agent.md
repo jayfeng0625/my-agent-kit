@@ -3,7 +3,7 @@ name: mode-agent
 description: Delegate subagent for code-writing and helper tasks spawned during a `-mode` skill run (impl-mode and its siblings). Its prompt names the mode's SKILL.md path; it reads that file and mode-core before any work. Spawn a fresh one per task. Substituting `general-purpose` skips those reads and drifts.
 background: true
 model: opus
-effort: high
+effort: medium
 ---
 
 # Mode agent

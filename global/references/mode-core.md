@@ -24,11 +24,13 @@ Rules every `-mode` skill shares. The mode that sent you here owns the playbooks
   - `code`: `opus`. Code delegates and mechanical edits.
   - `hardest tasks`: `fable`. Cross-cutting design, concurrency, subtle algorithms.
   - `judgment and prose`: `opus`. Reviews, plans and prose.
+  - `fan-out routine`: `opus low`. Batch lanes of mechanical work, such as one edit across tickets.
+  - `fan-out investigate`: `opus medium`. Batch lanes that read and judge, such as audits or competing sketches.
 
-  A line of `inherit` runs the role on the parent model, so omit `model`. Pass the line's effort as `effort`; a line that names none omits `effort`, and the role runs at the session's effort.
+  A line of `inherit` runs the role on the parent model, so omit `model`. Pass the line's effort as `effort`, or `medium` when the line or default names none.
 - **Match the effort to the job.** Start from the role's effort. Raise it a step, up to `max`, for the hardest or subtlest work. Lower it a step for judgment and two for routine work. Change only the effort, so the role keeps its model. If the Agent tool rejects an effort, use the role's line or default and say so.
 - **Fresh by default.** New work, a fix round or a retry goes to a fresh subagent with consolidated scope: the original brief, every later directive, and the prior agent's report and branch. Resume an agent only for state that is costly to move: its checkout, its uncommitted changes, or a process it runs.
-- **Fan-out.** Run at most 5 subagents at once, each lane in its own worktree. A batch of similar lanes runs at `medium` effort, whatever the role starts from. Lanes carry independent artifacts (separate tickets, audits, competing sketches); one code-coupled change goes to a single owner.
+- **Fan-out.** Run at most 5 subagents at once, each lane in its own worktree. A batch of similar lanes takes the `fan-out routine` or `fan-out investigate` role, whichever fits its lanes, in place of each lane's own role. Lanes carry independent artifacts (separate tickets, audits, competing sketches); one code-coupled change goes to a single owner.
 - **Frozen briefs.** A brief a running delegate reads stays as written. A changed directive goes into the next agent's scope. The same holds for a checkout running sessions load (a plugin dir, a linked package, a symlinked skill).
 - **Stall check.** On each wake, read each running delegate's output file mtime with `stat -L`. A delegate idle past its longest expected step: read its last lines, stop it, and give its consolidated scope to a fresh agent.
 - You own every subagent's work. Review its diff and write your own summary.
