@@ -1,0 +1,5 @@
+interface:
+  display_name: "Dark-factory Mode"
+  short_description: "Turn a ticket queue into verified branches while you are away"
+policy:
+  allow_implicit_invocation: false
