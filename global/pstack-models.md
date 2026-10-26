@@ -5,9 +5,9 @@
 code: opus medium
 hardest tasks: fable medium
 judgment and prose: sonnet high
-fan-out routine: opus low
+fan-out routine: sonnet high
 fan-out investigate: opus medium
-how explorer: sonnet medium
+how explorer: opus low
 how explainer: opus medium
-why investigators: sonnet medium
+why investigators: opus medium
 why synthesizer: opus medium

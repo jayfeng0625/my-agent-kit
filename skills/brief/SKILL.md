@@ -1,7 +1,6 @@
 ---
 name: brief
 description: Minimal output mode. Answer first, only load-bearing facts, no essays. MANDATORY for every reply, every turn, unless the user asks for detail.
-disable-model-invocation: true
 metadata:
   tags: [communication, output-style]
 ---
