@@ -8,7 +8,7 @@ metadata:
 
 # Dark-factory mode
 
-Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy, subagent, reply and comment rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
+Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy, subagent, reply and comment rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every verifier and reviewer `mode-agent` prompt; a lane's prompt names impl-mode's `SKILL.md` instead (see Roles and context).
 
 The user is present at the start gate and at the digest, and nowhere between.
 
@@ -32,10 +32,11 @@ Each move gets a run comment: the marker `dark-factory <run-id>`, the branch, th
 
 ## Roles and context
 
-Three kinds of agent, and none of them shares a context window:
+Four kinds of agent, and none of them shares a context window:
 
 - **Runner.** The session that received this mode. It holds ticket ids, stages, branches and SHAs, and nothing larger. It never reads a diff, a test log or a lane's transcript; mode-core's diff review goes to the verifier.
-- **Lane.** One fresh `mode-agent` per ticket attempt, on the `code` role in place of mode-core's fan-out roles, since each lane writes a whole ticket, running `~/.claude/skills/impl-mode/SKILL.md` with its Feature or Refactoring playbook in its own worktree. impl-mode's Verify items 1 to 3 bind it, including its own fresh `/code-review` reviewer. It hands back a committed branch and a report of at most 15 lines: head SHA, proof command and result, the defaults it chose, and any question it parked on. Run step 9 replaces impl-mode's Verify item 4.
+- **Lane.** One fresh `mode-agent` per ticket attempt, on the `code` role in place of mode-core's fan-out roles, since each lane writes a whole ticket. Its prompt names `~/.claude/skills/impl-mode/SKILL.md` as its mode, with its Feature or Refactoring playbook run in its own worktree, and names this file only for its Gates, the Any ask or pause trigger and this report format. impl-mode's Verify items 1 and 2 bind it. It hands back a committed branch and a report of at most 15 lines, which replaces impl-mode's Reply: head SHA, proof command and result, the count of tests proven red under a break, the defaults it chose, the PR body file, and any question it parked on. Run step 9 replaces impl-mode's Verify item 4.
+- **Reviewer.** A fresh `mode-agent` per round, on the `judgment and prose` role, that runs `/code-review` on the lane's head. A lane has no Agent tool, so the runner spawns impl-mode's Verify item 3 review after the lane hands back and before the verifier.
 - **Verifier.** A fresh `mode-agent` per verdict, on the `judgment and prose` role, on any model other than the lane's; when the role line names the lane's model, use another `model` value. It never sees the lane's context. It reads the ticket and the diff, reruns the proof in a detached throwaway worktree at the head SHA, and returns PASS, FAIL or INCONCLUSIVE with up to 10 lines of evidence. The author never verifies its own branch.
 
 Bulk stays in the agent that produced it. The runner keeps its working set in the tracker and the run directory, so after a compaction it rereads this file and resumes at Run step 2.
@@ -43,8 +44,8 @@ Bulk stays in the agent that produced it. The runner keeps its working set in th
 ## Triggers
 
 - **Any ask or pause.** Every ask in mode-core and impl-mode (Missing skill, which surface to prove on, an extra capability, Always pause) becomes the safest reversible default when one exists, recorded as a run comment, and a park when none does. mode-core's Observe forks still runs inside the lane, through impl-mode's Prototype playbook.
-- **Dependent tickets.** A ticket blocked by another ticket in this run starts once its blocker is Verified, and branches from the blocker's branch. A ticket whose blocker is Parked, or open outside the run, is Parked with a comment naming the blocker.
-- **Long, unattended work.** The **show-me-your-work** skill keeps the trail in the run directory.
+- **Dependent tickets.** A ticket blocked by another ticket in this run starts once its blocker is Verified, and branches from the blocker's branch. A ticket whose blocker is Parked or open outside the run, or whose in-run blockers sit on more than one branch, is Parked with a comment naming the blockers.
+- **Long, unattended work.** The **show-me-your-work** skill keeps the trail in the run directory. At the digest step a `mode-agent` runs its cross-model review of the trail, and its Attention section goes into `digest.md`, so the runner never reads a night-long transcript.
 - **Prose.** The **unslop** skill. PR bodies take the **pr** skill.
 
 ## Run directory
@@ -53,14 +54,14 @@ Bulk stays in the agent that produced it. The runner keeps its working set in th
 
 - `decisions.tsv`: the show-me-your-work trail.
 - `pr/<ticket>.md`: each verified ticket's PR body.
-- `land.sh`: the push and `gh pr create` commands for every verified branch, bottom of the stack first.
+- `land.sh`: the push and `gh pr create` commands for every verified branch, bottom of the stack first. A dependent's `gh pr create` passes `--base df/<blocker-id>`.
 - `digest.md`: the reply.
 
 ## Gates
 
 The run asks the user once, at Run step 1. Past it, the user is reachable only through the digest and a push notification.
 
-The runner alone writes tracker moves, comments and the run directory. Lanes and verifiers report; the runner writes. Every agent leaves these for the user, except those writes and the worktrees the runner assigns:
+The runner alone writes tracker moves, comments and the run directory. Lanes and verifiers report; the runner writes. The runner creates each lane's and verifier's worktree, since `git worktree add` writes the shared `.git`. It resets a lane's worktree to the branch head before a retry and removes a verifier's worktree after its verdict. Every agent leaves these for the user, except those writes and the worktrees the runner assigns:
 
 - `git push`, every `gh` write, and every merge.
 - Moving a ticket to Done.
@@ -81,7 +82,7 @@ Done means all four hold.
 
 1. **Terminal.** Every queued ticket is Verified or Parked. A Parked ticket's comment names the decision or input the user owes.
 2. **Independent verdict.** Each Verified ticket has a PASS from a verifier on a model other than its lane's, recorded against a head SHA that `git rev-parse <branch>` still returns.
-3. **Lane proof.** impl-mode's Verify items 1 to 3 held in every Verified lane.
+3. **Lane proof.** impl-mode's Verify items 1 and 2 held in every Verified lane, and its fresh review of the Verified head came back clean or after 3 rounds.
 4. **Hand-off.** `land.sh` passes `bash -n` and lists every Verified branch bottom first. `git ls-remote --heads origin <branch>` is empty for each. `digest.md` is written, and the user got a push notification, or the digest says the tool was missing.
 
 **Reply:** the contents of `digest.md`, per Run step 11.
