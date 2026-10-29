@@ -10,8 +10,8 @@
    - **Independent workstreams.** Disjoint files, services or layers run in parallel lanes. Shared writes serialize.
    - **Shared mutable state.** Split the target first (**principle-separate-before-serializing-shared-state**). Serialize only for a real invariant.
    - **Smallest safe decomposition.** If one worker is best, say why.
-5. When the implementation admits several valid shapes (error handling, abstraction layer, test structure), sketch each per `playbooks/prototype.md` and pick one.
-6. Build it, in the main thread or a `mode-agent` per Scope. A delegate's scope names the file paths, the data shape, and the ticket sentences as success criteria. Port a shared-primitive improvement to every consumer and verify each. Re-ground a file derived from upstream against its source.
+5. When the implementation admits several valid shapes (error handling, abstraction layer, test structure), sketch each per `playbooks/prototype.md`, pick one yourself, and record the choice with its evidence. That playbook's asks to the user (steps 2 and 6) bind a standalone Prototype run only.
+6. Build it, in the main thread or a `mode-agent` per Scope. A delegate's scope names the file paths, the data shape, and the ticket sentences as success criteria. Port a shared-primitive improvement only to the consumers the change breaks, verify each, and list the rest under Deferred. Re-ground a file derived from upstream against its source.
 7. Run `playbooks/trim.md` over the diff.
 8. Meet every item in **Verify**.
 
