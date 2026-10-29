@@ -64,7 +64,9 @@ Glue that goes away as subagents fold or merge:
 | `.claude/checks/modes.test.ts` | Structure: Verify heading last, mode-core opening, playbook paths, trigger names and Verify item numbers resolve | Keep as a gate. It scores no behavior. |
 | `.claude/evals/modes/` (built in step 1) | Outcome of impl, bug-hunting and research mode runs on a fixture repo: commits, hidden tests, read-only state, judged reply facts | Main metric, once the person signs off the tasks |
 
-Main metric: `pass` on `.claude/evals/modes/` (pending sign-off). Pinned: `claude-opus-5-5` at effort `high` for the run under test, `claude-sonnet-5-5` for the judge.
+Main metric: `pass` on `.claude/evals/modes/`. Pinned: `claude-opus-5-5` at effort `medium` with `--budget-usd 10` per case for the run under test, `claude-sonnet-5-5` for the judge (the person's settings, 2026-10-29).
+
+Sign-off (2026-10-29, the person): tasks as drafted, the probe and baseline spend, `--approve-harness`, and no stop after the baseline for the hillclimb port and the poteto-mode removal. A first probe at effort `high` finished t08 twice (pass both; 224k and 308k input tokens, 3.1k and 4.4k output, 7 and 9 model calls, 32 s and 49 s, all on the main agent) before the person switched to `medium`; those rows sit outside the flow dir and do not count.
 
 Runner (built 2026-10-29): `node .claude/evals/modes/run-eval.mjs`, adapted from `/claude-api build-eval`'s scaffold. Entry point: `claude -p "/<mode> <request>"`, the same slash command the person types. What makes it safe: each case builds a throwaway fixture repo with no remote; `HOME` is a scratch dir that links `global/` and `skills/` from a `git archive` of `--kit-ref`; the environment keeps only the model proxy variables (no `CLAUDE_CODE_*` session ids, no `GH_TOKEN` or `GITHUB_TOKEN`); a `gh` shim always fails; `git push`, WebSearch, WebFetch and MCP are off. The person chose this design at the regroup. Proven with no model: `graders.test.ts` (30 checks: each code task's reference fix passes, doing nothing and a plausible wrong fix fail; each read-only task fails on a commit or a tracked edit), and a full dry run with a stand-in `claude` that wrote rows, traces, `by_agent` and actions that `compare.py` read.
 
@@ -131,26 +133,24 @@ Merges first, then folds, then as-tool changes. With no traffic data, lowest ris
 
 Item 1 fixes a broken path today (a lane cannot spawn its reviewer). Item 2 is the person's stated goal.
 
-## Resume point (2026-10-29, paused for compaction)
+## Resume point (2026-10-29, AFK runbook)
 
-Done on the branch (`git log 9c85537..`, gate green: `npm test` 63/0, `npm run typecheck` clean):
+Done on the branch (gate green: `npm test` 93/0, `npm run typecheck` clean): the reference lint, this audit, the audit bug fixes (one commit per mode), upstream skills off poteto-mode, the mode eval (`.claude/evals/modes/`, commit 827fc23), and a draft `skills/hillclimb/` with three skill-creator test cases in `.claude/evals/hillclimb/` (kept outside `skills/` so installs do not ship them).
 
-- Reference lint in `.claude/checks/modes.test.ts`, proven red under three breaks.
-- This audit; the single-agent-loop skill in `.claude/skills/single-agent-loop/`.
-- Audit bug fixes: the shared layer (mode-core, mode-agent, pstack-models comment), then one commit per mode (impl, dark-factory, bug-hunting, research, ops), from three independent auditors' 74 findings. Findings the kit wants measured (merges, as-tool) stay in the worklist below.
-- how, why, show-me-your-work, no-comments, automate-me and figure-it-out no longer cite poteto-mode; each manifest's `merge_guidance` records it.
-- `npm test` and `typecheck` no longer sweep `.claude/worktrees/`.
+The person signed off the tasks, the spend, the harness and running unattended (see Evals). Settings for every mode eval run: `--model claude-opus-5-5 --effort medium --budget-usd 10 --kit-ref fb28d38`, with `--work /tmp/claude-0/-home-user-my-agent-kit/593d717f-ce66-55b2-9d36-c1ae470a9d80/scratchpad/eval-work` while this container lives. `fb28d38` is the head the probe ran on; the hillclimb skill and later commits are not model-visible to the three modes (every new or removed skill here sets `disable-model-invocation: true`).
 
-Eval built after the pause (see Evals). Its first paid run waits on the person.
+Run unattended, in order. Stop and write a check-in at the end of `PLAN.md` the moment a run errors, a grader looks wrong, or a result surprises; otherwise keep going.
 
-Next, in order:
+1. **Probe.** When it finishes, run `python3 .claude/skills/single-agent-loop/scripts/estimate.py .claude/hillclimb/modes probe --tasks 10 --reps 2 --heavy 4` and record the range here.
+2. **Baseline.** In the background, from the repo root:
+   `node .claude/evals/modes/run-eval.mjs --flow .claude/hillclimb/modes --variant baseline --model claude-opus-5-5 --effort medium --budget-usd 10 --kit-ref fb28d38 --work <work dir> --reps 2 --concurrency 5 --timeout-s 3600`
+   Afterwards record under Evals: tasks complete, latency, tokens and model calls per task, the noise band between reps, and the tokens used against the estimate (`estimate.py ... probe ... --actual baseline`). Read the trace of every failing task (`.claude/hillclimb/modes/baseline/traces/`, full stream in the row's `workdir`). A grader bug is ours to fix, but editing the harness needs the person's `--approve-harness` again, so record it and leave the fix for them. An expected outcome that looks wrong goes to the person with what the run did. Rerun `errors.jsonl` cases once by rerunning the same command (resume skips finished rows).
+3. **hillclimb skill test runs** (skill-creator loop), only with the person's yes to their spend: 3 cases, each with the skill and without it, as headless `claude -p` runs on the invoicer fixture under the same isolation and `--budget-usd 10`. Workspace: `.claude/hillclimb/hillclimb-skill/iteration-1/<case>/{with_skill,without_skill}/`. Grade each case's `graders/` statements into `grading.json`, aggregate with skill-creator's `scripts.aggregate_benchmark`, and write the viewer with `generate_review.py --static`. The person reviews it before any rewrite.
+4. **dark-factory Autonomous run.** Port `skills/poteto-mode/playbooks/autonomous-run.md` as `skills/dark-factory-mode/playbooks/autonomous-run.md`: one exit predicate driven to done unattended, under dark-factory's Gates and Any ask or pause rule (no `AskUserQuestion`; a park where no safe default exists), with `/loop` for waking. Add it to the mode's Playbooks list. dark-factory is outside this eval, so no rerun.
+5. **Remove poteto-mode** in its own commit: `skills/poteto-mode/`, `upstream/poteto-mode.yaml`, `global/agents/poteto-agent.md`; README (skill count, credits: pstack's count drops by one), AGENTS.md (the agents list), LICENSE wording if it names poteto-mode, `notTaskModes` in `.claude/checks/modes.test.ts`, and any remaining `poteto` mention (`grep -rn poteto --exclude-dir=.git`). Tick worklist item 2: it changes nothing a mode run sees, so it needs no variant.
+6. `npm test`, `npm run typecheck`, commit each step, push, and write the closing check-in.
 
-0. Probe and baseline, once the person corrects the tasks and says yes to the spend and the harness.
-1. Port poteto-mode's Hillclimb playbook (`skills/poteto-mode/playbooks/hillclimb.md`) as a standalone local skill `skills/hillclimb/` (SKILL.md, `agents/openai.yaml`, pstack MIT `LICENSE`; README credits and skill count). Port its Autonomous run playbook (`playbooks/autonomous-run.md`) into dark-factory-mode as a second playbook under the same Gates and Any ask or pause rules.
-2. Delete poteto-mode in its own last commit: `skills/poteto-mode/`, `upstream/poteto-mode.yaml`, the `global/agents/poteto-agent.md` link; update README, AGENTS.md, LICENSE wording, and `notTaskModes` in `.claude/checks/modes.test.ts`.
-3. Step 1 of the kit: build the eval per the regroup decisions (fixture repo, about 10 drafted tasks across impl, bug-hunting and research, runner with an allowlisted environment writing `.claude/hillclimb/modes/<variant>/results.jsonl`). Then stop for the person to correct the tasks before any paid run.
-
-Open owner questions 1 and 3 below still stand. Question 2 was answered by the person's last commit, which changed the values, so the comment was updated to match.
+Open owner questions 1 and 3 below still stand.
 
 ## Changes
 

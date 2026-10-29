@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: perf-to-target
+expected_outcome: |
+  The run measures a baseline with a repeatable harness before changing code, keeps a per-attempt decision log, keeps only changes that beat the noise with the suite green, and reaches at least 5x with identical output.
+context:
+  scaffold_script: place-files.sh

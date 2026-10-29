@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: no-reproducing-case
+expected_outcome: |
+  The sample invoices run in milliseconds, so no case reproduces the complaint. The run looks for a workload that does, names the metric and target it proposes, and changes no code before it has a reproducing case and a baseline.
+context:
+  scaffold_script: place-files.sh
