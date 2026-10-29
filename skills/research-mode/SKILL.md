@@ -25,7 +25,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 - **User-named source.** When the user names a source or a section, open the answer with what it offers for their question.
 - **Explaining code.** Reuse the names and diagrams the code already uses, and map each new term to them the first time you use it.
 - **Empirical fork.** mode-core's Observe forks runs here as the smallest script that shows the answer, in a scratch dir outside the repo, with its output cited.
-- **Labelling a ticket.** Use the project's triage labels; with none, follow the triage skill's own path (it names `/setup-issue-tracker`). Map each verification outcome to a state per the triage skill: confirmed to a ready state, refuted to wontfix, insufficient detail from the reporter to needs-info with what is missing. A ready-for-agent label needs an established approach, and for a bug an established cause too. A check your own environment blocks is not needs-info; it goes to the user.
+- **Labelling a ticket.** Use the project's triage labels; with none, follow the triage skill's own path (it names `/setup-issue-tracker`). Map each verification outcome to a state per the triage skill: confirmed to a ready state, refuted to wontfix, insufficient detail from the reporter to needs-info with what is missing. A ready-for-agent label needs an established approach, and for a bug an established cause too. A check your own environment blocks goes to the user with what it needs.
 - **Long transcript or bulk output.** Parse it in a `mode-agent` and keep the reduced result in the main thread (**Guard the Context Window**).
 - **Prose.** The **unslop** skill, the reply included. A research file also takes `/technical-writing`.
 
