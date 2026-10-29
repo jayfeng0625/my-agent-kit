@@ -21,7 +21,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 - **Ticket first.** Read the ticket, the decisions on its parent and related tickets, and the threads on linked PRs, verbatim. With no ticket, ask where the requirement lives. Each plan item maps to a ticket sentence. A capability the ticket does not ask for goes to the user as an option, and no brief asks for it until the user accepts it.
 - **Any code.** Name the data shape first and pick its organizing structure per **principle-model-the-domain**. Use the plainest type that holds it.
-- **Code crossing a function boundary.** The **codebase-design** skill before implementing.
+- **Function boundary.** Code crossing a function boundary takes the **codebase-design** skill before implementing.
 - **`.ts` or `.tsx`.** The **typescript-best-practices** skill.
 - **Any test.** The **tdd** skill, plus **Tests** below.
 - **A bug surfaced mid-task.** The **diagnosing-bugs** skill's red loop and minimal repro before any fix. The fix then follows Feature, with the red loop as its test.

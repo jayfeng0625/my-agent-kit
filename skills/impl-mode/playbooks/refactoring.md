@@ -4,7 +4,7 @@
 
 1. Pin the behavior first. Run `how` over the affected subsystem, then write a characterization test, snapshot, or equivalence harness that captures current behavior. If the area has no test, land the pin as a test in a commit before the reshape; a harness kept outside the tree guards only this session. Type check and lint are no pin.
 2. Name the structure the code is missing (**principle-model-the-domain**). Code whose shape is already clear and local stays. The reshape deletes branches or invalid states.
-3. Name the target shape: module layout, types and call graph as if built today (**principle-foundational-thinking**, **principle-redesign-from-first-principles**). Crossing a function boundary, run the function-boundary trigger first.
+3. Name the target shape: module layout, types and call graph as if built today (**principle-foundational-thinking**, **principle-redesign-from-first-principles**). Crossing a function boundary, run the Function boundary trigger first.
 4. Subtract first: dead code, one-caller wrappers, redundant validators, orphan references (**principle-subtract-before-you-add**).
 5. Move in small steps, each keeping the pin green. For an API reshape, migrate every caller and delete the old API in the same wave (**principle-migrate-callers-then-delete-legacy-apis**). Grep every rename across strings, prose and back-references.
 6. Prove behavior is unchanged on the real artifact, with an equivalence check for a larger reshape: a script that diffs old and new outputs, or a recorded baseline replayed.
