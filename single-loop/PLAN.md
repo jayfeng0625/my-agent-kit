@@ -65,6 +65,17 @@ Glue that goes away as subagents fold or merge:
 
 Main metric: not set.
 
+Decisions from the regroup (2026-10-29, the person):
+
+- Build a headless eval: `claude -p` against a fixture repo with an isolated `HOME`. Credential: the host proxy of the cloud container, after a one-call probe.
+- Fix the audit's clear bugs first, each topic its own commit, then baseline the fixed head.
+- Tasks: Claude drafts about 10 on a fixture repo, and the person corrects each expected outcome before any run.
+- First eval covers impl-mode, bug-hunting-mode and research-mode. ops-mode and dark-factory-mode come later.
+- In the brief vs mode reply conflict, the mode's Reply sections win on content inside a mode run. brief governs style.
+- poteto-mode: its Hillclimb becomes a standalone `hillclimb` skill, and its Autonomous run becomes a dark-factory playbook.
+
+Probe (2026-10-29): `env -u CLAUDECODE HOME=<scratch> claude -p "Reply with exactly: OK" --output-format json --max-turns 1` exited 0 through the host proxy. The response served `claude-opus-5-5`, and the call used 35,377 input tokens (26,629 cache reads), 4 output tokens, and `total_cost_usd` 0.0755 at list price. The JSON's `session_id` equalled the parent session's id, so the runner must start each run from an allowlisted environment that drops the inherited `CLAUDE_CODE_*` session variables.
+
 What step 1 needs from the person:
 
 1. A safe runner. Proposed: `claude -p` headless against a throwaway fixture repo, with `HOME` pointed at a scratch dir that links `global/` and installs `skills/`, so no real tracker, forge or prod is reachable. Needs a credential for paid runs; this container has no `ANTHROPIC_API_KEY` and no `ant`.
