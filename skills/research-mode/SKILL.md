@@ -20,18 +20,18 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 ## Triggers
 
-- **Read-only.** Research changes no tracked file. The files a routed skill writes as its output (a research file, triage's out-of-scope notes, a glossary or ADR edit during grilling) and mode-core's broken-skill fix are the only exceptions. A PR checkout, a build or a test run goes in a worktree outside the repo.
+- **Read-only.** Research changes no tracked file. The files a routed skill writes as its output (a research file, triage's out-of-scope notes, a glossary or ADR edit during grilling) and mode-core's broken-skill fix are the only exceptions. The reply lists each out-of-scope note for the user to commit, and a posted comment links one only after the user pushes it. A PR checkout, a build or a test run goes in a worktree outside the repo.
 - **Routing a question.** A how question takes the **how** skill, a motivation question the **why** skill, and docs, APIs or specs outside the repo the **research** skill. A question that spans two of them takes both, and the deliverable carries both outputs.
 - **User-named source.** When the user names a source or a section, open the answer with what it offers for their question.
 - **Explaining code.** Reuse the names and diagrams the code already uses, and map each new term to them the first time you use it.
 - **Empirical fork.** mode-core's Observe forks runs here as the smallest script that shows the answer, in a scratch dir outside the repo, with its output cited.
-- **Labelling a ticket.** Use the project's triage labels; ask if it has none. A ready-for-agent label needs an established approach, and for a bug an established cause too. A ticket whose investigation is still inconclusive gets the needs-info label, with what is missing.
+- **Labelling a ticket.** Use the project's triage labels; with none, follow the triage skill's own path (it names `/setup-issue-tracker`). Map each verification outcome to a state per the triage skill: confirmed to a ready state, refuted to wontfix, insufficient detail from the reporter to needs-info with what is missing. A ready-for-agent label needs an established approach, and for a bug an established cause too. A check your own environment blocks is not needs-info; it goes to the user.
 - **Long transcript or bulk output.** Parse it in a `mode-agent` and keep the reduced result in the main thread (**Guard the Context Window**).
 - **Prose.** The **unslop** skill, the reply included. A research file also takes `/technical-writing`.
 
 ## Principles
 
-- **Attack the Premise.** A choice backed by a stated premise, or two fixes on one premise that failed: test the premise before building on it.
+- **Attack the Premise.** A choice backed by a stated premise: test the premise before building on it.
 - **Prove It Works.** A claim that something works or runs: show it on the real artifact.
 - **Explain the Number.** A measured number you report: find what limits it before you trust it.
 - **Guard the Context Window.** Long files, transcripts and outputs.
@@ -49,7 +49,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 Done means all three hold.
 
-1. **Traced.** Every claim and premise in the deliverable meets **Evidence** or carries mode-core's label.
+1. **Traced.** Every premise in the deliverable is traced per **Evidence**. Every other claim meets **Evidence** or, when it cannot be traced, carries mode-core's label.
 2. **Fresh check.** For every playbook but Investigation, a fresh `mode-agent` opens each citation in the deliverable and confirms it backs its claim. Fix or relabel each one that fails.
 3. **Hand-off.** The deliverable is in the reply, or in the file a routed skill writes. `git status` shows only the exceptions **Read-only** allows. Follow-up code work names the mode that owns it, such as `/impl-mode`.
 
