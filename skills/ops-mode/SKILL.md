@@ -29,7 +29,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 - **Billable create.** A create that costs money or quota, in any environment: state the cost and pause.
 - **Empirical fork.** mode-core's Observe forks runs here as a read-only probe on the lowest environment that shows the answer, with its output and target identity cited. A fork only prod can answer takes a prod read. A fork that needs a prod write goes to the user as a question.
 - **Large log or export.** Parse it in a `mode-agent` and keep the reduced result in the main thread (**Guard the Context Window**).
-- **A measured number.** The **benchmark-checklist** skill before you report or act on it.
+- **A measured number.** The **benchmark-checklist** skill before you report or act on a number you produced by running a benchmark. An observed prod signal, such as an error rate or a latency, takes **Explain the Number**.
 - **Secrets.** Read a secret's metadata and leave its value unread. Redact secrets from any output before you quote it.
 - **Any code.** Name the data shape first. Code crossing a function boundary takes the **codebase-design** skill, `.ts` or `.tsx` takes **typescript-best-practices**, and a test takes the **tdd** skill.
 - **Prose.** The **unslop** skill. Runbooks and commit messages also take `/technical-writing`. PR bodies take the **pr** skill alone.
@@ -68,7 +68,7 @@ One block per apply step:
 5. **Rollback**: the exact command that undoes it. An irreversible step writes `none`, names the backup or restore path, and waits for the user to confirm it exists.
 6. **Then**: the read you run after, and "reply done once it finishes".
 
-More than one dependent step, a dashboard walk or a captured secret goes to the **wizard** skill. A wizard prompts, so the user runs it in their own terminal as `bash <path>`. A step that runs for minutes, such as a backfill, also runs there.
+More than one dependent step, a dashboard walk or a captured secret goes to the **wizard** skill. A wizard prompts, so the user runs it in their own terminal as `bash <path>`. A step that runs for minutes, such as a backfill, also runs there. A wizard that writes prod in more than one stage lists one Then read per stage that writes, and item 2 of **Verify** counts each.
 
 On "done", run the step's Then read, print the target identity, and compare with Expected. A match logs the step. A mismatch stops the playbook: report both outputs and offer the Rollback block. A retry is a new block for the user to run.
 
@@ -81,7 +81,7 @@ On "done", run the step's Then read, print the target identity, and compare with
 ## Scope
 
 - Code changes run in a git worktree off the base branch.
-- Incident and Live verification change no tracked file, except a revert or an incident note the user wants kept.
+- Incident and Live verification change no tracked file, except a revert, an incident note the user wants kept, or mode-core's broken-skill fix.
 - Scratch probes and other wizards live outside the repo unless the user asks to keep one. A migration runbook, its wizards included, is committed with the code it drives.
 
 ## Commits
@@ -93,8 +93,8 @@ On "done", run the step's Then read, print the target identity, and compare with
 
 Done means all five hold, or the items the playbook names.
 
-1. **Observed.** Every check and applied step meets **Evidence**. Incident: the symptom signal back to baseline over a stated window. Migration: parity per phase. Infra change: an empty plan after the apply. Live verification: the verdict with its identity. An inconclusive read, or a read on the wrong target, is a fail to flag.
-2. **Prod writes went through the user.** Every command you ran against prod was a read. Every prod write is in the hand-off log with the user's done and the after read.
+1. **Observed.** Every check and applied step meets **Evidence**. Incident: the symptom signal back to baseline over a stated window. Migration: parity per phase. Infra change: an empty plan after the apply, or with no plan tool, the changed setting's after read against its before read. Live verification: the verdict with its identity. An inconclusive read, or a read on the wrong target, is a fail to flag.
+2. **Prod writes went through the user.** Every command you ran against prod was a read. Every prod write, each writing stage of a wizard included, is in the hand-off log with the user's done and the after read.
 3. **Clean.** Debug output, scratch resources and temp wizards are gone, or listed for the user with their delete commands. `git status` shows only the change's files.
 4. **Fresh review.** A fresh-context `mode-agent` runs `/code-review` over the diff: code, IaC, migration script and runbook. Fix accepted findings and re-review, until a round comes back clean or after 3 rounds. Findings still open after the last round stop any prod apply until the user has read them.
 5. **Hand-off.** For a code or IaC change, a reviewed, committed branch and a PR body written with the **pr** skill that carries the apply steps and the evidence; the user pushes and opens the PR. For an incident, the note in the reply and the root cause routed per Incident. For a live verification, the verdict in the reply.
