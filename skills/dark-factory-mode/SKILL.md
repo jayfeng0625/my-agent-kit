@@ -1,6 +1,6 @@
 ---
 name: dark-factory-mode
-description: Dark-factory mode for unattended runs, including overnight ones, that turn a queue of ready tickets into a stack of independently verified branches the user lands. Needs my-agent-kit's global files linked.
+description: Dark-factory mode for unattended runs, including overnight ones, that turn a queue of ready tickets, or one exit condition, into independently verified branches the user lands. Needs my-agent-kit's global files linked.
 disable-model-invocation: true
 metadata:
   tags: [workflow, autonomy, implementation, playbooks]
@@ -15,6 +15,7 @@ The user is present at the start gate and at the digest, and nowhere between.
 ## Playbooks
 
 - **Run** (`playbooks/run.md`). A queue of tickets, worked from claim to a verified branch while the user is away.
+- **Autonomous run** (`playbooks/autonomous-run.md`). One exit condition, driven to done while the user is away, one kept or reset change at a time.
 
 ## Ticket states
 
