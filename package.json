@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc",
-    "test": "node --test '.claude/**/*.test.ts'"
+    "test": "node --test '.claude/checks/*.test.ts' '.claude/skills/**/*.test.ts'"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
