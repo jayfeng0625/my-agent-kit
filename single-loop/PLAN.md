@@ -3,7 +3,7 @@
 Audit date: 2026-10-29
 Repo and commit: jayfeng0625/my-agent-kit at 14f8c94 (branch `claude/routers-audit-poteto-removal-gcddj7`)
 
-What blocks the plan: no eval exists and no runner can score a mode run. Step 1 needs a safe way to run a mode on a test request and some real requests (see Evals).
+What blocks the plan: the eval is built (`.claude/evals/modes/`) and waits on the person's corrections to its tasks and a yes to the probe and baseline spend.
 
 ## Status
 
@@ -49,6 +49,7 @@ Glue that goes away as subagents fold or merge:
   - dark-factory Gates (no `git push`, no `gh` writes for lanes and verifiers): `deny` rules in the lane's settings.
   - how's "the subagent edits no files": a `tools:` list without Edit and Write on a dedicated agent type.
 - Persona: comment-sicko writes in the first person ("I read nearby..."). One voice for the main session's reply.
+- This container sets `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH=1`, which may be why the probe found that a subagent cannot spawn; a local install may differ. The eval runs without that variable.
 - Instructions about other agents: mode-agent.md:11 says the parent owns "every Agent spawn", while impl-mode Verify 3 and dark-factory lanes assume a delegate spawns a reviewer. A delegate cannot spawn (probe).
 - Rules that conflict across files (all found by the audit lanes, details in the Changes log):
   - brief (every reply, about 5 lines, no tables) against each mode's Reply line (VERIFIED, REASONED and Deferred lists, tables).
@@ -61,9 +62,28 @@ Glue that goes away as subagents fold or merge:
 | Eval | What it measures | What to do with it |
 | --- | --- | --- |
 | `.claude/checks/modes.test.ts` | Structure: Verify heading last, mode-core opening, playbook paths, trigger names and Verify item numbers resolve | Keep as a gate. It scores no behavior. |
-| none found for behavior | | Build in step 1 |
+| `.claude/evals/modes/` (built in step 1) | Outcome of impl, bug-hunting and research mode runs on a fixture repo: commits, hidden tests, read-only state, judged reply facts | Main metric, once the person signs off the tasks |
 
-Main metric: not set.
+Main metric: `pass` on `.claude/evals/modes/` (pending sign-off). Pinned: `claude-opus-5-5` at effort `high` for the run under test, `claude-sonnet-5-5` for the judge.
+
+Runner (built 2026-10-29): `node .claude/evals/modes/run-eval.mjs`, adapted from `/claude-api build-eval`'s scaffold. Entry point: `claude -p "/<mode> <request>"`, the same slash command the person types. What makes it safe: each case builds a throwaway fixture repo with no remote; `HOME` is a scratch dir that links `global/` and `skills/` from a `git archive` of `--kit-ref`; the environment keeps only the model proxy variables (no `CLAUDE_CODE_*` session ids, no `GH_TOKEN` or `GITHUB_TOKEN`); a `gh` shim always fails; `git push`, WebSearch, WebFetch and MCP are off. The person chose this design at the regroup. Proven with no model: `graders.test.ts` (30 checks: each code task's reference fix passes, doing nothing and a plausible wrong fix fail; each read-only task fails on a commit or a tracked edit), and a full dry run with a stand-in `claude` that wrote rows, traces, `by_agent` and actions that `compare.py` read.
+
+Where the tasks come from: no transcripts were shared, so Claude synthesized them from the modes' playbooks onto the fixture (the lowest-fidelity source), for the person to correct.
+
+| Task | Mode, playbook | Graded on |
+| --- | --- | --- |
+| t01-impl-csv | impl, Feature | `--csv` output exactly per INV-12 (ticket example, and a hidden invoice with a comma, quotes and a newline); report unchanged; suite green; cache, rates and config untouched |
+| t02-impl-refactor | impl, Refactoring | report.js and cli.js call formatCents with no cents math of their own; CLI output identical to main on three invoices; suite green |
+| t03-impl-no-ticket | impl, unhappy path | no commit, no tracked edit; judge: the reply asks where INV-31 lives |
+| t04-impl-trim | impl, Trim | diff against main only in invoice.js, report.js and tests; INV-15 works; the [dbg] log, its log-wording test, legacyRound, lodash and the cache.js reindent gone; suite green |
+| t05-bug-discount | bug-hunting, Bug fix | tax on the discounted amount per docs/pricing.md (hidden invoices), per-line rounding kept; suite green; no debug output. Secondary: a test red on main. The prompt carries a wrong premise (INV-7 rounding) |
+| t06-bug-cache | bug-hunting, Bug fix | updating a key in a full LRU keeps the others, new keys still evict LRU; suite green; no debug output. Secondary: set refreshes recency; a test red on main |
+| t07-bug-perf | bug-hunting, Perf issue | 60,000-line invoice under 1 s (main: 5.2 s) with identical output; a repeated SKU still rejected by name; suite green; no debug output |
+| t08-research-why | research, Investigation | no writes; judge: the ERP stores tax per line, so subtotal rounding broke reconciliation; cites 8ccfd20 or INV-7 |
+| t09-research-how | research, Investigation | no writes; judge: parseInvoice, computeTotals with the cached rateFor, renderReport; at least three `file:line` citations |
+| t10-research-premise | research, Assessment | no writes; judge: `cache.maxEntries` is never read (rates.js reads `rateCacheSize`, default 16), so the change does nothing |
+
+Proposed run: probe of t08 x2 and t01 x1, then baseline of 10 tasks x 2 reps at concurrency 5, each case capped at 3600 s. No mode run has been measured, so the size is a guess until the probe: each conversation is likely 1M to 6M input tokens, mostly cache reads, and 20k to 80k output tokens, which puts the baseline near 20M to 120M input tokens. The probe narrows it with `estimate.py`.
 
 Decisions from the regroup (2026-10-29, the person):
 
@@ -76,10 +96,7 @@ Decisions from the regroup (2026-10-29, the person):
 
 Probe (2026-10-29): `env -u CLAUDECODE HOME=<scratch> claude -p "Reply with exactly: OK" --output-format json --max-turns 1` exited 0 through the host proxy. The response served `claude-opus-5-5`, and the call used 35,377 input tokens (26,629 cache reads), 4 output tokens, and `total_cost_usd` 0.0755 at list price. The JSON's `session_id` equalled the parent session's id, so the runner must start each run from an allowlisted environment that drops the inherited `CLAUDE_CODE_*` session variables.
 
-What step 1 needs from the person:
-
-1. A safe runner. Proposed: `claude -p` headless against a throwaway fixture repo, with `HOME` pointed at a scratch dir that links `global/` and installs `skills/`, so no real tracker, forge or prod is reachable. Needs a credential for paid runs; this container has no `ANTHROPIC_API_KEY` and no `ant`.
-2. Real requests: 10 to 20 mode invocations from transcripts (`~/.claude/projects/<project>/*.jsonl` on the person's machine), or the most common request per mode.
+Second probe (2026-10-29): the same one-call check with the allowlisted environment the runner uses (`env -i` plus the proxy variables) exited 0 on `claude-opus-5-5` with its own session id, 17,215 input tokens (11,852 cache reads) and 4 output tokens.
 
 Gaps noticed: no task checks that a mode reaches its routed skills, that a delegate's spawn-dependent step still runs, or that a prod write goes through Hand-off.
 
@@ -89,13 +106,13 @@ Break map: filled in at step 1.
 
 | What could break | Tasks that would notice | Gap, and the task to add |
 | --- | --- | --- |
-| Dropped handoff | none | lane report to verifier: a verdict that names the lane's head SHA |
-| Lost rule | none | ops prod write attempted outside Hand-off; graded on no write |
-| Shortcut | none | |
-| Wrong pick | none | a request worded to fit two modes; graded on the outcome |
-| Unwanted write | none | research-mode run graded on `git status` clean |
-| Lost thread | n/a | |
-| Unhappy path | none | impl-mode with no ticket; graded on asking where the requirement lives |
+| Dropped handoff | t01, t02, t04 to t07 grade the committed end state after any mode-agent and fresh-review rounds | dark-factory lane to verifier: out of this eval's scope (dark-factory comes later) |
+| Lost rule | t08 to t10 and t03 (read-only, no write); t05 to t07 (debug output left in the diff) | ops prod write outside Hand-off: ops-mode comes later |
+| Shortcut | t05 (a wrong premise in the request), t10 (a premise about config in force) | |
+| Wrong pick | t07 (Perf issue over Bug fix), t10 (Assessment over Investigation); graded on the outcome | |
+| Unwanted write | t03, t08 to t10 fail on any commit or tracked edit; every row records its writes for `compare.py` | |
+| Lost thread | n/a: headless runs are single-turn | |
+| Unhappy path | t03 | |
 
 Baseline (variant `baseline`): not run.
 
@@ -124,8 +141,11 @@ Done on the branch (`git log 9c85537..`, gate green: `npm test` 63/0, `npm run t
 - how, why, show-me-your-work, no-comments, automate-me and figure-it-out no longer cite poteto-mode; each manifest's `merge_guidance` records it.
 - `npm test` and `typecheck` no longer sweep `.claude/worktrees/`.
 
+Eval built after the pause (see Evals). Its first paid run waits on the person.
+
 Next, in order:
 
+0. Probe and baseline, once the person corrects the tasks and says yes to the spend and the harness.
 1. Port poteto-mode's Hillclimb playbook (`skills/poteto-mode/playbooks/hillclimb.md`) as a standalone local skill `skills/hillclimb/` (SKILL.md, `agents/openai.yaml`, pstack MIT `LICENSE`; README credits and skill count). Port its Autonomous run playbook (`playbooks/autonomous-run.md`) into dark-factory-mode as a second playbook under the same Gates and Any ask or pause rules.
 2. Delete poteto-mode in its own last commit: `skills/poteto-mode/`, `upstream/poteto-mode.yaml`, the `global/agents/poteto-agent.md` link; update README, AGENTS.md, LICENSE wording, and `notTaskModes` in `.claude/checks/modes.test.ts`.
 3. Step 1 of the kit: build the eval per the regroup decisions (fixture repo, about 10 drafted tasks across impl, bug-hunting and research, runner with an allowlisted environment writing `.claude/hillclimb/modes/<variant>/results.jsonl`). Then stop for the person to correct the tasks before any paid run.
