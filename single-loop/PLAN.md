@@ -114,6 +114,24 @@ Merges first, then folds, then as-tool changes. With no traffic data, lowest ris
 
 Item 1 fixes a broken path today (a lane cannot spawn its reviewer). Item 2 is the person's stated goal.
 
+## Resume point (2026-10-29, paused for compaction)
+
+Done on the branch (`git log 9c85537..`, gate green: `npm test` 63/0, `npm run typecheck` clean):
+
+- Reference lint in `.claude/checks/modes.test.ts`, proven red under three breaks.
+- This audit; the single-agent-loop skill in `.claude/skills/single-agent-loop/`.
+- Audit bug fixes: the shared layer (mode-core, mode-agent, pstack-models comment), then one commit per mode (impl, dark-factory, bug-hunting, research, ops), from three independent auditors' 74 findings. Findings the kit wants measured (merges, as-tool) stay in the worklist below.
+- how, why, show-me-your-work, no-comments, automate-me and figure-it-out no longer cite poteto-mode; each manifest's `merge_guidance` records it.
+- `npm test` and `typecheck` no longer sweep `.claude/worktrees/`.
+
+Next, in order:
+
+1. Port poteto-mode's Hillclimb playbook (`skills/poteto-mode/playbooks/hillclimb.md`) as a standalone local skill `skills/hillclimb/` (SKILL.md, `agents/openai.yaml`, pstack MIT `LICENSE`; README credits and skill count). Port its Autonomous run playbook (`playbooks/autonomous-run.md`) into dark-factory-mode as a second playbook under the same Gates and Any ask or pause rules.
+2. Delete poteto-mode in its own last commit: `skills/poteto-mode/`, `upstream/poteto-mode.yaml`, the `global/agents/poteto-agent.md` link; update README, AGENTS.md, LICENSE wording, and `notTaskModes` in `.claude/checks/modes.test.ts`.
+3. Step 1 of the kit: build the eval per the regroup decisions (fixture repo, about 10 drafted tasks across impl, bug-hunting and research, runner with an allowlisted environment writing `.claude/hillclimb/modes/<variant>/results.jsonl`). Then stop for the person to correct the tasks before any paid run.
+
+Open owner questions 1 and 3 below still stand. Question 2 was answered by the person's last commit, which changed the values, so the comment was updated to match.
+
 ## Changes
 
 Prose fixes made outside the worklist, after this audit, on the same branch (each its own commit; none adds, removes or reroutes an agent): see `git log 14f8c94..` and the commit bodies. They change text every mode run reads, so a baseline taken later runs on them; pick the commit to baseline at step 1.
