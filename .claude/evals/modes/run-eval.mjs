@@ -265,8 +265,10 @@ async function runCase(input, ctx) {
   const run = { model: init.model, usage, workdir: dir, repo, base, reply: result?.result ?? '', transcript,
     by_agent, model_calls, model_usage: modelUsage, cost_usd_reported: result?.total_cost_usd,
     num_turns: result?.num_turns, stop_reason: result?.subtype };
+  // A slash command's text reaches the model without showing in stream-json, so the
+  // init event's command list and the reply stand in for it.
   const mode = input.prompt.split(' ')[0].slice(1);
-  if (!readFileSync(streamFile, 'utf8').includes(`skills/${mode}`)) {
+  if (!(init.slash_commands ?? []).includes(mode) || /^Unknown (skill|command)/m.test(result?.result ?? '')) {
     const e = new Error(`the ${mode} skill never loaded (exit ${code})`);
     e.failure_class = 'harness';
     throw e;
