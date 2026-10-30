@@ -1,5 +1,5 @@
 interface:
   display_name: "Dark-factory Mode"
-  short_description: "Turn a ticket queue into verified branches while you are away"
+  short_description: "Plan a program, then turn its tickets into verified branches or green PRs while you are away"
 policy:
   allow_implicit_invocation: false
