@@ -319,6 +319,13 @@ Recorded.
     }, reply("f.md"));
     assert.equal(g.grade.pass, 1, JSON.stringify(g));
   });
+  test("t14-df-plan: a new ticket plus a link comment on INV-12 passes", () => {
+    const g = grade("t14-df-plan", (repo) => {
+      publish("h.md", "ready-for-human")(repo);
+      tool(repo, "tracker", ["comment", "INV-12", "--body", "Planned as INV-16."]);
+    }, reply("h.md"));
+    assert.equal(g.grade.pass, 1, JSON.stringify(g));
+  });
   test("t14-df-plan: moving INV-12 to ready-for-agent fails", () => {
     const g = grade("t14-df-plan", (repo) => {
       publish("g.md", "ready-for-human")(repo);

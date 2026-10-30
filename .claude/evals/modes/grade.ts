@@ -429,8 +429,9 @@ const graders: Record<string, (ctx: Ctx) => Partial> = {
     const db = JSON.parse(read(dirname(ctx.repo), "tracker.json") || '{"issues":[]}') as {
       issues: { id: string; status: string; body: string; comments?: { body: string }[] }[];
     };
-    // A planned ticket is a new one, or a seeded one the plan was posted to as a comment.
-    const planned = db.issues.filter((x) => !SEEDED.has(x.id) || (x.comments ?? []).length > 0);
+    // A planned ticket is a new one, or a seeded one with a ticket section posted as a comment;
+    // a comment that only links INV-12 to a new ticket leaves INV-12 out.
+    const planned = db.issues.filter((x) => !SEEDED.has(x.id) || (x.comments ?? []).some((c) => ticketOk(c.body)));
     const codeCommits = ctx.inspection.candidates.some(({ sha }) => changedFiles(ctx.repo, ctx.base.main, sha).some((f) => f.startsWith("src/")));
     const checks: Checks = {
       clean: ctx.inspection.dirty.length === 0 && !codeCommits,
