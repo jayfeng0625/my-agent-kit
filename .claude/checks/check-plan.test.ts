@@ -107,6 +107,20 @@ test("rejects backtick info strings containing a backtick", () => {
   assert.match(result.stderr, /"## Example only" after Close the program is not an appendix/);
 });
 
+test("ignores prose punctuation inside matching multi-backtick code spans", () => {
+  for (const count of [2, 3, 4]) {
+    const delimiter = "`".repeat(count);
+    check(plan() + `Use ${delimiter}echo \`x\`: “quoted” — example${delimiter}.\n`, 0);
+  }
+});
+
+test("checks prose following a multi-backtick span and unmatched delimiters", () => {
+  const outside = check(plan() + "Use ``echo `x`: y``. Bad: prose.\n", 1);
+  assert.match(outside.stderr, /mid-sentence colon/);
+  const unmatched = check(plan() + "Use ``unclosed: bad` here.\n", 1);
+  assert.match(unmatched.stderr, /mid-sentence colon/);
+});
+
 test("accepts more lanes than the minimum when the count matches", () => {
   check(plan(ticket(`${rule} 4 lanes at the ticket head.\n${lanes(4)}`)), 0);
 });

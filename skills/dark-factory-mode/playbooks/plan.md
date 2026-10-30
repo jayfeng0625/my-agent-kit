@@ -1,6 +1,6 @@
 ### Plan
 
-**You own the plan, not the code. The plan is a checklist the runner works box by box and the user audits from the evidence.** The user is present for this playbook. The plan and its tickets are the deliverable; do not implement.
+**You own the plan, never the code. The plan is a checklist the runner works box by box and the user audits from the evidence.** The user is present for this playbook. The plan and its tickets are the deliverable; do not implement.
 
 1. **Prototype open questions first.** Settle each by impl-mode's Prototype playbook (`~/.claude/skills/impl-mode/playbooks/prototype.md`), and keep the branch, the SHA and the screenshots for Appendix A. Ask the user only about a product or preference call no run can settle, with options.
 2. **Explore in subagents.** Spawn `mode-agent` per mode-core's Subagents rules. Each returns file pointers, conventions, test commands and entry points, with no inlined dumps.
@@ -49,7 +49,7 @@ Tests alone are not sufficient verification. A ticket is verified only when its 
 ### Verdict
 
 - [ ] A full swarm runs once, at the code-ready head, per Run step 7. It runs one gates lane, every live lane, the perf lane and two audit lanes.
-- [ ] Clean only when every lane passes. A new head gets a fresh verdict unless the patch-id rule carries it.
+- [ ] Judge every finding by the blocking rule in **Roles and context**. The verdict is clean when none blocks. A failure on trunk behavior in a lane marked `Regression lane against trunk.` is recorded against trunk and does not block the ticket. A new head gets a fresh verdict unless the patch-id rule carries it.
 
 ### Boot recipe
 

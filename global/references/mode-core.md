@@ -20,7 +20,7 @@ Rules every `-mode` skill shares. The mode that sent you here owns the playbooks
 ## Subagents
 
 - The session that receives the mode runs the playbook itself. Spawn every delegate and ad-hoc helper with `subagent_type: "mode-agent"`, including subagents a skill you invoke spawns without naming a type, and put the absolute path of the mode's `SKILL.md` in every prompt. A skill that names its own `subagent_type`, role lines or lane count keeps them. If the Agent tool offers no `mode-agent` type, tell the user to link `global/agents/mode-agent.md` from my-agent-kit into `~/.claude/agents/`.
-- Every `Agent` call: file pointers over inlined context, and `run_in_background: false` when your next step waits on that one result. Spawns that run side by side go in the background.
+- Every `Agent` call: file pointers over inlined context, and `run_in_background: false` when your next step waits on that one result. Spawns that run side by side go in the background, and so does a steer or resume of a running agent, because a foreground call holds your turn while other reports wait.
 - **Roles.** Each spawn takes its role's model and effort from the role's line in `~/.claude/pstack-models.md`. A role with no line keeps its default:
   - `code`: `opus`. Code delegates and mechanical edits.
   - `hardest tasks`: `fable`. Cross-cutting design, concurrency, subtle algorithms.
@@ -29,7 +29,7 @@ Rules every `-mode` skill shares. The mode that sent you here owns the playbooks
   - `fan-out investigate`: `opus medium`. Batch lanes that read and judge, such as audits or competing sketches.
 
   A spawn the mode names no role for takes the closest one: a reviewer, checker or verifier takes `judgment and prose`, a parser of a large log, transcript or artifact takes `fan-out investigate`, and a code delegate takes `code`. A line of `inherit` runs the role on the parent model, so omit `model`. Pass the line's effort as `effort`; a line that names none omits `effort`, and the spawn runs at the session's effort.
-- **Match the effort to the job.** A role's effort fits its usual job. Raise it a step, up to `max`, for harder or subtler work, and lower it a step for lighter work. Change only the effort, so the role keeps its model. If the Agent tool rejects an effort, use the role's line or default and say so.
+- **Match the effort to the job.** A role's effort fits its usual job. Raise it a step, up to `max`, for harder or subtler work, and lower it a step for lighter work. Change only the effort, so the role keeps its model. If the Agent tool rejects an effort, use the role's line or default and say so. If it rejects that too, omit `model` so the spawn runs on the parent model, and say so.
 - **Code delegate brief.** Give a code `mode-agent` these fields: the mode `SKILL.md` path, the playbook, the worktree and its base ref, the goal (the ticket text or the user's words), the success check as a command, and the files or behavior to leave alone.
 - **Code delegate report.** It opens with `done`, `blocked` or `question`, then lists the branch and head SHA, the success check's command with its last output lines, the files changed, and what it skipped. At most 15 lines.
 - **Fresh by default.** New work, a fix round or a retry goes to a fresh subagent with consolidated scope: the original brief, every later directive, and the prior agent's report and branch. Resume an agent only for state that is costly to move: its checkout, its uncommitted changes, or a process it runs.
@@ -41,6 +41,7 @@ Rules every `-mode` skill shares. The mode that sent you here owns the playbooks
 
 ## Writing the reply
 
+- **First message.** Tell the user, in your own words, their goal, the problem they are solving, and, if the task ships a change, the smallest change you expect to meet it. Don't wait for confirmation. If the evidence rules out the change the user asked for, show it and stop. Restate the user's goal in each subagent brief, and open each PR body's why with it. Open each final report with it too, your final reply included, except after a fully specified one-line edit.
 - Short declarative sentences, one thought each.
 - No long-dash character. A colon only before a list.
 - Terse keeps content: every section the mode's and the playbook's Reply lines name stays, tables included. Inside a mode run these sections override the **brief** skill's length and table limits, and brief still sets the style. VERIFIED lists measured claims, and REASONED lists inferred ones.

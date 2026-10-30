@@ -16,7 +16,7 @@ The user is present for Plan, at the start gate and at the digest, and nowhere b
 
 - **Plan** (`playbooks/plan.md`). With the user: a program written as tickets that each carry unit, live and perf verification, checked by `scripts/check-plan.mjs`.
 - **Run** (`playbooks/run.md`). A queue of tickets, worked from claim to a verified branch, or a green PR under the `prs` grant, while the user is away.
-- **Orchestrate** (`playbooks/orchestrate.md`). A program that outlives one session: many tickets on several tracks over days, kept in the `orch` store.
+- **Orchestrate** (`playbooks/orchestrate.md`). A standing project handed to one coordinator session: multi-day, many stacked PRs, dozens to hundreds of subagents, few human turns.
 - **Autonomous run** (`playbooks/autonomous-run.md`). One exit condition, driven to done while the user is away, one kept or reset change at a time.
 
 ## Ticket states
@@ -46,7 +46,7 @@ Four kinds of agent, and none of them shares a context window:
   - one perf lane (`judgment and prose`) that runs Verify, perf's probe on the base ref and the head, interleaved, base first, and applies its Rule;
   - two audit lanes (`judgment and prose`), each with its own focus, that read the ticket, the diff and the lane's report and trust no claim they have not checked. A loosened gate (a disabled, skipped or soft-failed check, a raised budget, a new allowlist entry) fails the verdict unless the ticket's Build names it.
 
-  The verdict is PASS only when every lane passes.
+  The verdict is PASS only when every lane passes. A lane fails, and the reviewer tags a finding `blocking` (impl-mode's Review findings rule), only for a problem it can show, with a failing run at the head or a doc line the ticket made wrong. A problem the base ref already has doesn't block unless the ticket copies it or newly reaches it. Only a bug a user would hit, a failed gate, or a wrong shipped doc blocks, and everything else goes in a follow-up.
 
 Bulk stays in the agent that produced it. The runner keeps its working set in the tracker and the run directory, so after a compaction it rereads this file and resumes at Run step 2.
 
@@ -64,7 +64,6 @@ Bulk stays in the agent that produced it. The runner keeps its working set in th
 - `decisions.tsv`: the show-me-your-work trail.
 - `pr/<ticket>.md`: each verified ticket's PR body.
 - `verdicts/<ticket>/<sha>/`: each verdict lane's report and screenshots; `review/`: the review-gate screenshots.
-- `orch/`: the Orchestrate playbook's store.
 - `land.sh`, under grant `none`: the push and `gh pr create` commands for every verified branch, bottom of the stack first. A dependent's `gh pr create` passes `--base df/<blocker-id>`.
 - `digest.md`: the reply.
 

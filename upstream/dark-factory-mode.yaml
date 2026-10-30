@@ -1,0 +1,20 @@
+repo: https://github.com/cursor/plugins
+path: pstack/skills/poteto-mode
+commit: c742dd61706fbacc1b95f1a20b7b988cf096ce6c
+author: Lauren Tan
+license: MIT
+tags: [pstack, workflow]
+extra_files:
+  playbooks/plan.md: pstack/skills/poteto-mode/playbooks/multi-phase-plan.md
+merge_guidance: |
+  A partial port, so `diff` shows every upstream file the port leaves out as deleted; read only
+  SKILL.md, playbooks/orchestrate.md, playbooks/autonomous-run.md, playbooks/multi-phase-plan.md
+  (local playbooks/plan.md), playbooks/autopilot-full.md and autopilot-stack.md (folded into
+  playbooks/run.md), and scripts/check-plan.mjs (tests at .claude/checks/check-plan.test.ts).
+  Cursor's `Task` is `Agent`, poteto-agent is mode-agent, "reasoning level and fast or standard
+  speed" is effort per mode-core, cloud VMs are worktrees, the Project tracker and store are the
+  tracker per Ticket states and the run directory, PR and CI subscriptions are the `Monitor` tool.
+  Merges, pushes and `gh` writes stay with the user and the runner per Gates, so owners rebase
+  and report in place of pushing or merging. No sub-coordinators: a mode-agent cannot spawn.
+  Sub-coordinator lines drop. SKILL-level triggers land in mode-core (first message, background
+  steer and resume, effort fallback), and the blocking rule lives in Roles and context.
