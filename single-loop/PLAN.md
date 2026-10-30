@@ -148,7 +148,7 @@ Merges first, then folds, then as-tool changes. With no traffic data, lowest ris
 
 - [ ] 1. `merge dark-factory lane reviewer into the verifier` · variant: · compared with: · result:
 - [x] 2. `merge poteto-agent into mode-agent (remove poteto-mode)` · variant: none (no mode run sees poteto-mode or poteto-agent; every mode already spawns mode-agent) · compared with: n/a · result: removed on 2026-10-30; the hillclimb skill and dark-factory's Autonomous run playbook carry over its two playbooks no other mode had
-- [ ] 3. `merge comment-sicko into the fresh reviewer` · variant: · compared with: · result:
+- [x] 3. `merge comment-sicko into the fresh reviewer` · variant: v1 (`73dd5b2`) · compared with: baseline · result: 10/10 both sides; calls +13%, input tokens +11% (inside rep noise); comment lines left 3 to 0; kept on 2026-10-30. ops-mode still runs `/no-comments`.
 - [ ] 4. `fold the how explainer (upstream, needs merge_guidance)` · variant: · compared with: · result:
 - [ ] 5. `fold the why synthesizer (upstream, needs merge_guidance)` · variant: · compared with: · result:
 - [ ] 6. `mode-agent as a tool: fixed brief fields and a response shape` · variant: · compared with: · result:
@@ -253,3 +253,5 @@ Answer (2026-10-30): "Comment check should stay with the reviewer", read as buil
 
 **Need from you**
 - Keep item 3 and go on to item 4? keep and go on / keep and stop / fix / revert
+
+Answer (2026-10-30): keep and go on. Item 4 scoped to the how skill's simple path (the only path t09 runs); `v2` and its skill check `v3` (t09 only) started.
