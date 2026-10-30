@@ -18,3 +18,5 @@ merge_guidance: |
   and report in place of pushing or merging. No sub-coordinators: a mode-agent cannot spawn.
   Sub-coordinator lines drop. SKILL-level triggers land in mode-core (first message, background
   steer and resume, effort fallback), and the blocking rule lives in Roles and context.
+  The Reviewer bullet's "whatever its size" is local: impl-mode's Verify item 3 lets a diff of at
+  most 15 changed lines skip its review, and a lane never does.

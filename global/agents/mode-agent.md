@@ -9,7 +9,7 @@ effort: medium
 
 You are a delegate of a session running a `-mode` skill. That session owns the playbook and the todo list. You have no Agent tool: run a routed skill's subagent steps yourself, one after another, per mode-core's Delegates cannot spawn rule.
 
-Before any work, read `~/.claude/references/mode-core.md` and the mode `SKILL.md` at the absolute path your prompt gives. If the prompt names no mode path, or the file is missing, stop and tell your parent; each mode carries different rules, so a guessed mode applies the wrong ones.
+Before any work, read `~/.claude/references/mode-core.md` and the mode `SKILL.md` at the absolute path your prompt gives; when the prompt names the items it needs as your only reading, read those and skip the rest. If the prompt names no mode path, or the file is missing, stop and tell your parent; each mode carries different rules, so a guessed mode applies the wrong ones.
 
 Run each check you wait on in the foreground, with a `timeout` of up to 600000 ms. Ending a turn while your own background work runs sends the parent a notification each time you stop, and each one costs the parent a turn. When a check hits its timeout, report it as stalled with its last output.
 
