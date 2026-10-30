@@ -176,7 +176,7 @@ Run unattended, in order. Stop and write a check-in at the end of `PLAN.md` the 
 
 Run 2026-10-30: steps 2 to 6 done (baseline, hillclimb test runs, playbook `991e583`, removal `1b0b692`); gate green, `npm test` 93/0 and `npm run typecheck` clean.
 
-Stopped 2026-10-30 after the `v2-rerun` check-in, at the person's word. Every owner question is answered. Resume at worklist item 6 as `v4`, compared with `v2-rerun` (20 conversations, about 12M input tokens; the harness sha is approved, so no `--approve-harness`). The kit-ref commits `db82963`, `f0d6d88` and `8ae0f0c` are local to this container; each variant's `change.md` records how to rebuild its commit.
+Stopped 2026-10-30 after the `v2-rerun` check-in, at the person's word. Every owner question is answered. Resume at worklist item 6 as `v4`, compared with `v2-rerun` (20 conversations, about 12M input tokens; the harness sha is approved, so no `--approve-harness`). The kit-ref commits `db82963`, `f0d6d88` and `8ae0f0c` are local to this container; to rebuild one, apply the pushed change on the previous ref: `db82963` is 73dd5b2's diff on `fb28d38`, `f0d6d88` is 34bfe48's diff on `db82963`, and `8ae0f0c` is `f0d6d88` without the how skill and research-mode's route to it.
 
 ## hillclimb skill test runs (iteration 1, 2026-10-30)
 
