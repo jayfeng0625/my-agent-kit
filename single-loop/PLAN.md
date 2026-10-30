@@ -272,3 +272,11 @@ Answer (2026-10-30): keep and go on. Item 4 scoped to the how skill's simple pat
 - Keep item 4 and go on to item 6, with the wakeup fix first? keep and go on / keep and stop / fix / revert
 
 Answer (2026-10-30): keep and fix, then recap. The mode eval now disallows `ScheduleWakeup`; the next run needs `--approve-harness`. Item 6 not started.
+
+## Check-in: rerun after the wakeup fix (v2-rerun, 2026-10-30)
+
+**Found**
+- `v2-rerun` reran v2's kit (`f0d6d88`) under the fixed runner: 20 runs, 0 failed, 10 of 10 pass. No stream mentions `ScheduleWakeup`; the slowest run took 256 s.
+- Against v2: latency 207 s to 102 s, calls 19.9 to 17.9, input tokens 691k to 609k. Against the baseline: 103 s to 102 s, calls 17.3 to 17.9, input tokens 608.6k to 608.9k; no task worse, and the only route moves are one-rep ones the baseline also shows.
+- Estimate 14.0M input tokens, actual 12.18M.
+- `v2-rerun` replaces v2 as the reference for the next change.
