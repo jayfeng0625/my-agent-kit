@@ -4,7 +4,7 @@ Agent skills, and the global Claude Code setup that goes with them.
 
 ## What's in the repo
 
-- `skills/`: 75 skills. Each one installs through the [skills CLI](https://github.com/vercel-labs/skills) for Claude Code, Codex, and other agents.
+- `skills/`: 77 skills. Each one installs through the [skills CLI](https://github.com/vercel-labs/skills) for Claude Code, Codex, and other agents.
 - `global/`: the files that link into `~/.claude/`.
 	- `CLAUDE.md`: the output rule and ways of working that load in every session.
 	- `references/read-before-implementation.md`: the red, green, review, refactor, and scope steps to follow before implementing.

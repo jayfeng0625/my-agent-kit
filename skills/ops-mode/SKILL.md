@@ -43,7 +43,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 - **Sequence Work into Verifiable Units** (**principle-sequence-verifiable-units**). One phase, one check, before the next.
 - **Fix Root Causes.** A mitigation buys time; the cause still gets traced and routed.
 - **Attack the Premise.** Which environment, revision and config are live: check each before building on it.
-- **Explain the Number.** Error rates, latencies and row counts.
+- **Explain the Number.** Error rates, latencies and row counts: name the result that would change a decision before the run.
 - **Build the Lever.** A repeated check or a multi-step apply: script it.
 - **Separate Before Serializing Shared State.** Shared tables, queues and environments that other sessions use.
 - **Migrate Callers Then Delete Legacy APIs.** The contract phase of a migration.

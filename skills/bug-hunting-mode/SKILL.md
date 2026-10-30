@@ -36,7 +36,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 - **Fix Root Causes.** A symptom: trace it to the first place the system went wrong and fix it there.
 - **Attack the Premise.** Two fixes that share one premise have failed: test the premise before a third.
 - **Prove It Works.** A fix counts once the original repro passes on its own surface.
-- **Explain the Number.** A measured number: find what limits it before you trust it.
+- **Explain the Number.** A measured number: name the result that would change a decision before the run, and find what limits the number before you trust it.
 - **Laziness Protocol.** Sizing the fix: the smallest change the evidence justifies.
 - **Build the Lever.** A hunt that repeats a manual check: script the loop, the bisect or the parser.
 - **Test Behavior, Not Implementation.** Writing the regression test.

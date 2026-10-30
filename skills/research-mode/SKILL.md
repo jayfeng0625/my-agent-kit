@@ -33,7 +33,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 - **Attack the Premise.** A choice backed by a stated premise: test the premise before building on it.
 - **Prove It Works.** A claim that something works or runs: show it on the real artifact.
-- **Explain the Number.** A measured number you report: find what limits it before you trust it.
+- **Explain the Number.** A number you measure or report: name the result that would change a decision before the run, and find what limits the number before you trust it.
 - **Guard the Context Window.** Long files, transcripts and outputs.
 - **Minimize Reader Load.** Explaining code that is hard to trace: count its layers and hidden state.
 - **Experience First.** Product or scope tradeoffs in an assessment.
