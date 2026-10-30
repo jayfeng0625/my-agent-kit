@@ -305,7 +305,7 @@ The old container's results did not carry over, so `.claude/hillclimb/modes/` st
 | t10 research premise | 1, 1 | 42, 52 | 0.20M, 0.20M | 6 + 3, 6 + 3 |
 
 **Recommend**
-- Next: P1 (impl-mode and bug-hunting-mode re-review only after a `blocking` fix) as `v1`, compared with `baseline`. It targets the mode-agent rounds that drive the spread above. Then P3 (drop `/simplify` from impl's Before commit), P2 (foreground for a spawn the session waits on), worklist items 6 and 7, then P4 and P5. Each is 20 conversations, about 12M input tokens.
+- Next: P1 (impl-mode and bug-hunting-mode re-review only after a `blocking` fix) as `v1`, compared with `baseline`. It targets the mode-agent rounds that drive the spread above. Then P3 (drop `/simplify` from impl's Before commit), P2 (foreground for a spawn the session waits on), worklist items 6 and 7, then P4 (the four code playbooks run `how` and `why` only for an unread subsystem or a regression) and P5 (no `brief` or `read-before-implementation` read inside a mode run). The prompt audit ranked P1 to P5 by expected saving, inferred at 40k to 80k input tokens per task for P1 down to 15k to 25k for P5. Each is 20 conversations, about 12M input tokens.
 
 **Need from you**
 - Run P1 as `v1` (about 12M input tokens, about $13 at CLI prices)? go / another order / stop
