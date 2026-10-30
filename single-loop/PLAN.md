@@ -151,7 +151,7 @@ Merges first, then folds, then as-tool changes. With no traffic data, lowest ris
 - [x] 3. `merge comment-sicko into the fresh reviewer` · variant: v1 (`73dd5b2`) · compared with: baseline · result: 10/10 both sides; calls +13%, input tokens +11% (inside rep noise); comment lines left 3 to 0; kept on 2026-10-30. ops-mode still runs `/no-comments`.
 - [x] 4. `fold the how explainer (upstream, needs merge_guidance)` · variant: v2 (`34bfe48`, simple path only) · compared with: v1 · result: 10/10 both sides; t09 11 to 6.5 calls, 316k to 190k input tokens; skill check v3 (no how skill) also passes t09; kept with the skill and its route on 2026-10-30. The complex path (explorers, explainer) is unchanged and has no task.
 - [ ] 5. `fold the why synthesizer (upstream, needs merge_guidance)` · variant: · compared with: · result:
-- [ ] 6. `mode-agent as a tool: fixed brief fields and a response shape` · variant: · compared with: · result:
+- [x] 6. `mode-agent as a tool: fixed brief fields and a response shape` · variant: v6 (`5c88d4d`) · compared with: v4 · result: 10/10 both sides; input tokens -11%, calls -9%, latency -18%; kept on 2026-10-30.
 - [ ] 7. `fresh reviewer as a tool: findings tagged blocking or not, with file:line` · variant: · compared with: · result:
 - [ ] 8. `bulk parser as a tool: reduced finding with its source location` · variant: · compared with: · result:
 
@@ -332,3 +332,9 @@ The person approved P1, P3, P2, P4 and P5 unattended, in that order, with an $80
 
 **Need from you**
 - Run item 6 as `v6` (20 conversations, about 9M input tokens, about $10)? go / item 7 first / stop
+
+## Items 6 and 7 (2026-10-30)
+
+The person said go for items 6 and 7, compared with `v4`.
+
+- `v6` item 6 (`5c88d4d`), a fixed brief and a 15-line report for a code `mode-agent`, compared with `v4`: 10 of 10 both sides, verdict holds. Calls 13.2 to 11.9 (-9%), input tokens 429k to 382k (-11%), output 7.3k to 6.2k, latency 88 s to 72 s; mode-agent calls 2.6 to 1.9. Kept. $8.91.
