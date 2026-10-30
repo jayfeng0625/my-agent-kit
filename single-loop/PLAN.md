@@ -3,7 +3,7 @@
 Audit date: 2026-10-29
 Repo and commit: jayfeng0625/my-agent-kit at 14f8c94 (branch `claude/routers-audit-poteto-removal-gcddj7`)
 
-What blocks the plan: the eval is built (`.claude/evals/modes/`) and waits on the person's corrections to its tasks and a yes to the probe and baseline spend.
+What blocks the plan: two harness fixes the baseline turned up (see Evals) wait on the person's `--approve-harness`; worklist item 1 waits on the check-in at the end of this file.
 
 ## Status
 
@@ -174,7 +174,21 @@ Run unattended, in order. Stop and write a check-in at the end of `PLAN.md` the 
 5. **Remove poteto-mode** in its own commit: `skills/poteto-mode/`, `upstream/poteto-mode.yaml`, `global/agents/poteto-agent.md`; README (skill count, credits: pstack's count drops by one), AGENTS.md (the agents list), LICENSE wording if it names poteto-mode, `notTaskModes` in `.claude/checks/modes.test.ts`, and any remaining `poteto` mention (`grep -rn poteto --exclude-dir=.git`). Tick worklist item 2: it changes nothing a mode run sees, so it needs no variant.
 6. `npm test`, `npm run typecheck`, commit each step, push, and write the closing check-in.
 
+Run 2026-10-30: steps 2 to 6 done (baseline, hillclimb test runs, playbook `991e583`, removal `1b0b692`); gate green, `npm test` 93/0 and `npm run typecheck` clean.
+
 Open owner questions 1 and 3 below still stand.
+
+## hillclimb skill test runs (iteration 1, 2026-10-30)
+
+Runner: `.claude/evals/hillclimb/run.mjs`, kit `991e583` with poteto-mode left out of both homes, `claude-opus-5-5` at `medium`, `--budget-usd 10`, one run per case and configuration; judge `claude-sonnet-5-5` over the reply, the transcript, and the runner's own measurement of the base and final trees on a fresh 60k-line invoice. Workspace and review page: `.claude/hillclimb/hillclimb-skill/iteration-1/` (`review.html`, `benchmark.md`).
+
+| Case | With skill | Without skill |
+| --- | --- | --- |
+| perf-to-target | 5/5; 58.5× measured, 2 commits kept, 1 reverted, decision log; 188 s, 0.96M tokens | 1/5; 52.7× measured, but one timing sample, no log, fix left uncommitted; 21 s, 0.09M tokens |
+| memory-target | 4/4; 34.1% less RSS measured, 7-sample baseline, log; 588 s, 2.20M tokens | 1/4; 34.9% less RSS measured, no log, uncommitted; 476 s, 1.57M tokens |
+| no-reproducing-case | 3/3; measured, proposed metric, target and floor, stopped to agree them, no edit; 34 s | 3/3; found a 30k-line workload, measured, fixed without asking, uncommitted; 63 s |
+
+Pass rate 100% against 48%. Both configurations reach the speed and memory targets in code; the skill adds the discipline the assertions check (sampled baseline, one commit per kept change, the log, the reply's numbers) and costs more tokens for it. no-reproducing-case does not discriminate as written. My first grading pass measured the committed tree for runs that left edits uncommitted and scored both without-skill code runs at 0.9×; the runner now measures the checkout in that case, and all six were regraded (the first grading is kept in the scratchpad). The skill is unchanged: per the runbook the person reviews `review.html` before any rewrite.
 
 ## Changes
 
@@ -189,3 +203,20 @@ Prose fixes made outside the worklist, after this audit, on the same branch (eac
 ## Left as it is, and why
 
 - How explorers, why investigators, DESIGN-IT-TWICE designers and the show-me-your-work reviewer: each earns its context, and each belongs to an upstream skill.
+
+## Check-in: after the baseline (AFK run, 2026-10-30)
+
+**Found**
+- Baseline: 17 of 18 scored rows pass; t03 has no score. 12.06M input tokens and 203k output against a 24M estimate; CLI-reported $13.31.
+- Two harness bugs, not mode failures. t03's "skill never loaded" check misses runs that answer without opening a skill file (all 4 t03 runs pass when graded offline). t09 rep 1's judge facts ask for "LRU" and `--summary` wording the prompt never asked for. Fixes are written under Evals; each needs `--approve-harness`.
+- Reps vary up to 2.3× in tokens and model calls on the same task, so a cost change needs to be bigger than that to read on 2 reps.
+- hillclimb skill: 100% against 48% without it, one run each. The review page is `.claude/hillclimb/hillclimb-skill/iteration-1/review.html`.
+- Done beyond the eval: dark-factory's Autonomous run playbook (`991e583`), poteto-mode removed (`1b0b692`, worklist item 2 ticked), the hillclimb runner and its measuring fix.
+
+**Recommend**
+- Apply both harness fixes, approve the harness, and rerun t03 (2 rows) and regrade t09 rep 1: about 2 conversations, under 0.5M input tokens on the probe's numbers. Then worklist item 1.
+- Or start item 1 now on the baseline as it stands, with t03 unscored.
+
+**Need from you**
+- Apply the two harness fixes and rerun t03, 2 conversations? apply and rerun / start item 1 as is
+

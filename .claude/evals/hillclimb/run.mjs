@@ -167,12 +167,14 @@ function inspect(c, config) {
   const tips = git(repo, 'for-each-ref', '--format=%(objectname) %(committerdate:unix) %(refname:short)', 'refs/heads')
     .split('\n').map(l => l.split(' ')).filter(([sha]) => sha !== base && sha !== taxExempt);
   const head = git(repo, 'rev-parse', 'HEAD');
-  // The tree the run left: the checked-out HEAD when it moved, else its newest branch tip.
-  const final = head !== base && git(repo, 'branch', '--contains', head) ? head
+  // The tree the run left: the main checkout when it holds uncommitted edits, else the
+  // checked-out HEAD when it moved, else the newest branch tip.
+  const dirty = git(repo, 'status', '--porcelain', '--untracked-files=no') !== '';
+  const final = dirty ? 'checkout' : head !== base && git(repo, 'branch', '--contains', head) ? head
     : (tips.sort((a, b) => b[1] - a[1])[0]?.[0] ?? base);
   const env = { ...process.env };
   delete env.NODE_TEST_CONTEXT;
-  const md = [`# What the run left in the invoicer repo`, '', `Base (main at start): ${base}`, `Final tree measured: ${final}`, ''];
+  const md = [`# What the run left in the invoicer repo`, '', `Base (main at start): ${base}`, `Final tree measured: ${final === 'checkout' ? `the main checkout as the run left it, uncommitted edits included (HEAD ${head})` : final}`, ''];
   md.push('## Commits on every branch since the base', '```', git(repo, 'log', '--all', '--stat', '--format=%n%h %ad %s%n%b', '--date=iso', '--not', base, taxExempt) || '(none)', '```', '');
   md.push('## Uncommitted changes in the main checkout', '```', git(repo, 'status', '--short') || '(none)', '```', '');
   const tree = join(dir, 'measure');
@@ -181,10 +183,12 @@ function inspect(c, config) {
   const results = {};
   for (const [label, sha] of [['base', base], ['final', final]]) {
     rmSync(tree, { recursive: true, force: true });
-    git(repo, 'worktree', 'add', '-q', '--detach', tree, sha);
+    if (sha === 'checkout') cpSync(repo, tree, { recursive: true });
+    else git(repo, 'worktree', 'add', '-q', '--detach', tree, sha);
     const test = spawnSync('npm', ['test'], { cwd: tree, env, encoding: 'utf8' });
     results[label] = { tests: test.status === 0 ? 'pass' : `FAIL (exit ${test.status})`, ...measure(tree, big, env) };
-    git(repo, 'worktree', 'remove', '--force', tree);
+    if (sha === 'checkout') rmSync(tree, { recursive: true, force: true });
+    else git(repo, 'worktree', 'remove', '--force', tree);
   }
   const same = results.base.output === results.final.output;
   md.push('## Measured by the grader on a fresh 60k-line invoice (median of 5)', '',
