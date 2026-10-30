@@ -309,3 +309,9 @@ The old container's results did not carry over, so `.claude/hillclimb/modes/` st
 
 **Need from you**
 - Run P1 as `v1` (about 12M input tokens, about $13 at CLI prices)? go / another order / stop
+
+## AFK series (2026-10-30)
+
+The person approved P1, P3, P2, P4 and P5 unattended, in that order, with an $80 cap on CLI-reported cost; worklist items 6 and 7 wait for them. Keep rule: 10 of 10 pass holds, no task worse, input tokens and calls inside rep noise or lower. Each variant is compared with the last kept one.
+
+- `v1` P1 (`0f52380`), re-review only after a correctness fix, compared with `baseline`: 10 of 10 both sides, verdict holds. Latency 117 s to 105 s (-11%), calls 18.5 to 19.1, input tokens 610k to 623k (+2%), mode-agent calls 5.9 to 6.0. No token saving shows on 2 reps. Kept: the rule is shorter and nothing regressed. $13.24.

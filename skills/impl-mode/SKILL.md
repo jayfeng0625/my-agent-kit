@@ -29,7 +29,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 - **Contested design.** The **grilling** skill before shipping.
 - **A slice that needs a migration.** The migration ships in the slice, built with the project's migration tooling under **Make Operations Idempotent** and **Outcome-Oriented Execution**: a dry run, resumable, and a parity check that prints its target. Prove it locally, and ask when the project names no way to. Commit its runbook with the code; its environment runs go through `/ops-mode` Migration. The contract phase is a later slice while old and new code run side by side during rollout, and joins this slice when the deploy is atomic.
 - **Prose.** The **unslop** skill. Docs and commit messages also take `/technical-writing`. PR bodies take the **pr** skill alone.
-- **Before commit.** `/deslop`, then `/simplify` over the diff.
+- **Before commit.** `/deslop` over the diff.
 - **Review findings** you write: tag each `blocking` or `not blocking` for merge, and name the runtime condition the tag depends on, such as a flag being on or a caller existing.
 
 ## Principles
