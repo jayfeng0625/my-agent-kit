@@ -8,7 +8,7 @@ Agent skills, and the global Claude Code setup that goes with them.
 - `global/`: the files that link into `~/.claude/`.
 	- `CLAUDE.md`: the output rule and ways of working that load in every session.
 	- `references/read-before-implementation.md`: the red, green, review, refactor, and scope steps to follow before implementing.
-	- `references/mode-core.md`: the todolist, autonomy and message rules that every `-mode` skill loads, with pointers to `mode-subagents.md`, `mode-code.md` and `mode-reply.md`, read at the step that needs them.
+	- `references/mode-core.md`: the todolist, autonomy, reply and comment rules that every `-mode` skill loads, with a pointer to `mode-subagents.md`, read before the first subagent spawn.
 	- `pstack-models.md`: the model and effort for each subagent role that the `how` and `why` skills and the `-mode` skills spawn.
 	- `agents/`: the subagents that skills spawn by type. `mode-agent` lives here; `comment-sicko` links into its skill.
 - `upstream/`: one manifest per skill pulled from another repo. A manifest records the source repo and the commit the skill was last merged from. Some also carry merge guidance: the local changes that the next merge must keep.

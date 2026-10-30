@@ -8,7 +8,7 @@ metadata:
 
 # Impl mode
 
-Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy and message rules, and points to the subagent, code and reply rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
+Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy and message rules, and points to the subagent rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
 
 ## Playbooks
 
@@ -80,7 +80,7 @@ Done means all four hold.
 
 1. **One real proof.** Run the change on the real artifact the ticket names, with the verify or drive tooling the project context names; ask which surface and tool if it names none. Behavior tests count only when the change has no runnable surface. One proof that would go red if the change were wrong, then stop. An inconclusive result, or a proof on the wrong surface, is a fail to flag.
 2. **Tests proven red.** Each new or changed test went red under a break.
-3. **Fresh review.** A diff of at most 15 changed lines outside tests, with no added comment or suppression, skips this item, and the Reply says so. For any other diff, run `/code-review` over the diff yourself; it reviews in its own forked context. Then flag each comment the diff adds that mode-code's **Comments** rule cuts, and each lint or type suppression whose rule guards correctness. Fix accepted findings. Run another round only after fixing a correctness finding, at most 3 rounds; a correctness finding still open after round 3 is a fail to flag.
+3. **Fresh review.** A diff of at most 15 changed lines outside tests, with no added comment or suppression, skips this item, and the Reply says so. For any other diff, run `/code-review` over the diff yourself; it reviews in its own forked context. Then flag each comment the diff adds that mode-core's **Comments** rule cuts, and each lint or type suppression whose rule guards correctness. Fix accepted findings. Run another round only after fixing a correctness finding, at most 3 rounds; a correctness finding still open after round 3 is a fail to flag.
 4. **Hand-off.** A committed branch, reviewed per item 3, and a PR body written with the **pr** skill. The user pushes and opens the PR.
 
 **Reply:** what you built and for whom, what you chose and why, the diff stat, a VERIFIED list (ran it, saw the output) and a REASONED list (read it, believe it), and a Deferred list of improvements you noticed and skipped.

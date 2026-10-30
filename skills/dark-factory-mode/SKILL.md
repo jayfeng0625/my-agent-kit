@@ -8,7 +8,7 @@ metadata:
 
 # Dark-factory mode
 
-Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy and message rules, and points to the subagent, code and reply rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every verifier and reviewer `mode-agent` prompt; a lane's prompt names impl-mode's `SKILL.md` instead (see Roles and context).
+Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy and message rules, and points to the subagent rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every verifier and reviewer `mode-agent` prompt; a lane's prompt names impl-mode's `SKILL.md` instead (see Roles and context).
 
 The user is present for Plan, at the start gate and at the digest, and nowhere between.
 

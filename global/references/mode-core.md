@@ -2,11 +2,9 @@
 
 Rules every `-mode` skill shares. The mode that sent you here owns the playbooks; this file owns how you run them. Where the mode's own rule differs from a rule here or in `~/.claude/references/read-before-implementation.md`, the mode's rule wins.
 
-Read each file below in `~/.claude/references/` when you reach its step:
+Read the file below in `~/.claude/references/` when you reach its step:
 
 - `mode-subagents.md`: before your first `Agent` call. Roles, effort, briefs, fan-out, stall check.
-- `mode-code.md`: before you write code or review a diff. Comments and the code delegate report.
-- `mode-reply.md`: before you ask the user a question or write your final reply.
 
 ## Playbooks and principles
 
@@ -29,3 +27,15 @@ Read each file below in `~/.claude/references/` when you reach its step:
 - Short declarative sentences, one thought each.
 - No long-dash character. A colon only before a list.
 - Link only artifacts you produced or read this session.
+- Terse keeps content: every section the mode's and the playbook's Reply lines name stays, tables included. Inside a mode run these sections override the **brief** skill's length and table limits, and brief still sets the style. VERIFIED lists measured claims, and REASONED lists inferred ones.
+- Lead with who the work is for and what changes for them, then what the next maintainer inherits.
+- Each claim carries its evidence or its label in the same sentence: measured, inferred, or guess. Run every check you can yourself, and hand the user only the ones you cannot run.
+- **Each question stands alone.** Say what each item is and where it came from in words the user knows without a subagent's report, and what each option does. When the user must act before you continue, name the exact action and ask them to reply once it is done. Let the user answer in their own words.
+
+## Comments
+
+Keep a comment only for a non-obvious *why*. Test and verify scripts document each step in the assertion or log string. A repo's own test-label convention (such as `// Given`, `// When`, `// Then`) wins.
+
+## Code delegate report
+
+A code `mode-agent`'s report opens with `done`, `blocked` or `question`, then lists the branch and head SHA, the success check's command with its last output lines, the files changed, and what it skipped. At most 15 lines.
