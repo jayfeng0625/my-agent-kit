@@ -152,7 +152,7 @@ Merges first, then folds, then as-tool changes. With no traffic data, lowest ris
 - [x] 4. `fold the how explainer (upstream, needs merge_guidance)` · variant: v2 (`34bfe48`, simple path only) · compared with: v1 · result: 10/10 both sides; t09 11 to 6.5 calls, 316k to 190k input tokens; skill check v3 (no how skill) also passes t09; kept with the skill and its route on 2026-10-30. The complex path (explorers, explainer) is unchanged and has no task.
 - [ ] 5. `fold the why synthesizer (upstream, needs merge_guidance)` · variant: · compared with: · result:
 - [x] 6. `mode-agent as a tool: fixed brief fields and a response shape` · variant: v6 (`5c88d4d`) · compared with: v4 · result: 10/10 both sides; input tokens -11%, calls -9%, latency -18%; kept on 2026-10-30.
-- [ ] 7. `fresh reviewer as a tool: findings tagged blocking or not, with file:line` · variant: · compared with: · result:
+- [x] 7. `fresh reviewer as a tool: findings tagged blocking or not, with file:line` · variant: v7 (`dd013ae`) · compared with: v6 · result: 10/10 both sides; input tokens +15%, calls +11%, latency +22%, spread over the code tasks; reverted on 2026-10-30.
 - [ ] 8. `bulk parser as a tool: reduced finding with its source location` · variant: · compared with: · result:
 
 Item 1 fixes a broken path today (a lane cannot spawn its reviewer). Item 2 is the person's stated goal.
@@ -338,3 +338,11 @@ The person approved P1, P3, P2, P4 and P5 unattended, in that order, with an $80
 The person said go for items 6 and 7, compared with `v4`.
 
 - `v6` item 6 (`5c88d4d`), a fixed brief and a 15-line report for a code `mode-agent`, compared with `v4`: 10 of 10 both sides, verdict holds. Calls 13.2 to 11.9 (-9%), input tokens 429k to 382k (-11%), output 7.3k to 6.2k, latency 88 s to 72 s; mode-agent calls 2.6 to 1.9. Kept. $8.91.
+- `v7` item 7 (`dd013ae`), fresh-review findings tagged `blocking` or `not blocking` with `file:line`, and P1's rule keyed to the tag, compared with `v6`: 10 of 10 both sides, verdict holds. Calls 11.9 to 13.2 (+11%), input tokens 382k to 439k (+15%), latency 72 s to 88 s. The rise covers most code tasks (t01 660k and 689k to 860k and 846k; t05, t06 and t07 up on both or one rep), so it reads as a cost of the change, with no gain to set against it. Reverted; P1 keeps "correctness finding". $9.73.
+
+**Found**
+- Last kept variant: `v6`. Against `baseline`: calls 18.5 to 11.9 per task (-36%), input tokens 610k to 382k (-37%), latency 117 s to 72 s (-38%), 10 of 10 pass throughout.
+- Seven runs since the baseline, CLI-reported $72.77 (judge calls not counted), 140 conversations, 0 errors.
+
+**Recommend**
+- Stop here. Item 8 (bulk parser as a tool) has no eval task that parses a large log, so a run would not see it; items 1 and 5 stay blocked for the same reason.
