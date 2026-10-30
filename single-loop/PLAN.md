@@ -3,7 +3,7 @@
 Audit date: 2026-10-29
 Repo and commit: jayfeng0625/my-agent-kit at 14f8c94 (branch `claude/routers-audit-poteto-removal-gcddj7`)
 
-What blocks the plan: nothing; the baseline is 20 of 20 on harness `513a580902cb`, and worklist item 1 is next.
+What blocks the plan: nothing; the reference run is `baseline` at kit `8a1316d` on harness `e9c7095ea344` (20 of 20, new container, 2026-10-30), and the person picks the next variant at its check-in.
 
 ## Status
 
@@ -280,3 +280,32 @@ Answer (2026-10-30): keep and fix, then recap. The mode eval now disallows `Sche
 - Against v2: latency 207 s to 102 s, calls 19.9 to 17.9, input tokens 691k to 609k. Against the baseline: 103 s to 102 s, calls 17.3 to 17.9, input tokens 608.6k to 608.9k; no task worse, and the only route moves are one-rep ones the baseline also shows.
 - Estimate 14.0M input tokens, actual 12.18M.
 - `v2-rerun` replaces v2 as the reference for the next change.
+
+## Check-in: reference run in a new container (baseline, 2026-10-30)
+
+The old container's results did not carry over, so `.claude/hillclimb/modes/` starts again. Before the run, two review fixes landed: `9b1f043` (dark-factory prose and `check-plan.mjs`, not model-visible to the three modes) and `8a1316d` (grading runs in a worker thread, so a case's grading no longer stalls the cases in flight; a tracked edit in a linked worktree now fails a read-only task). `_state.json` now lists the grader, tasks, fixture and hidden tests as `harness_paths`, so the approved sha `e9c7095ea344` covers 60 files.
+
+**Found**
+- `baseline` on kit `8a1316d`: 20 runs, 0 failed, 10 of 10 tasks pass both reps, 728 s wall at concurrency 5.
+- Per task: 18.5 model calls, 609.6k input tokens, 117 s mean latency; 12.19M input and 199k output in all, CLI-reported $12.63 (judge calls not counted). Against the old container's `v2-rerun` (17.9 calls, 608.9k, 102 s): the same within rep noise. One slow row, t07 rep 1 (450 s, 34 calls, 13 on mode-agent), lifts the latency mean.
+- Rep spread holds: t04 0.74M and 1.28M, t07 0.73M and 1.06M, t06 23 and 15 calls; the spread follows mode-agent calls (review and fix rounds).
+- `estimate.py ... baseline --reps 2`: the next 20-conversation run is about 12.0M input and 200k output tokens.
+
+| Task | Pass | Latency s | Input tokens | Calls (main + mode-agent) |
+| --- | --- | --- | --- | --- |
+| t01 impl csv | 1, 1 | 215, 205 | 1.64M, 1.57M | 24 + 18, 24 + 21 |
+| t02 impl refactor | 1, 1 | 151, 202 | 0.87M, 0.89M | 17 + 6, 18 + 12 |
+| t03 impl no ticket | 1, 1 | 19, 13 | 0.06M, 0.09M | 3, 4 |
+| t04 impl trim | 1, 1 | 94, 217 | 0.74M, 1.28M | 17 + 6, 21 + 11 |
+| t05 bug discount | 1, 1 | 66, 134 | 0.43M, 0.67M | 11 + 5, 13 + 5 |
+| t06 bug cache | 1, 1 | 128, 53 | 0.75M, 0.38M | 15 + 8, 12 + 3 |
+| t07 bug perf | 1, 1 | 201, 450 | 0.73M, 1.06M | 17 + 4, 21 + 13 |
+| t08 research why | 1, 1 | 27, 22 | 0.19M, 0.13M | 7, 5 |
+| t09 research how | 1, 1 | 28, 26 | 0.15M, 0.14M | 6, 5 |
+| t10 research premise | 1, 1 | 42, 52 | 0.20M, 0.20M | 6 + 3, 6 + 3 |
+
+**Recommend**
+- Next: P1 (impl-mode and bug-hunting-mode re-review only after a `blocking` fix) as `v1`, compared with `baseline`. It targets the mode-agent rounds that drive the spread above. Then P3 (drop `/simplify` from impl's Before commit), P2 (foreground for a spawn the session waits on), worklist items 6 and 7, then P4 and P5. Each is 20 conversations, about 12M input tokens.
+
+**Need from you**
+- Run P1 as `v1` (about 12M input tokens, about $13 at CLI prices)? go / another order / stop
