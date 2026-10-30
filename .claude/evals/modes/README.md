@@ -6,7 +6,7 @@ Scores impl-mode, bug-hunting-mode and research-mode by outcome. Each case runs 
 - `tasks.json`: the requests and what done means for each.
 - `grade.ts` and `hidden/`: the graders. Code tasks run the suite and hidden tests on every new commit and keep the best; read-only tasks fail on any commit or tracked edit, and a Sonnet judge checks the facts the reply must state.
 - `graders.test.ts`: proves, with no model, that each grader passes a reference fix and fails doing nothing and a plausible wrong fix. `npm test` runs it.
-- `run-eval.mjs`: the runner, from `/claude-api build-eval`'s scaffold. Each case gets a scratch `HOME` that links this kit's `global/` and `skills/` at `--kit-ref`, an environment that keeps only the model proxy credential, a `gh` that always fails, and no `git push`, web or MCP.
+- `run-eval.mjs`: the runner, from `/claude-api build-eval`'s scaffold. Each case gets a scratch `HOME` that links this kit's `global/` and `skills/` at `--kit-ref`, an environment that keeps only the model proxy credential, a `gh` that always fails, and no `git push`, web, MCP or `ScheduleWakeup`.
 
 Run, from the repo root, after the user's yes to the spend:
 

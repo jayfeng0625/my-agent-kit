@@ -242,7 +242,9 @@ async function runCase(input, ctx) {
     '--output-format', 'stream-json', '--verbose', '--permission-mode', 'bypassPermissions',
     '--no-session-persistence', '--strict-mcp-config'];
   if (ctx.budgetUsd) args.push('--max-budget-usd', String(ctx.budgetUsd));
-  args.push('--disallowedTools', 'Bash(git push:*)', 'Bash(gh:*)', 'WebSearch', 'WebFetch');
+  // A headless run that ends its turn on a ScheduleWakeup sleeps the whole delay, though the
+  // background agent it waits on reports back without one.
+  args.push('--disallowedTools', 'Bash(git push:*)', 'Bash(gh:*)', 'WebSearch', 'WebFetch', 'ScheduleWakeup');
   const streamFile = join(dir, 'stream.jsonl');
   const out = createWriteStream(streamFile);
   const err = createWriteStream(join(dir, 'stderr.log'));
