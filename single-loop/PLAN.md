@@ -318,3 +318,17 @@ The person approved P1, P3, P2, P4 and P5 unattended, in that order, with an $80
 - `v2` P3 (`ee511ad`), drop `/simplify` from impl's Before commit, compared with `v1`: 10 of 10 both sides, verdict holds. Calls 19.1 to 14.9 (-22%), input tokens 623k to 471k (-24%), output 9.9k to 7.6k, latency 105 s to 84 s; mode-agent calls 6.0 to 3.6. Kept. $10.27.
 - `v3` P2 (`79cd23c`), foreground for a spawn the session waits on, compared with `v2`: 10 of 10 both sides, verdict holds. Calls 14.9 to 13.0 (-13%), input tokens 471k to 444k (-6%), latency 84 s to 88 s; mode-agent calls 3.6 to 2.4. Kept. $9.95.
 - `v4` P4 (`c98e7b1`), `how` and `why` only for an unread subsystem or a regression, compared with `v3`: 10 of 10 both sides, verdict holds. Calls 13.0 to 13.2, input tokens 444k to 429k (-3%, noise), latency flat. Kept: shorter trigger, nothing regressed. $9.95.
+- `v5` P5 (`b52a355`), skip `brief` and `read-before-implementation` inside a mode run, compared with `v4`: 10 of 10 both sides, verdict holds. Calls 13.2 to 13.5, input tokens 429k to 466k (+9%, noise). No trace in `v4` or `v5` reads either file, so the change has nothing to save and adds text. Reverted. $10.72.
+
+## Check-in: AFK series done (2026-10-30)
+
+**Found**
+- Kept: P1, P3, P2, P4 (`v1` to `v4`). Reverted: P5. Five runs, 100 conversations, 0 errors, 10 of 10 pass in every run. CLI-reported cost $54.13 of the $80 cap (judge calls not counted).
+- `compare.py baseline v4`: calls per task 18.5 to 13.2 (-29%), input tokens 610k to 429k (-30%), output 9.9k to 7.3k, latency 117 s to 88 s. P3 (drop `/simplify`) carries most of it: -24% input tokens on its own. P2 cut mode-agent calls 3.6 to 2.4. P1 and P4 sit inside rep noise.
+- Each run cost about $10 after P3, down from $13.
+
+**Recommend**
+- Worklist items 6 (mode-agent as a tool) and 7 (fresh reviewer as a tool), compared with `v4`. Item 7's `blocking` tag would also let P1's rule name the tag in place of "correctness finding".
+
+**Need from you**
+- Run item 6 as `v6` (20 conversations, about 9M input tokens, about $10)? go / item 7 first / stop
