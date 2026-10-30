@@ -40,7 +40,13 @@ if (!file || args.length !== (ticketMode ? 2 : 1)) {
 }
 const label = file === "-" ? "stdin" : file;
 
-const raw = fs.readFileSync(file === "-" ? 0 : file, "utf8").split(/\r?\n/);
+// readFileSync(0) throws EAGAIN on a non-blocking pipe whose writer has not written yet.
+const readStdin = async () => {
+	const chunks = [];
+	for await (const chunk of process.stdin) chunks.push(chunk);
+	return Buffer.concat(chunks).toString("utf8");
+};
+const raw = (file === "-" ? await readStdin() : fs.readFileSync(file, "utf8")).split(/\r?\n/);
 const problems = [];
 const fail = (line, message) => problems.push(`${label}:${line}: ${message}`);
 
