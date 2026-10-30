@@ -123,7 +123,7 @@ Baseline (variant `baseline`): not run.
 Merges first, then folds, then as-tool changes. With no traffic data, lowest risk first.
 
 - [ ] 1. `merge dark-factory lane reviewer into the verifier` · variant: · compared with: · result:
-- [ ] 2. `merge poteto-agent into mode-agent (remove poteto-mode)` · variant: · compared with: · result:
+- [x] 2. `merge poteto-agent into mode-agent (remove poteto-mode)` · variant: none (no mode run sees poteto-mode or poteto-agent; every mode already spawns mode-agent) · compared with: n/a · result: removed on 2026-10-30; the hillclimb skill and dark-factory's Autonomous run playbook carry over its two playbooks no other mode had
 - [ ] 3. `merge comment-sicko into the fresh reviewer` · variant: · compared with: · result:
 - [ ] 4. `fold the how explainer (upstream, needs merge_guidance)` · variant: · compared with: · result:
 - [ ] 5. `fold the why synthesizer (upstream, needs merge_guidance)` · variant: · compared with: · result:

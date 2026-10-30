@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 
 const skills = join(import.meta.dirname, "../../skills");
-const notTaskModes = new Set(["poteto-mode", "afk-mode"]);
+const notTaskModes = new Set(["afk-mode"]);
 
 const taskModes = readdirSync(skills).filter(
   (name) => name.endsWith("-mode") && !notTaskModes.has(name),
