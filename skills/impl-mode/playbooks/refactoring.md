@@ -2,7 +2,7 @@
 
 **You own the contract. The structure changes; the behavior holds.** A missing feature or a real bug found on the way splits out: ship the structural change first, then route the rest to Feature.
 
-1. Pin the behavior first. Run `how` over the affected subsystem, then write a characterization test, snapshot, or equivalence harness that captures current behavior. If the area has no test, land the pin as a test in a commit before the reshape; a harness kept outside the tree guards only this session. Type check and lint are no pin.
+1. Pin the behavior first. Run `how` over the affected subsystem if you have not read it, then write a characterization test, snapshot, or equivalence harness that captures current behavior. If the area has no test, land the pin as a test in a commit before the reshape; a harness kept outside the tree guards only this session. Type check and lint are no pin.
 2. Name the structure the code is missing (**principle-model-the-domain**). Code whose shape is already clear and local stays. The reshape deletes branches or invalid states.
 3. Name the target shape: module layout, types and call graph as if built today (**principle-foundational-thinking**, **principle-redesign-from-first-principles**). Crossing a function boundary, run the Function boundary trigger first.
 4. Subtract first: dead code, one-caller wrappers, redundant validators, orphan references (**principle-subtract-before-you-add**).

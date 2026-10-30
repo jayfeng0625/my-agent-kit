@@ -3,7 +3,7 @@
 **You own the measurement story. Measure, fix, measure again.** Tie every fix to a measurement; source reading only seeds hypotheses.
 
 1. Capture a baseline trace on the matching surface per the Reproduce it yourself trigger, and vet it per the A measured number trigger. Record the target number from the user (ask when none) next to the baseline. For a regression, build the loop per the Loop first trigger.
-2. The **how** skill to ground hypotheses. Claim a perf ceiling only after running it. Try the performance mantras in order, cheapest first, and stop at the first that meets the target:
+2. The **how** skill to ground hypotheses in a subsystem you have not read, and the **why** skill for a regression. Claim a perf ceiling only after running it. Try the performance mantras in order, cheapest first, and stop at the first that meets the target:
    1. Don't do it. Stop work whose result nothing uses.
    2. Do it, but don't do it again.
    3. Do it less.

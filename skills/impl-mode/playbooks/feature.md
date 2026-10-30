@@ -3,7 +3,7 @@
 **You own the design. Plan, review, verify.**
 
 1. Read the ticket per the Ticket first trigger. Write each requirement as the ticket sentence it comes from.
-2. `how` over the affected subsystem.
+2. `how` over the affected subsystem when you have not read it.
 3. Name the data shape per the Any code trigger. If the change crosses a function boundary, run the Function boundary trigger too.
 4. Write the throughput checkpoint as four todo items. A dimension that does not apply keeps its item with `n/a: <reason>`:
    - **Blocking first steps.** Gates that run before any fan-out.
