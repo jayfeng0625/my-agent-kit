@@ -255,3 +255,18 @@ Answer (2026-10-30): "Comment check should stay with the reviewer", read as buil
 - Keep item 3 and go on to item 4? keep and go on / keep and stop / fix / revert
 
 Answer (2026-10-30): keep and go on. Item 4 scoped to the how skill's simple path (the only path t09 runs); `v2` and its skill check `v3` (t09 only) started.
+
+## Check-in: after item 4 (v2, 2026-10-30)
+
+**Found**
+- `compare.py v1 v2`: 10 of 10 pass on both sides, no task worse, verdict holds. Calls per task 19.5 to 19.9, input tokens 673k to 691k (+3%, rep noise). On t09, the task the fold touches: 11 to 6.5 calls, 316k to 190k input tokens, 75 s to 29 s, both reps pass; the general-purpose explainer is gone (2/2 to 0/2), and no other route moved.
+- Skill check (`v3`, t09 with the how skill and research-mode's route to it removed): both reps pass, 5.5 calls, 150k input tokens. On t09 the how skill's instructions do not move the score. t09 is one narrow question; the skill's explorers serve the complex path, which no task runs.
+- Latency 164 s to 207 s comes from two runs (t01 rep 0, t02 rep 0, 1352 s each) where the main session called `ScheduleWakeup` for 1200 s while background agents ran, then slept it out. v1 had one such run, the baseline none that slept. Without them: 102 s (v1) and 80 s (v2). Not caused by either change.
+- Estimate 13.0M input tokens, actual 13.83M; v3 used 0.30M.
+
+**Recommend**
+- Keep v2, and keep the how skill and its route: a two-rep check on one narrow task is thin grounds to drop an upstream skill whose main use (complex questions, `/how` typed directly) the eval cannot see.
+- Before item 6, fix the wakeup stall: add `ScheduleWakeup` to the eval's disallowed tools (a harness edit, needs `--approve-harness`; no run of its own). It is a `/loop` tool, and a mode run waiting on a background agent gets its notification without it. Next measurable item is 6 (mode-agent as a tool), on all code tasks: `v4`, 20 conversations, about 14M input tokens on v2. Item 5 (why synthesizer) has no task on its chain: every t08 run answered from the main agent alone, so the synthesizer never ran. Item 1 has none either.
+
+**Need from you**
+- Keep item 4 and go on to item 6, with the wakeup fix first? keep and go on / keep and stop / fix / revert
