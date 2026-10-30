@@ -20,7 +20,7 @@ Rules every `-mode` skill shares. The mode that sent you here owns the playbooks
 ## Subagents
 
 - The session that receives the mode runs the playbook itself. Spawn every delegate and ad-hoc helper with `subagent_type: "mode-agent"`, including subagents a skill you invoke spawns without naming a type, and put the absolute path of the mode's `SKILL.md` in every prompt. A skill that names its own `subagent_type`, role lines or lane count keeps them. If the Agent tool offers no `mode-agent` type, tell the user to link `global/agents/mode-agent.md` from my-agent-kit into `~/.claude/agents/`.
-- Every `Agent` call: `run_in_background: true`, and file pointers over inlined context.
+- Every `Agent` call: file pointers over inlined context, and `run_in_background: false` when your next step waits on that one result. Spawns that run side by side go in the background.
 - **Roles.** Each spawn takes its role's model and effort from the role's line in `~/.claude/pstack-models.md`. A role with no line keeps its default:
   - `code`: `opus`. Code delegates and mechanical edits.
   - `hardest tasks`: `fable`. Cross-cutting design, concurrency, subtle algorithms.
