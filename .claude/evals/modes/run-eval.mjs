@@ -146,7 +146,8 @@ import { spawn, execFileSync } from 'node:child_process';
 import { createWriteStream, readdirSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { buildFixture } from './fixture/build.ts';
-import { gradeRun, isolatedEnv } from './grade.ts';
+import { Worker } from 'node:worker_threads';
+import { isolatedEnv } from './grade.ts';
 
 const EVAL_DIR = dirname(fileURLToPath(import.meta.url));
 const KIT_ROOT = resolve(EVAL_DIR, '../../..');
@@ -287,7 +288,13 @@ async function gradeCase(input, run, ref, ctx) {
   const kit = prepareKit(ctx);
   const judgeHome = join(ctx.work, 'judge-home');
   mkdirSync(judgeHome, { recursive: true });
-  const g = gradeRun(input, run.repo, run.base, run.reply, isolatedEnv(judgeHome, kit.path));
+  const g = await new Promise((resolve, reject) => {
+    const w = new Worker(join(EVAL_DIR, 'grade-worker.ts'), {
+      workerData: { task: input, repo: run.repo, base: run.base, reply: run.reply, env: isolatedEnv(judgeHome, kit.path) } });
+    w.once('message', resolve);
+    w.once('error', reject);
+    w.once('exit', (code) => reject(new Error(`grade worker exited ${code} with no result`)));
+  });
   run.actions = g.actions;
   const out = { grade: g.grade, explanation: g.explanation };
   if (g.judge_model) out.judge_model = g.judge_model;

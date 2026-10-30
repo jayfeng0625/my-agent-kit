@@ -1,7 +1,7 @@
 // Grades one mode run on the invoicer fixture by its outcome: the commits and files it
 // left, hidden tests against each new commit, and a judge for facts the reply must state.
 import { spawnSync } from "node:child_process";
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -61,10 +61,12 @@ export function inspectRepo(repo: string, base: Base): Inspection {
     const [sha, name] = line.split(" ");
     if (sha && name) heads.set(sha, heads.has(sha) ? `${heads.get(sha)},${name}` : name);
   }
+  const linked: string[] = [];
   for (const block of git(repo, "worktree", "list", "--porcelain").split("\n\n")) {
     const sha = /^HEAD (\w+)/m.exec(block)?.[1];
     const path = /^worktree (.+)$/m.exec(block)?.[1];
     if (sha && !heads.has(sha)) heads.set(sha, `worktree ${path}`);
+    if (path && block !== "" && existsSync(path) && realpathSync(path) !== realpathSync(repo)) linked.push(path);
   }
   const candidates = [...heads]
     .filter(([sha]) => sha !== base.main && sha !== base.taxExempt)
@@ -75,7 +77,12 @@ export function inspectRepo(repo: string, base: Base): Inspection {
         .split("\n")
         .filter(Boolean)
     : [];
-  const dirty = git(repo, "status", "--porcelain", "--untracked-files=no").split("\n").filter(Boolean);
+  // A tracked edit left in a linked worktree counts too.
+  const status = (dir: string) => git(dir, "status", "--porcelain", "--untracked-files=no").split("\n").filter(Boolean);
+  const dirty = [
+    ...status(repo),
+    ...linked.flatMap((dir) => status(dir).map((line) => `${line.slice(0, 3)}${join(dir, line.slice(3))}`)),
+  ];
   const actions: Action[] = [
     ...commits.map((subject) => ({ name: "commit", detail: subject })),
     ...dirty.map((line) => ({ name: "edit", detail: line.slice(3) })),

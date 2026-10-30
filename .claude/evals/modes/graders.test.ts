@@ -171,5 +171,13 @@ describe("read-only tasks", () => {
       const g = grade(id, (repo) => writeFileSync(join(repo, "README.md"), "changed\n"), reply);
       assert.equal(g.grade.pass, 0);
     });
+    test(`${id}: an edit left in a linked worktree fails`, () => {
+      const g = grade(id, (repo) => {
+        const tree = join(mkdtempSync(join(tmpdir(), "invoicer-wt-")), "wt");
+        git(repo, "worktree", "add", "-q", "-b", "scratch", tree, "main");
+        writeFileSync(join(tree, "README.md"), "changed\n");
+      }, reply);
+      assert.equal(g.grade.pass, 0, JSON.stringify(g.explanation));
+    });
   }
 });

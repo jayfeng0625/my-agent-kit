@@ -183,6 +183,7 @@ function inspect(c, config) {
   const results = {};
   for (const [label, sha] of [['base', base], ['final', final]]) {
     rmSync(tree, { recursive: true, force: true });
+    git(repo, 'worktree', 'prune');
     if (sha === 'checkout') cpSync(repo, tree, { recursive: true });
     else git(repo, 'worktree', 'add', '-q', '--detach', tree, sha);
     const test = spawnSync('npm', ['test'], { cwd: tree, env, encoding: 'utf8' });
@@ -197,7 +198,7 @@ function inspect(c, config) {
     `Speedup: ${(results.base.ms / results.final.ms).toFixed(2)}x. Max RSS change: ${(100 * (results.final.rss_mb / results.base.rss_mb - 1)).toFixed(1)}%.`,
     `Summary output (exit code and stdout) identical between base and final: ${same ? 'yes' : 'NO'}.`, '');
   if (!same) md.push('### Base output', '```', results.base.output.slice(0, 1500), '```', '### Final output', '```', results.final.output.slice(0, 1500), '```', '');
-  const logs = execFileSync('sh', ['-c', 'find "$1" -name "decision*.tsv" -not -path "*/node_modules/*" -not -path "*/home/*" 2>/dev/null; true', 'sh', dir], { encoding: 'utf8' }).trim();
+  const logs = execFileSync('sh', ['-c', 'find "$1" -name "decision*.tsv" -not -path "*/node_modules/*" -not -path "$1/home/*" 2>/dev/null; true', 'sh', dir], { encoding: 'utf8' }).trim();
   md.push('## Decision logs found in the run folder', '', logs || '(none)', '');
   const runDir = join(out, c.name, config);
   for (const f of logs.split('\n').filter(Boolean)) cpSync(f, join(runDir, 'outputs', f.slice(dir.length + 1).replaceAll('/', '__')));
@@ -247,9 +248,15 @@ for (const c of cases) {
 }
 const jobs = cases.flatMap(c => configs.map(config => ({ c, config })));
 if (!opt['grade-only']) await Promise.all(jobs.map(({ c, config }) => runOne(c, config, kit)));
+const failed = [];
 for (const { c, config } of jobs) {
-  inspect(c, config);
-  grade(c, config, kit);
+  try {
+    inspect(c, config);
+    grade(c, config, kit);
+  } catch (e) {
+    failed.push(`${c.name}/${config}`);
+    console.error(`${c.name}/${config}: grading failed: ${e.message}`);
+  }
 }
 writeFileSync(join(out, 'run.json'), JSON.stringify({ kit_ref: opt['kit-ref'], kit_sha: kit.sha, model: opt.model,
-  effort: opt.effort, budget_usd: Number(opt['budget-usd']), judge_model: JUDGE_MODEL, finished: new Date().toISOString() }, null, 2) + '\n');
+  effort: opt.effort, budget_usd: Number(opt['budget-usd']), judge_model: JUDGE_MODEL, grading_failed: failed, finished: new Date().toISOString() }, null, 2) + '\n');
