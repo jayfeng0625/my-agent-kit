@@ -198,7 +198,7 @@ Prose fixes made outside the worklist, after this audit, on the same branch (eac
 
 1. Upstream skills (how, why, no-comments, show-me-your-work, codebase-design) are pulled from pstack and mattpocock/skills. Items 4 and 5 adapt them locally through `merge_guidance`. Adapt, or leave them as upstream ships them?
 2. ~~Explorer and investigator models.~~ Answered 2026-10-30: the user's configuration decides; `pstack-models.md`'s role lines rule, and line 4 routes only judgment and routine fan-out to sonnet. No edit.
-3. ~~Fresh reviewer effort.~~ Answered 2026-10-30: `/code-review medium`, under any review instructions the project's context names. Applied in impl, bug-hunting, ops and dark-factory (prose fix outside the worklist; it reaches every code task, so item 6's comparison needs a run that carries it).
+3. ~~Fresh reviewer effort.~~ Answered 2026-10-30: name no level. `/code-review` reuses the session's last level, which is simpler; the reviewer already loads the project's context and its review rules. No edit.
 
 ## Left as it is, and why
 
