@@ -152,6 +152,9 @@ import { evalEnv } from './grade.ts';
 const EVAL_DIR = dirname(fileURLToPath(import.meta.url));
 const KIT_ROOT = resolve(EVAL_DIR, '../../..');
 let caseSeq = 0;
+// dark-factory-mode may name its ~/.dark-factory/<repo> folder after the package ("invoicer")
+// and not the checkout, so its cases run one at a time and each run's folder moves out on grading.
+let factoryTail = Promise.resolve();
 let kitSnapshot = null;
 
 // Runs read the kit through ~/.claude, so each kit skill and global link there must resolve
@@ -229,12 +232,35 @@ function summarize(events) {
 }
 
 async function runCase(input, ctx) {
+  if (!input.tags.includes('dark-factory-mode')) return runCaseLocked(input, ctx);
+  const prev = factoryTail;
+  let release;
+  factoryTail = new Promise(res => { release = res; });
+  await prev;
+  try {
+    const run = await runCaseLocked(input, ctx);
+    // The plans move into the case dir, and the grader reads the reply with its paths moved too.
+    run.gradeReply = run.reply;
+    for (const name of new Set([basename(run.repo), 'invoicer'])) {
+      const factory = join(homedir(), '.dark-factory', name);
+      if (!existsSync(factory)) continue;
+      const kept = join(run.workdir, 'dark-factory', name);
+      cpSync(factory, kept, { recursive: true });
+      rmSync(factory, { recursive: true, force: true });
+      run.gradeReply = run.gradeReply.replaceAll(`~/.dark-factory/${name}`, kept).replaceAll(factory, kept);
+    }
+    return run;
+  } finally {
+    release();
+  }
+}
+
+async function runCaseLocked(input, ctx) {
   const kit = prepareKit(ctx);
   const seq = caseSeq++;
   const dir = join(ctx.work, ctx.variant, `${input.id}-${process.pid}-${seq}`);
   rmSync(dir, { recursive: true, force: true });
-  // dark-factory-mode keeps a repo's plans in ~/.dark-factory/<repo name>, so each case
-  // gets its own name and concurrent reps cannot share a plan.
+  // A unique checkout name keeps a plan folder named after the checkout apart from other cases'.
   const repo = join(dir, `invoicer-${process.pid}-${seq}`);
   buildFixture(repo, input.ops);
   const rev = ref => execFileSync('git', ['rev-parse', ref], { cwd: repo, encoding: 'utf8' }).trim();
@@ -288,17 +314,12 @@ async function gradeCase(input, run, ref, ctx) {
   const kit = prepareKit(ctx);
   const g = await new Promise((resolve, reject) => {
     const w = new Worker(join(EVAL_DIR, 'grade-worker.ts'), {
-      workerData: { task: input, repo: run.repo, base: run.base, reply: run.reply, env: evalEnv(kit.path) } });
+      workerData: { task: input, repo: run.repo, base: run.base, reply: run.gradeReply ?? run.reply, env: evalEnv(kit.path) } });
     w.once('message', resolve);
     w.once('error', reject);
     w.once('exit', (code) => reject(new Error(`grade worker exited ${code} with no result`)));
   });
   run.actions = g.actions;
-  const factory = join(homedir(), '.dark-factory', basename(run.repo));
-  if (existsSync(factory)) {
-    cpSync(factory, join(run.workdir, 'dark-factory'), { recursive: true });
-    rmSync(factory, { recursive: true, force: true });
-  }
   const out = { grade: g.grade, explanation: g.explanation };
   if (g.judge_model) out.judge_model = g.judge_model;
   if (g.judge_usage) out.judge_usage = g.judge_usage;
