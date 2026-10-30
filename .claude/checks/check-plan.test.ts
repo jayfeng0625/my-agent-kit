@@ -16,7 +16,7 @@ const lanes = (count: number) =>
       : `- [ ] Lane ${i + 1}. Save \`lane-${i + 1}.png\`. Pass when evidence exists.`,
   ).join("\n");
 
-const ticket = (live = `${rule} 2 lanes on \`example-model\` at the ticket head.\n${lanes(2)}`) => `**Depends on.** None.
+const ticket = (live = `${rule} 2 lanes at the ticket head.\n${lanes(2)}`) => `**Depends on.** None.
 **Files.**
 - [ ] Do the thing.
 **Build.**
@@ -35,6 +35,8 @@ const ticket = (live = `${rule} 2 lanes on \`example-model\` at the ticket head.
 **Land.**
 - [ ] Land when verified.
 `;
+
+const boot = "**Boot recipe.**\n- [ ] Start the surface.\n";
 
 const plan = (body = ticket()) => `# Demo
 
@@ -106,21 +108,21 @@ test("rejects backtick info strings containing a backtick", () => {
 });
 
 test("accepts more lanes than the minimum when the count matches", () => {
-  check(plan(ticket(`${rule} 4 lanes on \`example-model\` at the ticket head.\n${lanes(4)}`)), 0);
+  check(plan(ticket(`${rule} 4 lanes at the ticket head.\n${lanes(4)}`)), 0);
 });
 
 test("rejects fewer than two live lanes", () => {
-  const result = check(plan(ticket(`${rule} 1 lanes on \`example-model\` at the ticket head.\n${lanes(1)}`)), 1);
+  const result = check(plan(ticket(`${rule} 1 lanes at the ticket head.\n${lanes(1)}`)), 1);
   assert.match(result.stderr, /declares 1 lanes, at least 2 required/);
 });
 
 test("rejects a lane count that does not match the boxes", () => {
-  const result = check(plan(ticket(`${rule} 3 lanes on \`example-model\` at the ticket head.\n${lanes(2)}`)), 1);
+  const result = check(plan(ticket(`${rule} 3 lanes at the ticket head.\n${lanes(2)}`)), 1);
   assert.match(result.stderr, /lanes are \[1,2\], expected 1 to 3/);
 });
 
 test("rejects a first lane that is not the regression lane against trunk", () => {
-  const live = `${rule} 2 lanes on \`example-model\` at the ticket head.\n${lanes(2).replace("Regression lane against trunk. ", "")}`;
+  const live = `${rule} 2 lanes at the ticket head.\n${lanes(2).replace("Regression lane against trunk. ", "")}`;
   const result = check(plan(ticket(live)), 1);
   assert.match(result.stderr, /lane 1 is not the regression lane against trunk/);
 });
@@ -131,7 +133,7 @@ test("rejects a verify block that does not open with the rule", () => {
 });
 
 test("ticket mode accepts a ticket body", () => {
-  const result = check(`## Add the thing\n\n${ticket()}`, 0, ["--ticket"]);
+  const result = check(`## Add the thing\n\n${ticket()}${boot}`, 0, ["--ticket"]);
   assert.match(result.stdout, /^Add the thing {2}boxes=/);
 });
 
@@ -141,12 +143,22 @@ test("ticket mode rejects a ticket without verify blocks", () => {
 });
 
 test("ticket mode reads stdin", () => {
-  const result = spawnSync(process.execPath, [checker, "--ticket", "-"], { input: ticket(), encoding: "utf8" });
+  const result = spawnSync(process.execPath, [checker, "--ticket", "-"], { input: ticket() + boot, encoding: "utf8" });
   assert.equal(result.status, 0, result.stderr);
 });
 
-test("the Plan playbook's skeleton passes once its lane count and model are filled", () => {
+test("ticket mode rejects a ticket with no boot recipe", () => {
+  const result = check(`## Add the thing\n\n${ticket()}`, 1, ["--ticket"]);
+  assert.match(result.stderr, /no \*\*Boot recipe\.\*\* block after Land/);
+});
+
+test("ticket mode keeps a body that opens with a horizontal rule", () => {
+  const result = check(`---\n${ticket()}---\n${boot}`, 0, ["--ticket"]);
+  assert.match(result.stdout, /depends|files=1/);
+});
+
+test("the Plan playbook's skeleton passes once its lane count is filled", () => {
   const playbook = readFileSync(join(import.meta.dirname, "../../skills/dark-factory-mode/playbooks/plan.md"), "utf8");
   const skeleton = playbook.split("````markdown\n")[1]?.split("\n````")[0] ?? "";
-  check(skeleton.replace("<N> lanes", "2 lanes").replace("`<swarm workers model>`", "`opus`"), 0);
+  check(skeleton.replace("<N> lanes", "2 lanes"), 0);
 });

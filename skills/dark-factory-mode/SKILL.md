@@ -93,7 +93,7 @@ Done means all four hold.
 
 1. **Terminal.** Every queued ticket is Verified or Parked. A Parked ticket's comment names the decision or input the user owes.
 2. **Independent verdict.** Each Verified ticket has a swarm PASS, with its unit, live and perf lanes on models other than its lane's, recorded against a head SHA that `git rev-parse <branch>` still returns, or carried to that head by Run step 7's patch-id rule.
-3. **Lane proof.** impl-mode's Verify items 1 and 2 held in every Verified lane, and its fresh review of the Verified head came back clean or after 3 rounds.
-4. **Hand-off.** Under grant `none`, `land.sh` passes `bash -n` and lists every Verified branch bottom first, and `git ls-remote --heads origin <branch>` is empty for each. Under `prs`, each Verified ticket's PR is open and unmerged, its head is the verdict's SHA, and its checks are green. `digest.md` is written, and the user got a push notification, or the digest says the tool was missing.
+3. **Lane proof.** impl-mode's Verify items 1 and 2 held in every Verified lane, and its fresh review of the Verified head came back with no `blocking` finding.
+4. **Hand-off.** Under grant `none`, `land.sh` passes `bash -n` and lists every Verified branch bottom first, and `git ls-remote --heads origin <branch>` is empty for each. Under `prs`, each Verified ticket's PR is open and unmerged, its head is the verdict's SHA, and its checks are green except those that also fail on the base ref, which the digest names. `digest.md` is written, and the user got a push notification, or the digest says the tool was missing.
 
 **Reply:** the contents of `digest.md`, per Run step 11.

@@ -5,7 +5,7 @@ import process from "node:process";
 
 const RULE =
 	"Tests alone are not sufficient verification. A ticket is verified only when its unit, live, and perf boxes are all checked.";
-const LANES = /^(?:.*\s)?(\d+) lanes on `[^`<>]+` at the ticket head/;
+const LANES = /^(?:.*\s)?(\d+) lanes at the ticket head/;
 const MIN_LANES = 2;
 const SUB_BLOCKS = [
 	"Depends on.",
@@ -18,6 +18,7 @@ const SUB_BLOCKS = [
 	"Review gate.",
 	"Land.",
 ];
+const BOOT = "Boot recipe.";
 const PROGRAM_H3 = ["Arm the program", "Tickets", "Verdict", "Boot recipe"];
 const PROGRAM_MARKERS = ["Re-read them at every tick"];
 const HOW_TO_READ_MARKERS = [
@@ -44,7 +45,8 @@ const problems = [];
 const fail = (line, message) => problems.push(`${label}:${line}: ${message}`);
 
 let start = 0;
-if (raw[0] === "---") {
+// A ticket body has no frontmatter, and its first line may be a horizontal rule.
+if (!ticketMode && raw[0] === "---") {
 	start = raw.indexOf("---", 1) + 1;
 }
 
@@ -87,14 +89,19 @@ for (let i = start; i < raw.length; i++) {
 
 const boxes = (ls) => ls.filter((l) => !l.code && BOX.test(l.text)).map((l) => ({ n: l.n, text: l.text.match(BOX)[1] }));
 
-const checkTicket = (title, n, body) => {
+const checkTicket = (title, n, body, needBoot) => {
 	const heads = [];
+	let boot = null;
 	for (const l of body) {
 		if (l.code) continue;
 		const m = l.text.match(/^\*\*([^*]+)\*\*(.*)$/);
-		if (m && SUB_BLOCKS.includes(m[1])) heads.push({ name: m[1], n: l.n, rest: m[2].trim(), lines: [] });
+		if (m && m[1] === BOOT) boot = { n: l.n, lines: [] };
+		else if (boot) boot.lines.push(l);
+		else if (m && SUB_BLOCKS.includes(m[1])) heads.push({ name: m[1], n: l.n, rest: m[2].trim(), lines: [] });
 		else if (heads.length) heads.at(-1).lines.push(l);
 	}
+	if (needBoot && !boot) fail(n, `${title}: no **${BOOT}** block after Land, so the live lanes have no recipe`);
+	else if (needBoot && boxes(boot.lines).length === 0) fail(boot.n, `${title}: ${BOOT} has no box`);
 	const names = heads.map((h) => h.name);
 	if (names.join("|") !== SUB_BLOCKS.join("|")) {
 		fail(n, `${title}: sub-blocks are [${names.join(", ")}], expected [${SUB_BLOCKS.join(", ")}]`);
@@ -118,7 +125,7 @@ const checkTicket = (title, n, body) => {
 	if (live) {
 		const declared = live.rest.match(LANES);
 		const count = declared ? Number(declared[1]) : 0;
-		if (!declared) fail(live.n, `${title}: Verify, live lacks "<N> lanes on \`<swarm workers model>\` at the ticket head" with the model filled in`);
+		if (!declared) fail(live.n, `${title}: Verify, live lacks "<N> lanes at the ticket head"`);
 		else if (count < MIN_LANES) fail(live.n, `${title}: Verify, live declares ${count} lanes, at least ${MIN_LANES} required`);
 		const lanes = boxes(live.lines).map((b) => ({ ...b, m: b.text.match(/^Lane (\d+)\. /) }));
 		const numbers = lanes.filter((b) => b.m).map((b) => Number(b.m[1])).sort((a, b) => a - b);
@@ -160,7 +167,7 @@ const checkTicket = (title, n, body) => {
 if (ticketMode) {
 	const heading = lines.find((l) => !l.code && /^#{1,3} /.test(l.text));
 	const title = heading ? heading.text.replace(/^#+ /, "").trim() : file === "-" ? "ticket" : path.basename(file, ".md");
-	console.log(checkTicket(title, heading ? heading.n : 1, lines));
+	console.log(checkTicket(title, heading ? heading.n : 1, lines, true));
 	console.log(`1 ticket, ${problems.length} problems`);
 	for (const p of problems) console.error(p);
 	process.exit(problems.length ? 1 : 0);
@@ -210,7 +217,7 @@ const closeIndex = sections.indexOf(close);
 const ticketSections = programIndex === -1 || closeIndex === -1 ? [] : sections.slice(programIndex + 1, closeIndex);
 if (ticketSections.length === 0) fail(1, "no ticket sections between Program checklist and Close the program");
 
-const report = ticketSections.map((t) => checkTicket(t.title, t.n, t.body));
+const report = ticketSections.map((t) => checkTicket(t.title, t.n, t.body, false));
 
 if (closeIndex !== -1) {
 	const tail = sections.slice(closeIndex + 1);
