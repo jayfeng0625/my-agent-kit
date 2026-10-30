@@ -341,7 +341,7 @@ The person said go for items 6 and 7, compared with `v4`.
 - `v7` item 7 (`dd013ae`), fresh-review findings tagged `blocking` or `not blocking` with `file:line`, and P1's rule keyed to the tag, compared with `v6`: 10 of 10 both sides, verdict holds. Calls 11.9 to 13.2 (+11%), input tokens 382k to 439k (+15%), latency 72 s to 88 s. The rise covers most code tasks (t01 660k and 689k to 860k and 846k; t05, t06 and t07 up on both or one rep), so it reads as a cost of the change, with no gain to set against it. Reverted; P1 keeps "correctness finding". $9.73.
 
 **Found**
-- Last kept variant: `v6`. Against `baseline`: calls 18.5 to 11.9 per task (-36%), input tokens 610k to 382k (-37%), latency 117 s to 72 s (-38%), 10 of 10 pass throughout.
+- Last kept variant: `v6`. Against `baseline`: calls 18.5 to 11.9 per task (-35%), input tokens 610k to 382k (-37%), latency 117 s to 72 s (-38%), 10 of 10 pass throughout.
 - Seven runs since the baseline, CLI-reported $72.77 (judge calls not counted), 140 conversations, 0 errors.
 
 **Recommend**
