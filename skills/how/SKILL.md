@@ -10,7 +10,7 @@ metadata:
 
 Explore the codebase to answer "how does X work?" questions. Produce architectural explanations at the level of a senior engineer onboarding onto a subsystem, enough to build a working mental model, not so much that it reads like annotated source code.
 
-Every spawn is an Agent tool subagent of type `general-purpose`, with a brief that says the subagent edits no files. Explorers use the `how explorer` line in `~/.claude/pstack-models.md` (default `opus`), and every explainer uses the `how explainer` line (default `opus`). The line's value is a model and an optional effort, such as `opus high`. Set `model` and `effort` from it, or `model` from the default if the file or the line is missing. Leave `model` unset when the model is `inherit`, and leave `effort` unset when the value names none. If the Agent tool rejects a model, use `inherit` and say so. Pick each subagent's effort for the job, per the Match the effort to the job rule in `~/.claude/references/mode-core.md`.
+Every spawn is an Agent tool subagent of type `general-purpose`, with a brief that says the subagent edits no files. Explorers use the `how explorer` line in `~/.claude/pstack-models.md` (default `opus`), and every explainer uses the `how explainer` line (default `opus`). The line's value is a model and an optional effort, such as `opus high`. Set `model` and `effort` from it, or `model` from the default if the file or the line is missing. Leave `model` unset when the model is `inherit`, and leave `effort` unset when the value names none. If the Agent tool rejects a model, use `inherit` and say so. Pick each subagent's effort for the job, per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`.
 
 ## 1. Assess complexity
 

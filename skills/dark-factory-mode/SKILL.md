@@ -8,7 +8,7 @@ metadata:
 
 # Dark-factory mode
 
-Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy, subagent, reply and comment rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every verifier and reviewer `mode-agent` prompt; a lane's prompt names impl-mode's `SKILL.md` instead (see Roles and context).
+Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy and message rules, and points to the subagent, code and reply rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every verifier and reviewer `mode-agent` prompt; a lane's prompt names impl-mode's `SKILL.md` instead (see Roles and context).
 
 The user is present for Plan, at the start gate and at the digest, and nowhere between.
 
@@ -37,8 +37,8 @@ Each move gets a run comment: the marker `dark-factory <run-id>`, the branch, th
 
 Four kinds of agent, and none of them shares a context window:
 
-- **Runner.** The session that received this mode. It holds ticket ids, stages, branches and SHAs, and nothing larger. It never reads a diff, a test log or a lane's transcript; mode-core's diff review goes to the verifier.
-- **Lane.** One fresh `mode-agent` per ticket attempt, on the `code` role in place of mode-core's fan-out roles, since each lane writes a whole ticket. Its prompt names `~/.claude/skills/impl-mode/SKILL.md` as its mode, with its Feature or Refactoring playbook run in its own worktree, and names this file only for its Gates, the Any ask or pause trigger and this report format. impl-mode's Verify items 1 and 2 bind it. It hands back a committed branch and a report of at most 15 lines, which replaces impl-mode's Reply: head SHA, proof command and result, the count of tests proven red under a break, the defaults it chose, the PR body file, and any question it parked on. Run step 9 replaces impl-mode's Verify item 4.
+- **Runner.** The session that received this mode. It holds ticket ids, stages, branches and SHAs, and nothing larger. It never reads a diff, a test log or a lane's transcript; mode-subagents' diff review goes to the verifier.
+- **Lane.** One fresh `mode-agent` per ticket attempt, on the `code` role in place of mode-subagents' fan-out roles, since each lane writes a whole ticket. Its prompt names `~/.claude/skills/impl-mode/SKILL.md` as its mode, with its Feature or Refactoring playbook run in its own worktree, and names this file only for its Gates, the Any ask or pause trigger and this report format. impl-mode's Verify items 1 and 2 bind it. It hands back a committed branch and a report of at most 15 lines, which replaces impl-mode's Reply: head SHA, proof command and result, the count of tests proven red under a break, the defaults it chose, the PR body file, and any question it parked on. Run step 9 replaces impl-mode's Verify item 4.
 - **Reviewer.** A fresh `mode-agent` per round, on the `judgment and prose` role, that runs `/code-review` on the lane's head, whatever its size. A lane has no Agent tool, so the runner spawns impl-mode's Verify item 3 review after the lane hands back and before the verifier.
 - **Verifier.** A fresh `mode-agent` per verdict lane, on any model other than the lane's; when the role line names the lane's model, use another `model` value. It never sees the lane's context, works in a detached throwaway worktree at the head SHA, and returns PASS, FAIL or INCONCLUSIVE with up to 10 lines of evidence and its screenshot paths under `verdicts/`. The author never verifies its own branch. A ticket's verification swarm is these lanes, from its Verify blocks:
   - one gates lane (`judgment and prose`) that reruns Verify, unit and the repo's checks for the touched paths;

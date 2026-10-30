@@ -14,4 +14,4 @@ merge_guidance: |
   carry over. "cursor location" on line 25 means the editor cursor and stays. Upstream's
   "reasoning level and fast or standard speed" becomes "effort", and its slug-fallback
   sentence is dropped, since a rejected model already runs on `inherit`.
-  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-core.md`".
+  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`".

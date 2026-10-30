@@ -8,7 +8,7 @@ metadata:
 
 # Bug-hunting mode
 
-Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy, subagent, reply and comment rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
+Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy and message rules, and points to the subagent, code and reply rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
 
 ## Playbooks
 
@@ -68,7 +68,7 @@ Done means all four hold. Runtime forensics and Trace forensics meet items 1, 2 
 
 1. **Red, then green.** The loop's red output before the fix and its green output after, on the surface the bug was reported on, both kept for the reply. When the loop runs below that surface (a seam test), add one run on the reported surface. A CI-only failure needs its red job output and the green rerun output; without the rerun, the reply labels the fix unverified and names the job to rerun. For perf, the baseline and post-fix numbers, each vetted by benchmark-checklist. For forensics, the mechanism proved on the live process or the paired capture, or labelled per **Evidence**. An inconclusive result, or a pass on the wrong surface, is a fail to flag.
 2. **Clean.** The debug-prefix grep over `git diff <base>...HEAD` finds nothing, throwaway harnesses are gone, and `git status` and `git diff --stat <base>...HEAD` show only the fix's files (none for forensics).
-3. **Fresh review.** A fix diff of at most 15 changed lines outside tests, with no added comment or suppression, skips this item, and the Reply says so. Any other diff goes to a fresh-context `mode-agent`, whose brief names this item and mode-core's **Comments** rule as its only reading. It runs `/code-review` over the diff and flags each comment the diff adds that mode-core's **Comments** rule cuts, and each lint or type suppression whose rule guards correctness. Fix accepted findings. Run another round only after fixing a correctness finding, at most 3 rounds. Findings still open after round 3 go into the PR body as open items, each with its severity.
+3. **Fresh review.** A fix diff of at most 15 changed lines outside tests, with no added comment or suppression, skips this item, and the Reply says so. For any other diff, run `/code-review` over the diff yourself; it reviews in its own forked context. Then flag each comment the diff adds that mode-code's **Comments** rule cuts, and each lint or type suppression whose rule guards correctness. Fix accepted findings. Run another round only after fixing a correctness finding, at most 3 rounds. Findings still open after round 3 go into the PR body as open items, each with its severity.
 4. **Hand-off.** For a fix, a committed branch, reviewed per item 3, and a PR body written with the **pr** skill; the user pushes and opens the PR. For a diagnosis, the cited finding in the reply, routed to Bug fix or Perf issue when a fix is wanted.
 
 **Reply:** the playbook's deliverable, a VERIFIED list (ran it, saw the output) and a REASONED list (read it, believe it), and a Deferred list of improvements you noticed and skipped.

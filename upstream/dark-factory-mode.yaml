@@ -12,11 +12,11 @@ merge_guidance: |
   (local playbooks/plan.md), playbooks/autopilot-full.md and autopilot-stack.md (folded into
   playbooks/run.md), and scripts/check-plan.mjs (tests at .claude/checks/check-plan.test.ts).
   Cursor's `Task` is `Agent`, poteto-agent is mode-agent, "reasoning level and fast or standard
-  speed" is effort per mode-core, cloud VMs are worktrees, the Project tracker and store are the
+  speed" is effort per mode-subagents, cloud VMs are worktrees, the Project tracker and store are the
   tracker per Ticket states and the run directory, PR and CI subscriptions are the `Monitor` tool.
   Merges, pushes and `gh` writes stay with the user and the runner per Gates, so owners rebase
   and report in place of pushing or merging. No sub-coordinators: a mode-agent cannot spawn.
-  Sub-coordinator lines drop. SKILL-level triggers land in mode-core (first message, background
+  Sub-coordinator lines drop. SKILL-level triggers land in mode-core (first message) and mode-subagents (background
   steer and resume, effort fallback), and the blocking rule lives in Roles and context.
   The Reviewer bullet's "whatever its size" is local: impl-mode's Verify item 3 lets a diff of at
   most 15 changed lines skip its review, and a lane never does.

@@ -10,5 +10,5 @@ merge_guidance: |
   DESIGN-IT-TWICE.md in codebase-design, and its harness bullet adds create-verification-skill;
   keep both on each merge. Principle references use full names (`**principle-<name>** skill`)
   where upstream writes `**<name>** principle skill`; convert new ones the same way.
-  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-core.md`".
+  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`".
   The Start todo reads the description of each principle-* skill, in place of poteto-mode's Principles section.

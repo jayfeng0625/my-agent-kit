@@ -8,4 +8,4 @@ merge_guidance: |
   Claude Code port. The end-of-run check reads ~/.claude/projects/<project>/${CLAUDE_SESSION_ID}.jsonl
   with the Read tool, an exact path with no glob, in place of Cursor's agent-transcripts/ directory.
   Upstream's "reasoning level and fast or standard speed" becomes "effort".
-  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-core.md`".
+  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`".

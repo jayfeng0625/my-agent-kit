@@ -8,7 +8,7 @@ metadata:
 
 # Research mode
 
-Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy, subagent, reply and comment rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
+Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy and message rules, and points to the subagent, code and reply rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
 
 ## Playbooks
 
@@ -49,7 +49,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 Done means all three hold.
 
-1. **Traced.** Every premise in the deliverable is traced per **Evidence**. Every other claim meets **Evidence** or, when it cannot be traced, carries mode-core's label.
+1. **Traced.** Every premise in the deliverable is traced per **Evidence**. Every other claim meets **Evidence** or, when it cannot be traced, carries mode-reply's label.
 2. **Fresh check.** For every playbook but Investigation, a fresh `mode-agent` opens each citation in the deliverable and confirms it backs its claim. Fix or relabel each one that fails.
 3. **Hand-off.** The deliverable is in the reply, or in the file a routed skill writes. `git status` shows only the exceptions **Read-only** allows. Follow-up code work names the mode that owns it, such as `/impl-mode`.
 

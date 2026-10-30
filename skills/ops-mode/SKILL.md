@@ -8,7 +8,7 @@ metadata:
 
 # Ops mode
 
-Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy, subagent, reply and comment rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
+Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy and message rules, and points to the subagent, code and reply rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
 
 ## Playbooks
 
@@ -96,7 +96,7 @@ Done means all five hold, or the items the playbook names.
 1. **Observed.** Every check and applied step meets **Evidence**. Incident: the symptom signal back to baseline over a stated window. Migration: parity per phase. Infra change: an empty plan after the apply, or with no plan tool, the changed setting's after read against its before read. Live verification: the verdict with its identity. An inconclusive read, or a read on the wrong target, is a fail to flag.
 2. **Prod writes went through the user.** Every command you ran against prod was a read. Every prod write, each writing stage of a wizard included, is in the hand-off log with the user's done and the after read.
 3. **Clean.** Debug output, scratch resources and temp wizards are gone, or listed for the user with their delete commands. `git status` shows only the change's files.
-4. **Fresh review.** A fresh-context `mode-agent` runs `/code-review` over the diff: code, IaC, migration script and runbook. Fix accepted findings and re-review, until a round comes back clean or after 3 rounds. Findings still open after the last round stop any prod apply until the user has read them.
+4. **Fresh review.** Run `/code-review` yourself over the diff: code, IaC, migration script and runbook. It reviews in its own forked context. Fix accepted findings and re-review, until a round comes back clean or after 3 rounds. Findings still open after the last round stop any prod apply until the user has read them.
 5. **Hand-off.** For a code or IaC change, a reviewed, committed branch and a PR body written with the **pr** skill that carries the apply steps and the evidence; the user pushes and opens the PR. For an incident, the note in the reply and the root cause routed per Incident. For a live verification, the verdict in the reply.
 
 **Reply:** the playbook's deliverable, the hand-off log, a VERIFIED list (ran it, saw the output) and a REASONED list (read it, believe it), and a Deferred list of improvements you noticed and skipped.

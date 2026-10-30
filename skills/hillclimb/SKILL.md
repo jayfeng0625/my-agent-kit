@@ -9,7 +9,7 @@ metadata:
 
 # Hillclimb
 
-Read `~/.claude/references/mode-core.md` first and follow its Playbooks and principles, Autonomy, Subagents and reply rules; this file is the playbook. Put this file's absolute path in every `mode-agent` prompt.
+Read `~/.claude/references/mode-core.md` first and follow its rules and the files it points to; this file is the playbook. Put this file's absolute path in every `mode-agent` prompt.
 
 **You own the metric and the experiment's integrity. Supervise and review; delegates make the attempts.** Use it to climb one measurable thing toward a target over many iterations. A one-off bug or slowness goes to `/bug-hunting-mode`. Tuning a prompt, skill or tool description against an eval goes to `/claude-api hillclimb`.
 

@@ -10,7 +10,7 @@ metadata:
 
 Investigate the motivation and intent behind code. The companion `how` skill answers what the code does and how it works. `why` answers what forces led to its shape.
 
-Each spawn below names a role line in `~/.claude/pstack-models.md` and a default. The line's value is a model and an optional effort, such as `opus high`. Set `model` and `effort` from it, or `model` from the default if the file or the line is missing. Leave `model` unset when the model is `inherit`, and leave `effort` unset when the value names none. If the Agent tool rejects a model, use `inherit` and say so. Pick each subagent's effort for the job, per the Match the effort to the job rule in `~/.claude/references/mode-core.md`.
+Each spawn below names a role line in `~/.claude/pstack-models.md` and a default. The line's value is a model and an optional effort, such as `opus high`. Set `model` and `effort` from it, or `model` from the default if the file or the line is missing. Leave `model` unset when the model is `inherit`, and leave `effort` unset when the value names none. If the Agent tool rejects a model, use `inherit` and say so. Pick each subagent's effort for the job, per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`.
 
 Every spawn is subagent type `general-purpose`, which carries the session's MCP tools for the MCP-backed investigators and the synthesizer's citation spot-checks. Investigators still shouldn't write anything.
 
