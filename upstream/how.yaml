@@ -12,4 +12,5 @@ merge_guidance: |
   "reasoning level and fast or standard speed" becomes "effort", and its slug-fallback
   sentence is dropped.
   Local User Proposal section in the explainer prompt carries the user's plan verbatim; the explainer judges it within the user's constraints and labels any orchestrator alternative.
+  Simple path (single-agent-loop worklist item 4): the main thread explores and explains in one pass, with no explainer spawn. The complex path keeps upstream's explorers and explainer.
   This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-core.md`".

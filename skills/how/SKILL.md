@@ -16,7 +16,7 @@ Every spawn is an Agent tool subagent of type `general-purpose`, with a brief th
 
 If the scope is ambiguous, state your interpretation and explore. The user can redirect.
 
-- **Simple** (a single module, a small utility, a narrow question such as "how does function X work"): no explorers. Spawn one explainer that explores and explains in one pass, built from `references/explainer-prompt.md` without the explorer-findings section. Go to step 4.
+- **Simple** (a single module, a small utility, a narrow question such as "how does function X work"): no subagents. Explore and explain in one pass yourself, under the User Proposal rule, Output Format and Communication Style in `references/explainer-prompt.md`. Go to step 4.
 - **Complex** (a subsystem spanning multiple files or services, a cross-cutting feature, a full architectural overview): go to step 2.
 
 When in doubt, take the simple path.
@@ -31,7 +31,7 @@ Once all explorers have returned, spawn one explainer with `references/explainer
 
 ## 4. Present
 
-Present the explainer's output. Light edits for clarity or context from the conversation are fine. Do not substantially rewrite it.
+Present the explanation. On the complex path that is the explainer's output: light edits for clarity or context from the conversation are fine. Do not substantially rewrite it.
 
 ## Output format
 
