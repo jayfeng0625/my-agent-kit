@@ -249,7 +249,7 @@ Answer (2026-10-30): "Comment check should stay with the reviewer", read as buil
 - ops-mode still runs `/no-comments`: no eval task covers it.
 
 **Recommend**
-- Keep. Then delete the `/no-comments` lines nothing else uses (none in these two modes now) and decide ops-mode separately. Next measurable item is 4 (fold the how explainer, covered by t09): `v2` at 20 conversations, about 13M input tokens on v1, plus the with and without skill check on t09, 4 conversations, about 1.3M. Item 1 (dark-factory lane reviewer into the verifier) has no eval task: dark-factory is outside the eval.
+- Keep: no task got worse, the extra tokens sit inside rep noise, and the comment check now runs in every code run. Nothing is left to delete, since ops-mode still uses no-comments and comment-sicko; moving ops-mode is a separate call. Next measurable item is 4 (fold the how explainer, covered by t09): `v2` at 20 conversations, about 13M input tokens on v1, plus the with and without skill check on t09, 4 conversations, about 1.3M. Item 1 (dark-factory lane reviewer into the verifier) has no eval task: dark-factory is outside the eval.
 
 **Need from you**
 - Keep item 3 and go on to item 4? keep and go on / keep and stop / fix / revert
