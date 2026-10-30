@@ -196,7 +196,7 @@ Prose fixes made outside the worklist, after this audit, on the same branch (eac
 
 ## Open questions for owners
 
-1. Upstream skills (how, why, no-comments, show-me-your-work, codebase-design) are pulled from pstack and mattpocock/skills. Items 4 and 5 adapt them locally through `merge_guidance`. Adapt, or leave them as upstream ships them?
+1. ~~Adapt upstream skills.~~ Answered 2026-10-30: adapt, when the eval shows a gain. Each edit is recorded in its `upstream/<name>.yaml` `merge_guidance`. Item 4 stays; item 5 stays on the worklist and waits for an eval task.
 2. ~~Explorer and investigator models.~~ Answered 2026-10-30: the user's configuration decides; `pstack-models.md`'s role lines rule, and line 4 routes only judgment and routine fan-out to sonnet. No edit.
 3. ~~Fresh reviewer effort.~~ Answered 2026-10-30: name no level. `/code-review` reuses the session's last level, which is simpler; the reviewer already loads the project's context and its review rules. No edit.
 
