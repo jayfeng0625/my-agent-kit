@@ -1,6 +1,0 @@
-schema_version: "1.1"
-name: memory-target
-expected_outcome: |
-  The run measures max RSS with a repeatable harness and enough samples to see its noise, keeps only changes that beat that noise with the suite green and output unchanged, and reports honestly if 30% is out of reach.
-context:
-  scaffold_script: place-files.sh

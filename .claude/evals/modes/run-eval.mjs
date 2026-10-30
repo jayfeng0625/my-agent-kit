@@ -340,12 +340,11 @@ function parseArgs(argv) {
     else if (k === '-h' || k === '--help') { usage(); process.exit(0); }
     else { eprint(`unknown argument: ${k}`); usage(); process.exit(2); }
   }
-  // probe and the single-agent-loop rerun names (baseline-rerun-v1, v1-rerun) are allowed too.
-  if (!/^(baseline|probe|v[1-9]\d*)(-rerun(-v[1-9]\d*)?)?$/.test(a.variant)) {
+  if (!/^(baseline|probe|v[1-9]\d*)$/.test(a.variant)) {
     // The report only reads directories named 'baseline' or 'v<N>' - any other
     // name runs to completion but spends the pass into a directory the Summary,
     // trajectory, and budget arithmetic never see.
-    eprint(`--variant must be 'baseline' or 'v<N>', got '${a.variant}'`);
+    eprint(`--variant must be 'baseline', 'probe' or 'v<N>', got '${a.variant}'`);
     usage(); process.exit(2);
   }
   if (!Number.isFinite(a.timeoutS) || a.timeoutS < 0

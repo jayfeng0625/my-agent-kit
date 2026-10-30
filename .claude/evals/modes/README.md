@@ -14,4 +14,4 @@ Run, from the repo root, after the user's yes to the spend:
       --model claude-opus-5-5 --effort medium --budget-usd 10 --kit-ref <sha> \
       --reps 2 --concurrency 5 --timeout-s 3600
 
-The first run of a changed harness stops until the user approves it with `--approve-harness`. Compare variants with `.claude/skills/single-agent-loop/scripts/compare.py .claude/hillclimb/modes baseline v1`.
+The first run of a changed harness stops until the user approves it with `--approve-harness`.
