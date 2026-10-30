@@ -20,15 +20,13 @@ Tracks are labels on units. Author the decomposition per program; build, landing
 
 #### Store
 
-`orch/` in the run directory, written only by the runner, through `node ~/.claude/skills/dark-factory-mode/scripts/orch/orch.ts --store ~/.dark-factory/<repo>/<run-id>/orch`, written `orch` below. Its plain TSV and JSON stay readable without the CLI. A unit is one ticket, keyed by its ticket id; the tracker stays each ticket's stage record, per **Ticket states**.
+`orch/` in the run directory, written only by the runner, through `node ~/.claude/skills/dark-factory-mode/scripts/orch/orch.ts --store ~/.dark-factory/<repo>/<run-id>/orch`, written `orch` below; it needs Node 22.18 or later, which runs TypeScript directly. Its plain TSV and JSON stay readable without the CLI. A unit is one ticket, keyed by its ticket id; the tracker stays each ticket's stage record, per **Ticket states**.
 
-- `preferences.md` is the standing-orders register: numbered lines, one constraint each (model policy, stack shape, landing grant, verification bar, forbidden paths, escalation policy). Paste it verbatim into every spawn and every resume. When you catch yourself restating an instruction, append the line before you act (**principle-encode-lessons-in-structure**).
-- `overview.md` is the program's PR and ticket record. Append; never rewrite it wholesale.
-- `units.tsv` has one row per unit: id, track, state, branch, PR, head SHA, brief path.
+- `preferences.md` is the standing-orders register (`orch standing add <line>`, `orch standing show`): numbered lines, one constraint each (model policy, stack shape, landing grant, verification bar, forbidden paths, escalation policy). Paste it verbatim into every spawn and every resume. When you catch yourself restating an instruction, append the line before you act (**principle-encode-lessons-in-structure**).
+- `units.tsv` has one row per unit (`orch unit add <id> --track <track> --brief <path>`, `orch unit set <id> --state <state> --branch <branch> --pr <n> --sha <sha>`): id, track, state, branch, PR, head SHA, brief path.
 - `frontier.json` is the computed merge frontier, per **Stack safety**.
 - `ledger.tsv` is the verdict ledger, per **Verification**.
-- `inbox/` holds completion pointers. `gates.md` parks the user's calls: question, options, default on no answer.
-- `status.md` is derived from `units.tsv` and `ledger.tsv` at each drain, never hand-written.
+- `inbox/` holds completion pointers. `gates.md` parks the user's calls (`orch gate park <id> --question <q> --options <o> --default <answer>`, `orch gate resolve <id> --answer <a>`).
 
 The show-me-your-work trail stays in the run directory's `decisions.tsv`.
 
@@ -79,7 +77,7 @@ Size the brief to the ticket: a one-command ticket collapses to a paragraph that
 
 #### Verification
 
-Every Verified ticket holds Run step 7's swarm PASS. `orch ledger record` writes it as `live-ui-verified` against the PR, or the branch under grant `none`, and the head SHA; `orch ledger check` reads it back. The other states keep their meaning: `unit-test-verified` and `type-check-only` never make a ticket Verified, `verifier-blocked` is not a pass and is retried when the environment heals, and `verifier-failed` gets a fix lane. A new head voids its row unless Run step 7's patch-id rule carries it.
+Every Verified ticket holds Run step 7's swarm PASS. Under `prs`, `orch ledger record <pr> <sha> live-ui-verified --evidence <verdicts dir> --verifier <model>` writes it, and `orch ledger check <pr> <sha>` reads it back (exit 2 with `NOT-VERIFIED` when no row matches). The ledger keys on a PR number, so under grant `none` the `verdict` run comment and the unit's state and head SHA in `units.tsv` hold it. The other states keep their meaning: `unit-test-verified` and `type-check-only` never make a ticket Verified, `verifier-blocked` is not a pass and is retried when the environment heals, and `verifier-failed` gets a fix lane. A new head voids its row unless Run step 7's patch-id rule carries it.
 
 A ticket's output is externalized when it lands in the run: the lane commits its branch, the verdict lanes write their reports under `verdicts/`, and the runner writes the ledger row.
 
