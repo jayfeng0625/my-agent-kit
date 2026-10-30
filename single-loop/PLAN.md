@@ -235,3 +235,21 @@ The person asked for item 3 (merge comment-sicko into the fresh reviewer). Its p
 - Add a `comments` check to the code tasks first: the judge reads each comment line the run added under `src/` and `test/` and fails one that narrates or restates the code, per mode-core's Comments rule. Regrade the baseline from its saved repos (judge calls only), approve the harness, then build item 3 and run it as `v1` (20 conversations, about 12M input tokens on the baseline).
 - Or build item 3 now on the eval as it is, with the gap written in `change.md`; the result then says nothing about lost comment cleanup.
 
+
+Answer (2026-10-30): "Comment check should stay with the reviewer", read as build item 3 as is. Built as `73dd5b2`; `v1` ran on `db82963` (the same diff on `fb28d38`), 20 conversations.
+
+## Check-in: after item 3 (v1, 2026-10-30)
+
+**Found**
+- `compare.py baseline v1`: 10 of 10 tasks pass on both sides, no task worse, verdict holds. Model calls per task 17.3 to 19.5 (+13%), input tokens 608k to 673k (+11%), all of it on the code tasks (10.68M to 11.99M; research 1.50M to 1.48M). Baseline reps of one task differ by up to 2.3x, so +11% sits inside rep noise.
+- Latency 103 s to 164 s comes from one run: t01 rep 0 took 1346 s with 45 calls. The main session called `ScheduleWakeup` (1200 s) while its `/simplify` agents ran, and slept it out. Baseline t01 rep 0 made the same call and returned in 270 s; v1 t06 rep 0 and t07 rep 1 also called it. Without that run, mean latency is 103 s on both sides. Not caused by this change; a headless `-p` run should never sleep on a wakeup (finding for mode-core's Stall check or the eval's tool list).
+- Comment check: every v1 review brief (16) named the Comments rule; none of the 18 baseline briefs did. Both t01 reviewers flagged the new `src/csv.js` header comment and both runs cut it. Added comment lines left in final diffs: baseline 3 (t01 rep 0, t05 rep 1), v1 0. No grader scores this; counted by grep over each run's `git diff main -- src test`.
+- Routes: comment-sicko gone (0.2 calls per task to 0). Other moves (t09 general-purpose 1 rep to 2) are one rep apart and off the changed path; research-mode was not edited.
+- Estimate 12.0M input tokens, actual 13.47M (`estimate.py --actual v1`). CLI cost $13.53 baseline, $14.49 v1.
+- ops-mode still runs `/no-comments`: no eval task covers it.
+
+**Recommend**
+- Keep. Then delete the `/no-comments` lines nothing else uses (none in these two modes now) and decide ops-mode separately. Next measurable item is 4 (fold the how explainer, covered by t09): `v2` at 20 conversations, about 13M input tokens on v1, plus the with and without skill check on t09, 4 conversations, about 1.3M. Item 1 (dark-factory lane reviewer into the verifier) has no eval task: dark-factory is outside the eval.
+
+**Need from you**
+- Keep item 3 and go on to item 4? keep and go on / keep and stop / fix / revert
