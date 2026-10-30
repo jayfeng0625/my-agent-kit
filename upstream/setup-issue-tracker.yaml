@@ -1,10 +1,9 @@
 repo: https://github.com/mattpocock/skills
 path: skills/engineering/setup-matt-pocock-skills
-commit: 49dd158d1076134a641b33efb035946536778336
+commit: a496f5513d4a4cf889bc48e189e579f4b0bdf6aa
 author: Matt Pocock
 license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
-  Renamed locally from setup-matt-pocock-skills (the user's choice). Local edits: the folder
-  name, the `name:` field, and `display_name` in agents/openai.yaml. Pulled skills that call it
-  use `/setup-issue-tracker`; rename any new upstream reference when merging.
+  Renamed from setup-matt-pocock-skills (folder, `name:`, `display_name`); rename new upstream references to `/setup-issue-tracker`.
+  The GitHub filing guard names "the repo these skills come from" in place of `mattpocock/skills`.

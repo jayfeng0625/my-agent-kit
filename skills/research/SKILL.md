@@ -5,7 +5,7 @@ metadata:
   tags: [research, docs, subagents]
 ---
 
-Spin up a **background agent** to do the research, so you keep working while it reads.
+Spin up a **background agent** to do the research, so you keep working while it reads. Start it with a fresh context window.
 
 Its job:
 
