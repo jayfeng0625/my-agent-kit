@@ -28,7 +28,7 @@
 
 import { createHash } from 'node:crypto';
 import { closeSync, constants as FS, existsSync, fstatSync, ftruncateSync, lstatSync, mkdirSync, openSync, readFileSync, realpathSync, writeFileSync, writeSync } from 'node:fs';
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // Every output write refuses symlinks: the flow dir is model-influenced, and a
@@ -136,50 +136,48 @@ const REF_EXTS = ['', '.html', '.txt', '.json'];
 // --- fill these in ----------------------------------------------------------
 //
 // Mode eval: each case runs one `-mode` skill headless (`claude -p "/<mode> ..."`) on a
-// fresh build of the invoicer fixture, with HOME pointed at a scratch dir that links
-// this kit's global files and skills at --kit-ref. Grading lives in grade.ts.
+// fresh build of the invoicer fixture, in the user's own HOME, ~/.claude and login, whose
+// kit skills and global files link to this checkout. Grading lives in grade.ts.
 //
 //   node .claude/evals/modes/run-eval.mjs --flow .claude/hillclimb/modes --variant baseline \
 //     --model claude-opus-5-5 --reps 2 --concurrency 5 --timeout-s 3600
 
 import { spawn, execFileSync } from 'node:child_process';
-import { createWriteStream, readdirSync, rmSync, symlinkSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { cpSync, createWriteStream, readdirSync, rmSync } from 'node:fs';
+import { homedir, tmpdir } from 'node:os';
 import { buildFixture } from './fixture/build.ts';
 import { Worker } from 'node:worker_threads';
-import { isolatedEnv } from './grade.ts';
+import { evalEnv } from './grade.ts';
 
 const EVAL_DIR = dirname(fileURLToPath(import.meta.url));
 const KIT_ROOT = resolve(EVAL_DIR, '../../..');
 let caseSeq = 0;
 let kitSnapshot = null;
 
+// Runs read the kit through ~/.claude, so each kit skill and global link there must resolve
+// into this checkout; the run record names the tree they saw.
 function prepareKit(ctx) {
   if (kitSnapshot) return kitSnapshot;
-  const sha = execFileSync('git', ['rev-parse', ctx.kitRef], { cwd: KIT_ROOT, encoding: 'utf8' }).trim();
-  const dir = join(ctx.work, `kit-${sha.slice(0, 12)}`);
-  if (!existsSync(dir)) {
-    mkdirSync(dir, { recursive: true });
-    execFileSync('sh', ['-c', 'git -C "$1" archive "$2" | tar -x -C "$3"', 'sh', KIT_ROOT, sha, dir]);
+  const claude = join(homedir(), '.claude');
+  const root = realpathSync(KIT_ROOT) + '/';
+  const linked = rel => { try { return realpathSync(join(claude, rel)).startsWith(root); } catch { return false; } };
+  const stray = [...readdirSync(join(KIT_ROOT, 'skills')).filter(s => !s.startsWith('.')).map(s => `skills/${s}`), 'references', 'agents', 'pstack-models.md']
+    .filter(rel => !linked(rel));
+  if (stray.length) {
+    eprint(`~/.claude does not link these into ${KIT_ROOT}: ${stray.join(', ')}. Run sh .claude/evals/modes/link-skills.sh.`);
+    process.exit(2);
   }
+  const git = (...a) => execFileSync('git', a, { cwd: KIT_ROOT, encoding: 'utf8' }).trim();
   const bin = join(ctx.work, 'bin');
   mkdirSync(bin, { recursive: true });
   writeFileSync(join(bin, 'gh'), '#!/bin/sh\necho "gh is not available in this eval" >&2\nexit 1\n', { mode: 0o755 });
-  const record = { kit_ref: ctx.kitRef, kit_sha: sha, model: ctx.model, effort: ctx.effort, reps: ctx.reps,
-    only: ctx.only, budget_usd: ctx.budgetUsd ?? null, started: new Date().toISOString() };
+  const record = { kit_sha: git('rev-parse', 'HEAD'), kit_dirty: git('status', '--porcelain', '--', 'skills', 'global'),
+    kit_diff_sha: createHash('sha256').update(git('diff', 'HEAD', '--', 'skills', 'global')).digest('hex').slice(0, 12),
+    model: ctx.model, effort: ctx.effort, reps: ctx.reps, only: ctx.only, budget_usd: ctx.budgetUsd ?? null,
+    started: new Date().toISOString() };
   writeFileSync(join(ctx.flow, ctx.variant, `run-${Date.now()}.json`), JSON.stringify(record, null, 2) + '\n');
-  kitSnapshot = { sha, dir, path: `${bin}:${process.env.PATH}` };
+  kitSnapshot = { sha: record.kit_sha, path: `${bin}:${process.env.PATH}` };
   return kitSnapshot;
-}
-
-// The global files and skills a person gets from this kit, as ~/.claude.
-function makeHome(home, kit) {
-  const claude = join(home, '.claude');
-  mkdirSync(join(claude, 'skills'), { recursive: true });
-  for (const f of ['CLAUDE.md', 'references', 'pstack-models.md', 'agents'])
-    symlinkSync(join(kit.dir, 'global', f), join(claude, f));
-  for (const skill of readdirSync(join(kit.dir, 'skills')))
-    symlinkSync(join(kit.dir, 'skills', skill), join(claude, 'skills', skill));
 }
 
 async function loadCases(ctx) {
@@ -232,13 +230,15 @@ function summarize(events) {
 
 async function runCase(input, ctx) {
   const kit = prepareKit(ctx);
-  const dir = join(ctx.work, ctx.variant, `${input.id}-${process.pid}-${caseSeq++}`);
+  const seq = caseSeq++;
+  const dir = join(ctx.work, ctx.variant, `${input.id}-${process.pid}-${seq}`);
   rmSync(dir, { recursive: true, force: true });
-  const repo = join(dir, 'invoicer');
-  buildFixture(repo);
+  // dark-factory-mode keeps a repo's plans in ~/.dark-factory/<repo name>, so each case
+  // gets its own name and concurrent reps cannot share a plan.
+  const repo = join(dir, `invoicer-${process.pid}-${seq}`);
+  buildFixture(repo, input.ops);
   const rev = ref => execFileSync('git', ['rev-parse', ref], { cwd: repo, encoding: 'utf8' }).trim();
   const base = { main: rev('main'), taxExempt: rev('tax-exempt') };
-  makeHome(join(dir, 'home'), kit);
   const args = ['-p', input.prompt, '--model', ctx.model, '--effort', ctx.effort,
     '--output-format', 'stream-json', '--verbose', '--permission-mode', 'bypassPermissions',
     '--no-session-persistence', '--strict-mcp-config'];
@@ -249,7 +249,7 @@ async function runCase(input, ctx) {
   const streamFile = join(dir, 'stream.jsonl');
   const out = createWriteStream(streamFile);
   const err = createWriteStream(join(dir, 'stderr.log'));
-  const child = spawn('claude', args, { cwd: repo, env: isolatedEnv(join(dir, 'home'), kit.path), stdio: ['ignore', 'pipe', 'pipe'] });
+  const child = spawn('claude', args, { cwd: repo, env: evalEnv(kit.path), stdio: ['ignore', 'pipe', 'pipe'] });
   child.stdout.pipe(out);
   child.stderr.pipe(err);
   const killAt = ctx.timeoutS > 0 ? setTimeout(() => child.kill('SIGKILL'), Math.max(1, ctx.timeoutS - 60) * 1000) : null;
@@ -286,16 +286,19 @@ async function runCase(input, ctx) {
 
 async function gradeCase(input, run, ref, ctx) {
   const kit = prepareKit(ctx);
-  const judgeHome = join(ctx.work, 'judge-home');
-  mkdirSync(judgeHome, { recursive: true });
   const g = await new Promise((resolve, reject) => {
     const w = new Worker(join(EVAL_DIR, 'grade-worker.ts'), {
-      workerData: { task: input, repo: run.repo, base: run.base, reply: run.reply, env: isolatedEnv(judgeHome, kit.path) } });
+      workerData: { task: input, repo: run.repo, base: run.base, reply: run.reply, env: evalEnv(kit.path) } });
     w.once('message', resolve);
     w.once('error', reject);
     w.once('exit', (code) => reject(new Error(`grade worker exited ${code} with no result`)));
   });
   run.actions = g.actions;
+  const factory = join(homedir(), '.dark-factory', basename(run.repo));
+  if (existsSync(factory)) {
+    cpSync(factory, join(run.workdir, 'dark-factory'), { recursive: true });
+    rmSync(factory, { recursive: true, force: true });
+  }
   const out = { grade: g.grade, explanation: g.explanation };
   if (g.judge_model) out.judge_model = g.judge_model;
   if (g.judge_usage) out.judge_usage = g.judge_usage;
@@ -318,7 +321,7 @@ function perfFrom(run) {
 function parseArgs(argv) {
   const a = { flow: '.claude/hillclimb/flow', variant: 'baseline',
               model: undefined, reps: 1, concurrency: 4, timeoutS: 1800,
-              approveHarness: false, kitRef: 'HEAD', effort: 'high', only: null,
+              approveHarness: false, effort: 'high', only: null,
               work: join(tmpdir(), 'mode-eval'), budgetUsd: null };
   // A flag at the end of argv would otherwise consume undefined - which for
   // --model equals the default and silently disables the served-model check.
@@ -332,7 +335,6 @@ function parseArgs(argv) {
     else if (k === '--concurrency') a.concurrency = +val(++i);
     else if (k === '--timeout-s') a.timeoutS = +val(++i);
     else if (k === '--approve-harness') a.approveHarness = true;
-    else if (k === '--kit-ref') a.kitRef = val(++i);
     else if (k === '--effort') a.effort = val(++i);
     else if (k === '--only') a.only = val(++i).split(',');
     else if (k === '--work') a.work = resolve(val(++i));
@@ -355,7 +357,7 @@ function parseArgs(argv) {
 }
 function usage() {
   eprint('usage: node run-eval.mjs --flow DIR --variant ID [--model ID] [--reps N] [--concurrency N] [--timeout-s N (0 = no ceiling)] [--approve-harness]'
-    + ' [--kit-ref REF] [--effort LEVEL] [--only ID,ID] [--work DIR] [--budget-usd N]');
+    + ' [--effort LEVEL] [--only ID,ID] [--work DIR] [--budget-usd N]');
 }
 
 // Harness integrity gate. The hillclimb loop gets this runner command

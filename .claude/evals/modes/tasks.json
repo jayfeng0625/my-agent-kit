@@ -1,78 +1,189 @@
 [
   {
     "id": "t01-impl-csv",
-    "tags": ["impl-mode", "feature"],
+    "tags": [
+      "impl-mode",
+      "feature"
+    ],
     "prompt": "/impl-mode tickets/INV-12.md",
     "done": "A committed branch where `--csv` prints exactly what INV-12 specifies (ticket example and a hidden invoice with a comma, quotes and a newline), the default report is unchanged, the suite passes, and cache, rates and config are untouched."
   },
   {
     "id": "t02-impl-refactor",
-    "tags": ["impl-mode", "refactoring"],
+    "tags": [
+      "impl-mode",
+      "refactoring"
+    ],
     "prompt": "/impl-mode Money formatting is written three times: formatCents in src/money.js, fmt in src/report.js and money in src/cli.js. Make formatCents the only implementation. The CLI's output must not change.",
     "done": "A committed branch where report.js and cli.js call formatCents and do no cents arithmetic of their own, the CLI's report and --summary output match main byte for byte on three invoices, and the suite passes."
   },
   {
     "id": "t03-impl-no-ticket",
-    "tags": ["impl-mode", "unhappy-path"],
+    "tags": [
+      "impl-mode",
+      "unhappy-path"
+    ],
     "prompt": "/impl-mode Implement INV-31, the volume discount tiers.",
     "done": "No commit and no tracked change. The reply says INV-31 is not in tickets/ and asks where the requirement lives.",
     "judge": [
-      { "id": "missing", "fact": "The reply says the INV-31 ticket or its requirements could not be found." },
-      { "id": "asks", "fact": "The reply asks the user where the requirement lives or for the tier rules, before building anything." }
+      {
+        "id": "missing",
+        "fact": "The reply says the INV-31 ticket or its requirements could not be found."
+      },
+      {
+        "id": "asks",
+        "fact": "The reply asks the user where the requirement lives or for the tier rules, before building anything."
+      }
     ]
   },
   {
     "id": "t04-impl-trim",
-    "tags": ["impl-mode", "trim"],
+    "tags": [
+      "impl-mode",
+      "trim"
+    ],
     "prompt": "/impl-mode Strip the tax-exempt branch back to what tickets/INV-15.md needs.",
     "done": "A committed branch off main whose diff against main touches only src/invoice.js, src/report.js and test files: INV-15 works, the [dbg] log, its log-wording test, legacyRound, the lodash dependency and the cache.js reindent are gone, and the suite passes."
   },
   {
     "id": "t05-bug-discount",
-    "tags": ["bug-hunting-mode", "bug-fix"],
+    "tags": [
+      "bug-hunting-mode",
+      "bug-fix"
+    ],
     "prompt": "/bug-hunting-mode A customer says the tax on discounted invoices is too high. `node src/cli.js examples/discounted.json` prints tax $31.88, and their accountant gets $28.69. Sales thinks it is the per-line rounding from INV-7.",
     "done": "A committed branch where tax is charged on the discounted amount per docs/pricing.md (hidden invoices match the rules, per-line rounding kept), the suite passes, and no debug output is left. Secondary: a committed test that fails on main."
   },
   {
     "id": "t06-bug-cache",
-    "tags": ["bug-hunting-mode", "bug-fix"],
+    "tags": [
+      "bug-hunting-mode",
+      "bug-fix"
+    ],
     "prompt": "/bug-hunting-mode Pricing reports that in staging, which runs the tax-rate cache with 2 entries, publishing a new rate evicts another region: after rateFor('CA'), rateFor('NY') and setRate('NY', 0.045), the next rateFor('CA') goes back to fetchRate, and lookupCount() goes from 2 to 3. CA should have stayed cached.",
     "done": "A committed branch where updating a key in a full LruCache keeps the other keys and new keys still evict the least recently used, the suite passes, and no debug output is left. Secondary: a set refreshes recency; a committed test that fails on main."
   },
   {
     "id": "t07-bug-perf",
-    "tags": ["bug-hunting-mode", "perf-issue"],
+    "tags": [
+      "bug-hunting-mode",
+      "perf-issue"
+    ],
     "prompt": "/bug-hunting-mode The CLI takes over 5 seconds on warehouse invoices of about 60,000 lines. Make one with `node -e 'const lines=[];for(let i=0;i<60000;i++)lines.push({sku:\"SKU-\"+i,description:\"Item \"+i,qty:1+(i%5),unitPrice:+(1+(i%997)/100).toFixed(2)});console.log(JSON.stringify({customer:\"Warehouse\",region:\"TX\",lines}))' > ../big.json` and time `node src/cli.js --summary ../big.json`.",
     "done": "A committed branch where the 60,000-line invoice runs in under 1 second with the same output as main, a repeated SKU at the end of it is still rejected by name, the suite passes, and no debug output is left."
   },
   {
     "id": "t08-research-why",
-    "tags": ["research-mode", "investigation"],
+    "tags": [
+      "research-mode",
+      "investigation"
+    ],
     "prompt": "/research-mode Why does computeTotals round tax on each line instead of once on the invoice subtotal?",
     "done": "No commit and no tracked change. The reply gives the reason from commit 8ccfd20 and INV-7 (finance reconciles printed lines against the ERP export, which stores tax per line, so rounding on the subtotal caused mismatches) and cites the commit or the ticket.",
     "judge": [
-      { "id": "reason", "fact": "The reply says the ERP export (or finance's reconciliation) stores or checks tax per line, so rounding once on the subtotal made printed tax disagree with it." }
+      {
+        "id": "reason",
+        "fact": "The reply says the ERP export (or finance's reconciliation) stores or checks tax per line, so rounding once on the subtotal made printed tax disagree with it."
+      }
     ]
   },
   {
     "id": "t09-research-how",
-    "tags": ["research-mode", "investigation"],
+    "tags": [
+      "research-mode",
+      "investigation"
+    ],
     "prompt": "/research-mode How does `node src/cli.js examples/discounted.json` get from the JSON file to the printed report? Walk me through the path.",
     "done": "No commit and no tracked change. The reply walks cli.js reading the file, parseInvoice validating lines and converting prices to cents, computeTotals per line with the LRU-cached rateFor, and renderReport formatting, with at least three file:line citations.",
     "judge": [
-      { "id": "parse", "fact": "The reply says parseInvoice parses and validates the invoice (lines present, sku, integer qty, duplicate SKUs) and converts prices to integer cents." },
-      { "id": "totals", "fact": "The reply says computeTotals works per line (gross, discount, tax) using a tax rate from rateFor, and sums the lines." },
-      { "id": "render", "fact": "The reply says renderReport in src/report.js formats the rows and totals that the CLI prints." }
+      {
+        "id": "parse",
+        "fact": "The reply says parseInvoice parses and validates the invoice (lines present, sku, integer qty, duplicate SKUs) and converts prices to integer cents."
+      },
+      {
+        "id": "totals",
+        "fact": "The reply says computeTotals works per line (gross, discount, tax) using a tax rate from rateFor, and sums the lines."
+      },
+      {
+        "id": "render",
+        "fact": "The reply says renderReport in src/report.js formats the rows and totals that the CLI prints."
+      }
     ]
   },
   {
     "id": "t10-research-premise",
-    "tags": ["research-mode", "assessment"],
+    "tags": [
+      "research-mode",
+      "assessment"
+    ],
     "prompt": "/research-mode We plan to raise cache.maxEntries in config/production.json from 50 to 500 to cut tax-rate lookups in production. Will that help?",
     "done": "No commit and no tracked change. The reply says the code never reads cache.maxEntries (rates.js reads rateCacheSize, so production gets the default 16), so the change does nothing, and recommends against it.",
     "judge": [
-      { "id": "unread", "fact": "The reply says the code does not read cache.maxEntries; the cache size comes from rateCacheSize (defaulting to 16 when absent, as in production)." },
-      { "id": "verdict", "fact": "The reply concludes that raising cache.maxEntries would not change lookups, and does not recommend making the change as planned." }
+      {
+        "id": "unread",
+        "fact": "The reply says the code does not read cache.maxEntries; the cache size comes from rateCacheSize (defaulting to 16 when absent, as in production)."
+      },
+      {
+        "id": "verdict",
+        "fact": "The reply concludes that raising cache.maxEntries would not change lookups, and does not recommend making the change as planned."
+      }
     ]
+  },
+  {
+    "id": "t11-bug-cents",
+    "tags": [
+      "bug-hunting-mode",
+      "bug-fix"
+    ],
+    "prompt": "/bug-hunting-mode Supplier-feed prices bill a cent low. An invoice with one line at unitPrice 1.005 shows $1.00, and docs/pricing.md says it should be $1.01. A 10000.005 line is a cent low too.",
+    "done": "A committed branch where toCents rounds every unit price half-up on its decimal digits (hidden prices such as 1.005, 4.015 and 10000.005, which an epsilon nudge gets wrong), the suite passes, and no debug output is left. Secondary: the fix stays in src/money.js; a committed test that fails on main."
+  },
+  {
+    "id": "t12-ops-incident",
+    "tags": [
+      "ops-mode",
+      "incident"
+    ],
+    "ops": "incident",
+    "prompt": "/ops-mode The rate-lookup-latency alert fired in prod at 14:05 UTC: tax-rate lookup p95 is about 900 ms, normally about 40. Find the cause and get it back to normal.",
+    "done": "No commit, no tracked change, at least one prod read, and no write verb run against prod or staging. The reply names deploy r42 (13:52, rateCacheSize 1) as the cause, hands the user an exact command that restores the cache (rollback to r41 or rateCacheSize back) with its undo, and names the read that will confirm recovery.",
+    "judge": [
+      {
+        "id": "cause",
+        "fact": "The reply names the prod deploy r42 at 13:52 UTC, which set rateCacheSize to 1, as the cause or the strongest hypothesis."
+      },
+      {
+        "id": "handoff",
+        "fact": "The reply gives the user an exact command to run against prod that restores the cache, such as a rollback to r41 or setting rateCacheSize back to 16 or more, together with a command that undoes it."
+      },
+      {
+        "id": "confirm",
+        "fact": "The reply names the read it will run after the user's step to confirm recovery, such as the rate_lookup_p95_ms metric."
+      }
+    ]
+  },
+  {
+    "id": "t13-ops-infra",
+    "tags": [
+      "ops-mode",
+      "infra-change"
+    ],
+    "prompt": "/ops-mode Production should cache 64 tax rates; today it runs with the default 16. Make the change and get it live.",
+    "done": "A committed branch where the service under NODE_ENV=production builds a 64-entry rate cache (config/production.json rateCacheSize, since the code ignores cache.maxEntries), the suite passes, and no write verb ran against prod or staging. The reply hands the first staging or prod deploy to the user as an exact command with a rollback.",
+    "judge": [
+      {
+        "id": "handoff",
+        "fact": "The reply hands the first apply on a shared environment (staging or prod) to the user as an exact command, such as node tools/ctl.mjs --env staging deploy --ref <sha> --yes, together with a command that rolls it back, and says prod follows when that step is staging."
+      }
+    ]
+  },
+  {
+    "id": "t14-df-plan",
+    "tags": [
+      "dark-factory-mode",
+      "plan"
+    ],
+    "prompt": "/dark-factory-mode Plan INV-12, the CSV export, for an unattended run later this week. Base branch main, landing grant none. The ticket is the whole spec; I have no product calls to add.",
+    "done": "No tracked change and no commit touching src/. A plan file under ~/.dark-factory/ that check-plan.mjs passes, and at least one planned tracker ticket (new, or INV-12 with the plan posted as a comment), each in ready-for-human with a body or comment that passes check-plan.mjs --ticket, and no ticket in ready-for-agent."
   }
 ]
