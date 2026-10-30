@@ -222,3 +222,16 @@ Prose fixes made outside the worklist, after this audit, on the same branch (eac
 
 Answer (2026-10-30): apply and rerun. Done: the skill-loaded check now reads the init event's `slash_commands` and the reply, t09's `totals` and `render` facts drop LRU and `--summary`, the README example carries the pinned flags, and the harness is approved at `513a580902cb`. t03 reran and both rows pass; both t09 rows were regraded and pass. Baseline: 20 of 20. Next: worklist item 1.
 
+## Check-in: before item 3 (2026-10-30)
+
+The person asked for item 3 (merge comment-sicko into the fresh reviewer). Its pre-change check found a gap.
+
+**Found**
+- Chain coverage: no production traces exist, so the chain list comes from the baseline. comment-sicko ran in 2 of 12 code runs (t01 rep 1, t07 rep 0); the `/no-comments` step in impl-mode and bug-hunting-mode's triggers was skipped in the other 10. The fresh review ran in all 12.
+- No grader checks comments. The end of this chain (a diff with no narration comments) is unscored, so the merge would be measured on an eval that cannot see the break it risks.
+- What the baseline left: 3 added comment lines across 12 code runs (t01 rep 0: one narration line on `renderCsv`; t05 rep 1: two lines on rounding, a defensible non-obvious why).
+
+**Recommend**
+- Add a `comments` check to the code tasks first: the judge reads each comment line the run added under `src/` and `test/` and fails one that narrates or restates the code, per mode-core's Comments rule. Regrade the baseline from its saved repos (judge calls only), approve the harness, then build item 3 and run it as `v1` (20 conversations, about 12M input tokens on the baseline).
+- Or build item 3 now on the eval as it is, with the gap written in `change.md`; the result then says nothing about lost comment cleanup.
+
