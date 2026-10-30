@@ -8,7 +8,7 @@ What blocks the plan: the eval is built (`.claude/evals/modes/`) and waits on th
 ## Status
 
 - [ ] Verdicts agreed with the person (end of step 0)
-- [ ] Main eval agreed and baseline measured (end of step 1)
+- [x] Main eval agreed and baseline measured (end of step 1); two harness fixes wait on the person, see Evals
 
 A new session picks up at the first unticked box here, then at the first unticked item in
 the worklist.
@@ -116,7 +116,31 @@ Break map: filled in at step 1.
 | Lost thread | n/a: headless runs are single-turn | |
 | Unhappy path | t03 | |
 
-Baseline (variant `baseline`): not run.
+Baseline (variant `baseline`, 2026-10-30): kit `fb28d38`, `claude-opus-5-5` at `medium`, `--budget-usd 10`, 10 tasks × 2 reps, judge `claude-sonnet-5-5`. 17 of 20 rows finished on the first pass; the one rerun of the 3 errored rows finished t08 rep 1 and errored t03 twice more. Scored: 17 of 18 rows pass (t03 has no score). Results: `.claude/hillclimb/modes/baseline/`.
+
+| Task | Pass (r0, r1) | Latency s | Input tokens | Output tokens | Model calls (main + delegates) |
+| --- | --- | --- | --- | --- | --- |
+| t01 impl csv | 1, 1 | 270, 153 | 1.72M, 0.97M | 28.3k, 17.1k | 41 (27 + 14), 24 (18 + 4 + 2 comment-sicko) |
+| t02 impl refactor | 1, 1 | 194, 126 | 1.10M, 0.78M | 20.2k, 13.1k | 29 (20 + 9), 23 (15 + 8) |
+| t03 impl no ticket | error, error | 6 to 9 | small | small | main only |
+| t04 impl trim | 1, 1 | 76, 83 | 0.55M, 0.60M | 7.8k, 8.5k | 18 (13 + 5), 19 (13 + 6) |
+| t05 bug discount | 1, 1 | 107, 224 | 0.56M, 1.31M | 10.8k, 25.6k | 16 (12 + 4), 35 (21 + 14) |
+| t06 bug cache | 1, 1 | 71, 75 | 0.44M, 0.42M | 7.3k, 5.8k | 14 (10 + 4), 15 (11 + 4) |
+| t07 bug perf | 1, 1 | 283, 118 | 1.43M, 0.69M | 22.4k, 8.4k | 33 (21 + 10 + 2 comment-sicko), 20 (15 + 5) |
+| t08 research why | 1, 1 | 29, 36 | 0.22M, 0.26M | 2.7k, 3.5k | 7, 8 (main only) |
+| t09 research how | 1, 0 | 27, 81 | 0.15M, 0.42M | 2.5k, 8.7k | 5 (main only), 14 (11 + 3 general-purpose) |
+| t10 research premise | 1, 1 | 53, 43 | 0.23M, 0.23M | 5.4k, 4.5k | 10 (6 + 4), 10 (6 + 4) |
+
+Totals over the 18 scored rows: 12.06M input tokens, 203k output, CLI-reported $13.31 (the person's own prices may differ). Estimate against actual (`estimate.py ... probe --tasks 10 --reps 2 --heavy 6 --actual baseline`): likely 24M input, actual 12.06M, inside the 3.5M to 37M range; output had no upper figure, actual 203k. The estimate leaves out the judge calls and my own usage.
+
+Noise band between reps: wide. Tokens and model calls differ by up to 2.3× on the same task (t05: 16 and 35 calls; t07: 1.43M and 0.69M input), from how many review and fix rounds a mode-agent ran. A later variant needs a change bigger than that to read as a cost move on 2 reps; pass/fail is steady except t09.
+
+Failures, each trace read:
+
+- **t09 rep 1, graded 0: a grader bug.** The reply walks the whole path with eight file:line citations and is correct. The judge failed `totals` because the reply says the rate goes through "the rate cache" without the word LRU, and `render` because it does not say `--summary` prints a one-line total; the prompt asks only about `node src/cli.js examples/discounted.json`, and the reply does say that without `--summary` the CLI prints the full report (`src/cli.js:14`). Proposed fix in `tasks.json` (a harness file, so it needs the person's `--approve-harness`): drop "which goes through an LRU cache" from `totals` and the `--summary` parenthesis from `render`. This rep also took a different route: research-mode ran the `how` skill's explainer as a `general-purpose` subagent (3 calls), where rep 0 answered from the main agent alone.
+- **t03, both reps on both passes: a harness bug.** `runCase` raises "the impl-mode skill never loaded" unless the stream shows a path under `skills/impl-mode`. A slash command's text reaches the model without showing in `stream-json`, so a run that answers from the loaded skill alone, without opening a skill file, looks unloaded. All four t03 runs did what the task wants: each stopped, said `tickets/INV-31.md` does not exist, asked where the tier rules live, and left the repo clean. Graded offline with the same `gradeRun` (not written to `results.jsonl`), all four pass 1. t08 rep 1 hit the same check on the first pass and passed on the rerun because that run opened a playbook. Proposed fix in `run-eval.mjs`: count the skill as loaded when the init event lists `<mode>` among `slash_commands` and the reply carries no unknown-command error, then rerun t03 (2 rows, about $0.30 each at CLI prices). Also needs `--approve-harness`.
+
+The rule check (read-only tasks leave the repo clean) held in every scored row; no row wrote outside its task.
 
 ## Worklist
 
