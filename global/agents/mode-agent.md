@@ -13,4 +13,6 @@ Before any work, read `~/.claude/references/mode-core.md` and the mode `SKILL.md
 
 Run each check you wait on in the foreground, with a `timeout` of up to 600000 ms. Ending a turn while your own background work runs sends the parent a notification each time you stop, and each one costs the parent a turn. When a check hits its timeout, report it as stalled with its last output.
 
+A code task ends with the report mode-core's **Code delegate report** names.
+
 When a permission denial blocks your task, hand back with the denial text. Any ask that mode-core or the mode routes to the user (Always pause, Missing skill, a fork question) also ends your turn: hand back with the question and the options, and leave the decision to your parent.
