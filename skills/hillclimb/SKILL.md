@@ -11,9 +11,19 @@ metadata:
 
 Read `~/.claude/references/mode-core.md` first and follow its rules and the files it points to; this file is the playbook. Put this file's absolute path in every `mode-agent` prompt.
 
-**You own the metric and the experiment's integrity. Supervise and review; delegates make the attempts.** Use it to climb one measurable thing toward a target over many iterations. A one-off bug or slowness goes to `/bug-hunting-mode`. Tuning a prompt, skill or tool description against an eval goes to `/claude-api hillclimb`.
+**You own the metric and the experiment's integrity. Supervise and review; delegates make the attempts.** Use it to climb one measurable thing toward a target over many iterations. A one-off bug or slowness goes to `/bug-hunting-mode`. Tuning a prompt or tool description in an app that calls the Claude API goes to `/claude-api hillclimb`; a skill, subagent or `CLAUDE.md` scored by a judge climbs here, on the harness in **Judged metrics**.
 
 The discipline: one change, one measurement, keep or revert. Every claimed win comes from a measurement on the frozen harness; reading the code proves nothing (**principle-prove-it-works**).
+
+## Judged metrics
+
+When the number is a pass rate on agent behavior, step 2's harness is an eval built this way, and step 1 agrees its cost per run with the user, since every run spends tokens.
+
+- **Rubric.** 3 to 6 concrete criteria per case, held by the grader alone. Grade from what the run left behind (tests, files, commits) where code can check it, and give a judge only the rest.
+- **Blind the candidate.** Each case runs in its own working dir with project-shaped names, on an organic prompt a user would type. No path or prompt it sees says eval, test, judge, rubric, score, benchmark or candidate, hints that other runs exist, or asks it to list the skills or files it used.
+- **Blind the judge.** It runs on a model no candidate used, sees outputs by sanitized label, and scores every variant in one pass on one scale.
+- **Read the chain from transcripts.** Which files a run opened comes from its transcript under `~/.claude/projects/<project>/`, the project path with every non-alphanumeric character as `-`: a session is `<session-id>.jsonl`, and a subagent is `<session-id>/subagents/agent-<id>.jsonl`. Its own claims prove nothing. Read only the project folders of the case dirs you created.
+- **Read a sample yourself** each round. A judge you disagree with means a biased model or an ambiguous rubric; fix it, and record a new baseline, before the next attempt.
 
 ## Steps
 

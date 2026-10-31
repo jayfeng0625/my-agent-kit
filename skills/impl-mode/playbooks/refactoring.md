@@ -11,4 +11,6 @@
 7. Keep the change only if it lowers reader load somewhere (**principle-minimize-reader-load**). Otherwise revert it.
 8. Order the commits: subtraction, then reshape, then follow-on cleanup. Meet every item in **Verify**.
 
+**Visual parity.** A reshape that must look the same (a styling-system migration, a second implementation of a component) pins with a screenshot harness through the control skill, across the component's states, plus the target when matching two implementations. The baseline is the spec: a diff never passes through a harness edit, a baseline edit or a component restructure, and a baseline that looks wrong is an ask. Migrate shared primitives first, then one component at a time, and a nonzero image diff fails step 6. Step 7 skips a migration the user asked for.
+
 **Reply:** add the pin, the equivalence proof, the reader-load delta, and what got reverted.

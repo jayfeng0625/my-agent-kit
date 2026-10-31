@@ -10,7 +10,8 @@ merge_guidance: |
   A partial port, so `diff` shows every upstream file the port leaves out as deleted; read only
   SKILL.md, playbooks/orchestrate.md, playbooks/autonomous-run.md, playbooks/multi-phase-plan.md
   (local playbooks/plan.md), playbooks/autopilot-full.md and autopilot-stack.md (folded into
-  playbooks/run.md), and scripts/check-plan.mjs (tests at .claude/checks/check-plan.test.ts).
+  playbooks/run.md), playbooks/babysit.md, playbooks/pause-safely.md (the User stop trigger in SKILL.md),
+  and scripts/check-plan.mjs (tests at .claude/checks/check-plan.test.ts).
   Cursor's `Task` is `Agent`, poteto-agent is mode-agent, "reasoning level and fast or standard
   speed" is effort per mode-subagents, cloud VMs are worktrees, the Project tracker and store are the
   tracker per Ticket states and the run directory, PR and CI subscriptions are the `Monitor` tool.
@@ -24,3 +25,9 @@ merge_guidance: |
   Orchestrate supervises through worker notifications and branch heads, with PR state and Monitor
   only under the `prs` grant, and its wording follows AGENTS.md's Writing rules. Autonomous run's
   side branches get a verifier, and its land.sh lists the run and side branches.
+  Babysit uses `gh` (or the project's forge) and Monitor in place of watch-pr and Origin, drops the `check`
+  mode (research-mode's Investigation) and `background`, folds bugbot-triage.md into its steps 4 and 7,
+  sends each fix through a lane and Run step 7, and pushes under the `babysit` grant in Gates.
+  Pause safely is the User stop trigger: the tracker and run directory replace the resume note.
+  Upstream's Eval playbook lives in the local hillclimb skill's Judged metrics, and Visual parity
+  in impl-mode's Refactoring playbook; neither skill has a manifest.

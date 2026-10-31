@@ -13,7 +13,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 ## Playbooks
 
 - **Feature** (`playbooks/feature.md`). New or changed behavior from a ticket. A batch of tickets runs one lane per ticket, each lane this playbook, under mode-subagents' Fan-out rule.
-- **Refactoring** (`playbooks/refactoring.md`). A behavior-preserving change to structure: rename, extract, inline, dedupe, move.
+- **Refactoring** (`playbooks/refactoring.md`). A behavior-preserving change to structure: rename, extract, inline, dedupe, move, or a migration held to visual parity.
 - **Trim** (`playbooks/trim.md`). Simplify or review an existing diff or PR down to what the ticket and the proof need.
 - **Prototype** (`playbooks/prototype.md`). A throwaway sketch that settles a design or behavior fork by observing it. mode-core's Observe forks runs through it.
 
