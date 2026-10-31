@@ -43,13 +43,16 @@ function git(repo: string, ...args: string[]): string {
 }
 
 // The environment the user runs Claude Code in every day (their HOME, ~/.claude, login and
-// provider settings), minus the launching session's ids and GitHub tokens, with `path` as PATH.
+// provider settings), minus the launching session's ids and GitHub tokens, with `path` as PATH
+// and the 5-minute prompt cache.
 const LAUNCHER_VAR =
   /^(CLAUDECODE|CLAUDE_PID|CLAUDE_EFFORT|CLAUDE_TMPDIR|CLAUDE_CODE_(\w*SESSION\w*|ENTRYPOINT|EXECPATH|MESSAGING_\w+|SSE_PORT|TMPDIR)|GH_TOKEN|GITHUB_TOKEN|NODE_TEST_CONTEXT)$/;
 export function evalEnv(path: string): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = {};
   for (const [key, value] of Object.entries(process.env)) if (!LAUNCHER_VAR.test(key)) env[key] = value;
   env.PATH = path;
+  // A run ends in minutes and nothing reuses its cache, so it writes at the 5-minute price.
+  env.FORCE_PROMPT_CACHING_5M = "1";
   return env;
 }
 

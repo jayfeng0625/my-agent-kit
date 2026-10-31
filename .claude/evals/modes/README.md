@@ -6,7 +6,7 @@ Scores impl-mode, bug-hunting-mode, research-mode, ops-mode and dark-factory-mod
 - `tasks.json`: the requests and what done means for each.
 - `grade.ts` and `hidden/`: the graders. Code tasks run the suite and hidden tests on every new commit and keep the best; read-only tasks fail on any commit or tracked edit, and a Sonnet judge checks the facts the reply must state.
 - `graders.test.ts`: proves, with no model, that each grader passes a reference fix and fails doing nothing and a plausible wrong fix. `npm test` runs it.
-- `run-eval.mjs`: the runner, from `/claude-api build-eval`'s scaffold. Each case runs in the user's own environment: their `HOME`, `~/.claude`, login, plugins and hooks. It strips only the launching session's `CLAUDE_CODE_*` ids and GitHub tokens, puts a `gh` that always fails first on `PATH`, and blocks `git push`, web, MCP and `ScheduleWakeup`.
+- `run-eval.mjs`: the runner, from `/claude-api build-eval`'s scaffold. Each case runs in the user's own environment: their `HOME`, `~/.claude`, login, plugins and hooks. It strips only the launching session's `CLAUDE_CODE_*` ids and GitHub tokens, puts a `gh` that always fails first on `PATH`, sets `FORCE_PROMPT_CACHING_5M=1` (a run ends long before a 1-hour cache would pay off), and blocks `git push`, web, MCP and `ScheduleWakeup`.
 
 The runs read the kit through `~/.claude`, so first point every kit skill there at this checkout with `sh .claude/evals/modes/link-skills.sh`; the runner refuses to start until each one resolves here. Undo it with `sh ~/.claude/skills-eval-backup/restore.sh`. Each run records the checkout's HEAD and a hash of any uncommitted change under `skills/` and `global/`.
 

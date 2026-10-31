@@ -373,6 +373,7 @@ describe("eval environment", () => {
       const env = evalEnv("/bin");
       for (const k of Object.keys(keep)) assert.equal(env[k], process.env[k], k);
       for (const k of Object.keys(drop)) assert.equal(env[k], undefined, k);
+      assert.equal(env.FORCE_PROMPT_CACHING_5M, "1");
     } finally {
       for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k];
     }
