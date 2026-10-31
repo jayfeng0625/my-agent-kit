@@ -1,5 +1,5 @@
 interface:
   display_name: "Sharpen"
-  short_description: "Sharpen a task before starting on it"
+  short_description: "Deepen a task, then rewrite the prompt"
 policy:
   allow_implicit_invocation: false

@@ -1,0 +1,33 @@
+repo: https://github.com/cursor/plugins
+path: pstack/skills/poteto-mode
+commit: c742dd61706fbacc1b95f1a20b7b988cf096ce6c
+author: Lauren Tan
+license: MIT
+tags: [pstack, workflow]
+extra_files:
+  playbooks/plan.md: pstack/skills/poteto-mode/playbooks/multi-phase-plan.md
+merge_guidance: |
+  A partial port, so `diff` shows every upstream file the port leaves out as deleted; read only
+  SKILL.md, playbooks/orchestrate.md, playbooks/autonomous-run.md, playbooks/multi-phase-plan.md
+  (local playbooks/plan.md), playbooks/autopilot-full.md and autopilot-stack.md (folded into
+  playbooks/run.md), playbooks/babysit.md, playbooks/pause-safely.md (the User stop trigger in SKILL.md),
+  and scripts/check-plan.mjs (tests at .claude/checks/check-plan.test.ts).
+  Cursor's `Task` is `Agent`, poteto-agent is mode-agent, "reasoning level and fast or standard
+  speed" is effort per mode-subagents, cloud VMs are worktrees, the Project tracker and store are the
+  tracker per Ticket states and the run directory, PR and CI subscriptions are the `Monitor` tool.
+  Merges, pushes and `gh` writes stay with the user and the runner per Gates, so owners rebase
+  and report in place of pushing or merging. No sub-coordinators: a mode-agent cannot spawn.
+  Sub-coordinator lines drop. SKILL-level triggers land in mode-core (first message) and mode-subagents (background
+  steer and resume, effort fallback), and the blocking rule lives in Roles and context.
+  The Reviewer bullet's "whatever its size" is local: impl-mode's Verify item 3 lets a diff of at
+  most 15 changed lines skip its review, and a lane never does. The runner spawns it so it runs
+  in a context independent of the lane.
+  Orchestrate supervises through worker notifications and branch heads, with PR state and Monitor
+  only under the `prs` grant, and its wording follows AGENTS.md's Writing rules. Autonomous run's
+  side branches get a verifier, and its land.sh lists the run and side branches.
+  Babysit uses `gh` (or the project's forge) and Monitor in place of watch-pr and Origin, drops the `check`
+  mode (research-mode's Investigation) and `background`, folds bugbot-triage.md into its steps 4 and 7,
+  sends each fix through a lane and Run step 7, and pushes under the `babysit` grant in Gates.
+  Pause safely is the User stop trigger: the tracker and run directory replace the resume note.
+  Upstream's Eval playbook lives in the local hillclimb skill's Judged metrics, and Visual parity
+  in impl-mode's Refactoring playbook; neither skill has a manifest.

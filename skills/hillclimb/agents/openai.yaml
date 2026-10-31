@@ -1,0 +1,5 @@
+interface:
+  display_name: "Hillclimb"
+  short_description: "Climb one measured number toward a target, keeping or reverting each attempt"
+policy:
+  allow_implicit_invocation: false

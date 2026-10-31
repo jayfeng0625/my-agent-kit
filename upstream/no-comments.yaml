@@ -15,3 +15,4 @@ merge_guidance: |
   keep it here, since the link it names is manual. Upstream's "reasoning level and fast or
   standard speed" becomes "effort".
   Step 1 spawns it with the Agent tool by `subagent_type: "comment-sicko"`.
+  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`".

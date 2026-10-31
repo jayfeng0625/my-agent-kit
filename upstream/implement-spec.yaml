@@ -1,11 +1,10 @@
 repo: https://github.com/mattpocock/skills
 path: skills/engineering/implement-spec
-commit: 49dd158d1076134a641b33efb035946536778336
+commit: a496f5513d4a4cf889bc48e189e579f4b0bdf6aa
 author: Matt Pocock
 license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
-  `/setup-matt-pocock-skills` becomes `/setup-issue-tracker` (see setup-issue-tracker).
-  `code-review` becomes `standards-review` (see standards-review).
-  Step 4's tdd call adds "taking the ticket's acceptance criteria as tdd's pre-agreed seams"
-  (2026-10-18): tdd asks the user to confirm seams, and a background implementer cannot ask.
+  `/setup-matt-pocock-skills` becomes `/setup-issue-tracker`.
+  `code-review` becomes `standards-review`.
+  Step 4's tdd call adds "taking the ticket's acceptance criteria as tdd's pre-agreed seams": a background implementer cannot confirm seams with the user.

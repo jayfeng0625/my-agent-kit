@@ -4,16 +4,9 @@ Agent skills, and the global Claude Code setup that goes with them.
 
 ## What's in the repo
 
-- `skills/`: 75 skills. Each one installs through the [skills CLI](https://github.com/vercel-labs/skills) for Claude Code, Codex, and other agents.
-- `global/`: the files that link into `~/.claude/`.
-	- `CLAUDE.md`: the output rule and ways of working that load in every session.
-	- `references/read-before-implementation.md`: the red, green, review, refactor, and scope steps to follow before implementing.
-	- `references/mode-core.md`: the todolist, autonomy, subagent, reply, and comment rules that every `-mode` skill loads.
-	- `pstack-models.md`: the model and effort for each subagent role that the `how` and `why` skills and the `-mode` skills spawn.
-	- `agents/`: the subagents that skills spawn by type. `mode-agent` lives here; `comment-sicko` and `poteto-agent` link into their skills.
-- `upstream/`: one manifest per skill pulled from another repo. A manifest records the source repo and the commit the skill was last merged from. Some also carry merge guidance: the local changes that the next merge must keep.
-
-To check the skill count, run `ls skills | wc -l`.
+- `skills/`: the skills, each installable through the [skills CLI](https://github.com/vercel-labs/skills) for Claude Code, Codex, and other agents.
+- `global/`: the files that link into `~/.claude/`: `CLAUDE.md`, the shared `references/` the `-mode` skills load, `pstack-models.md` (the model per subagent role), and `agents/`.
+- `upstream/`: one manifest per skill pulled from another repo, naming its source, the commit it was last merged from, and any local changes the next merge must keep.
 
 ## Install the skills
 
@@ -47,13 +40,13 @@ Restart Claude Code to load the new `CLAUDE.md` and subagents. The links point a
 
 ## Credits
 
-Most skills come from other repos. Each pulled skill keeps its upstream `LICENSE`, and its manifest names the author.
+Most skills come from other repos. Each pulled skill keeps its upstream `LICENSE`, and its manifest in `upstream/` names the author.
 
-- [mattpocock/skills](https://github.com/mattpocock/skills), by Matt Pocock: 23 skills.
-- [cursor/plugins](https://github.com/cursor/plugins): 41 pstack skills by Lauren Tan, and 3 cursor-team-kit skills by Eric Zakariasson.
+- [mattpocock/skills](https://github.com/mattpocock/skills), by Matt Pocock.
+- [cursor/plugins](https://github.com/cursor/plugins): pstack skills by Lauren Tan, and cursor-team-kit skills by Eric Zakariasson.
 - [lisbeth718/agent-setup](https://github.com/lisbeth718/agent-setup), by Mari Luukkainen: the `brief` skill. The output rule and em-dash line in `global/CLAUDE.md`, and `global/references/read-before-implementation.md`, adapt the same repo.
 
-`mod-it`, `pr`, `impl-mode`, `research-mode`, `bug-hunting-mode`, `dark-factory-mode`, and `ops-mode` are local skills. The five modes adapt pstack's poteto-mode playbooks and keep its MIT `LICENSE`, and `global/references/mode-core.md` and `global/agents/mode-agent.md` adapt the same skill. Each mode needs the global files linked, since it loads `mode-core.md` and spawns `mode-agent`.
+The `-mode` skills and `hillclimb` adapt pstack's poteto-mode playbooks and keep its MIT `LICENSE`, as do the mode references and `mode-agent` in `global/`. They need the global files linked, since they load `mode-core.md` and spawn `mode-agent`.
 
 ## License
 

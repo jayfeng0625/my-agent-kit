@@ -8,12 +8,12 @@ metadata:
 
 # Impl mode
 
-Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy, subagent, reply and comment rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
+Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy, message and comment rules and the code delegate report, and points to the subagent rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
 
 ## Playbooks
 
-- **Feature** (`playbooks/feature.md`). New or changed behavior from a ticket. A batch of tickets runs one lane per ticket, each lane this playbook, under mode-core's Fan-out rule.
-- **Refactoring** (`playbooks/refactoring.md`). A behavior-preserving change to structure: rename, extract, inline, dedupe, move.
+- **Feature** (`playbooks/feature.md`). New or changed behavior from a ticket. A batch of tickets runs one lane per ticket, each lane this playbook, under mode-subagents' Fan-out rule.
+- **Refactoring** (`playbooks/refactoring.md`). A behavior-preserving change to structure: rename, extract, inline, dedupe, move, or a migration held to visual parity.
 - **Trim** (`playbooks/trim.md`). Simplify or review an existing diff or PR down to what the ticket and the proof need.
 - **Prototype** (`playbooks/prototype.md`). A throwaway sketch that settles a design or behavior fork by observing it. mode-core's Observe forks runs through it.
 
@@ -21,7 +21,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 - **Ticket first.** Read the ticket, the decisions on its parent and related tickets, and the threads on linked PRs, verbatim. With no ticket, ask where the requirement lives. Each plan item maps to a ticket sentence. A capability the ticket does not ask for goes to the user as an option, and no brief asks for it until the user accepts it.
 - **Any code.** Name the data shape first and pick its organizing structure per **principle-model-the-domain**. Use the plainest type that holds it.
-- **Code crossing a function boundary.** The **codebase-design** skill before implementing.
+- **Function boundary.** Code crossing a function boundary takes the **codebase-design** skill before implementing.
 - **`.ts` or `.tsx`.** The **typescript-best-practices** skill.
 - **Any test.** The **tdd** skill, plus **Tests** below.
 - **A bug surfaced mid-task.** The **diagnosing-bugs** skill's red loop and minimal repro before any fix. The fix then follows Feature, with the red loop as its test.
@@ -29,7 +29,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 - **Contested design.** The **grilling** skill before shipping.
 - **A slice that needs a migration.** The migration ships in the slice, built with the project's migration tooling under **Make Operations Idempotent** and **Outcome-Oriented Execution**: a dry run, resumable, and a parity check that prints its target. Prove it locally, and ask when the project names no way to. Commit its runbook with the code; its environment runs go through `/ops-mode` Migration. The contract phase is a later slice while old and new code run side by side during rollout, and joins this slice when the deploy is atomic.
 - **Prose.** The **unslop** skill. Docs and commit messages also take `/technical-writing`. PR bodies take the **pr** skill alone.
-- **Before commit.** `/deslop`, then `/simplify` over the diff. **Before review.** `/no-comments`.
+- **Before commit.** `/deslop` over the diff.
 - **Review findings** you write: tag each `blocking` or `not blocking` for merge, and name the runtime condition the tag depends on, such as a flag being on or a caller existing.
 
 ## Principles
@@ -61,8 +61,8 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 ## Tests
 
-- A change that adds no logic of its own gets no new test, no exported helper and no test-only switch. That covers a pure deletion, a wrapper that only hands values to a library, and a branch the current config never takes. Prove it with the existing suite or a grep that finds no remaining reference. An untaken branch's tests wait for the ticket that turns it on.
-- **Prove each test red.** Break the behavior it guards with a one-line change, run it, see it go red, and revert, with `node <this skill dir>/scripts/break-proof.mjs <file> <search> <replace> -- <test command>` (or `--table <breaks.tsv>`, whose search and replace cells decode `\n`, `\t` and `\\`, so a search can add a neighbouring line to match once). It stops a command after 300 seconds. For a slower suite, pass a larger `--timeout <seconds>` and run the script in the background, since a foreground Bash call ends at 600 seconds. The script restores the file from its own copy. Run it in a worktree no other session edits. Keep each break and its red output for the PR.
+- A change that adds no logic of its own gets no new test, no exported helper and no test-only switch. A Refactoring pin is exempt. The rule covers a pure deletion, a wrapper that only hands values to a library, and a branch the current config never takes. Prove it with the existing suite or a grep that finds no remaining reference. An untaken branch's tests wait for the ticket that turns it on.
+- **Prove each test red.** Break the behavior it guards with a one-line change, run it, see it go red, and revert, with `node <this skill dir>/scripts/break-proof.mjs [--timeout <seconds>] <file> <search> <replace> -- <test command>` (or `--table <breaks.tsv>`, whose search and replace cells decode `\n`, `\t` and `\\`, so a search can add a neighbouring line to match once). It stops a command after 300 seconds. For a slower suite, pass a larger `--timeout <seconds>`, which the script accepts only as its first argument, and run the script in the background, since a foreground Bash call ends at 600 seconds. A `mode-agent` runs checks in the foreground, so in a delegate split a slow suite into `--table` rows that each finish under 600 seconds. The script restores the file from its own copy. Run it in a worktree no other session edits. Keep each break and its red output for the PR.
   - An absence assertion ("no difference") needs inputs that give the code a reason to act; assert that reason in the same test and break the input as well.
   - A normalising or comparing function: break each step in turn. A step that stays green gets deleted or gets the case that needs it.
 - Assert what the code's users observe. Put a logged value's logic (a diff, a cap, a size) in a function that returns it, and test that function. Leave log wording, log calls and internal mocks out of assertions.
@@ -80,7 +80,7 @@ Done means all four hold.
 
 1. **One real proof.** Run the change on the real artifact the ticket names, with the verify or drive tooling the project context names; ask which surface and tool if it names none. Behavior tests count only when the change has no runnable surface. One proof that would go red if the change were wrong, then stop. An inconclusive result, or a proof on the wrong surface, is a fail to flag.
 2. **Tests proven red.** Each new or changed test went red under a break.
-3. **Fresh review.** A fresh-context `mode-agent` runs `/code-review` over the diff. Fix accepted findings and re-review, until a round comes back clean or after 3 rounds.
-4. **Hand-off.** A reviewed, committed branch and a PR body written with the **pr** skill. The user pushes and opens the PR.
+3. **Fresh review.** A diff of at most 15 changed lines outside tests, with no added comment or suppression, skips this item, and the Reply says so. For any other diff, run `/code-review` over the diff yourself; it reviews in its own forked context. Then flag each comment the diff adds that mode-core's **Comments** rule cuts, and each lint or type suppression whose rule guards correctness. Fix accepted findings. Run another round only after fixing a correctness finding, at most 3 rounds; a correctness finding still open after round 3 is a fail to flag.
+4. **Hand-off.** A committed branch, reviewed per item 3, and a PR body written with the **pr** skill. The user pushes and opens the PR.
 
 **Reply:** what you built and for whom, what you chose and why, the diff stat, a VERIFIED list (ran it, saw the output) and a REASONED list (read it, believe it), and a Deferred list of improvements you noticed and skipped.
