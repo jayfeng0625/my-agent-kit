@@ -20,3 +20,6 @@ merge_guidance: |
   steer and resume, effort fallback), and the blocking rule lives in Roles and context.
   The Reviewer bullet's "whatever its size" is local: impl-mode's Verify item 3 lets a diff of at
   most 15 changed lines skip its review, and a lane never does.
+  Orchestrate supervises through worker notifications and branch heads, with PR state and Monitor
+  only under the `prs` grant, and its wording follows AGENTS.md's Writing rules. Autonomous run's
+  side branches get a verifier, and its land.sh lists the run and side branches.
