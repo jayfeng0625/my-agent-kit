@@ -1,9 +1,0 @@
-{
-  "customer": "Northwind Traders",
-  "region": "CA",
-  "lines": [
-    { "sku": "PEN-01", "description": "Gel pen, black", "qty": 12, "unitPrice": 1.15 },
-    { "sku": "PAD-07", "description": "Legal pad", "qty": 3, "unitPrice": 4.99 },
-    { "sku": "INK-22", "description": "Ink cartridge", "qty": 1, "unitPrice": 23.5 }
-  ]
-}

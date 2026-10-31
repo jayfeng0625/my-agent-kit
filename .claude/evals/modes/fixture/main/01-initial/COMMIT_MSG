@@ -1,4 +1,0 @@
-Initial invoicer: totals and a CLI
-
-Parses an invoice JSON, totals it in integer cents, and prints the
-total. Tax is applied once to the invoice subtotal.

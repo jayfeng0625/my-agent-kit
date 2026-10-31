@@ -1,8 +1,0 @@
-Round tax per line instead of once on the subtotal
-
-Finance reconciles each printed invoice line against the ERP export,
-which stores tax per line. Rounding once on the subtotal made the sum of
-the per-line tax in the ERP differ from our printed tax by up to a cent
-per line, and every mismatch opened a manual reconciliation. Tax is now
-computed and rounded on each line, and the invoice tax is the sum of the
-lines. See INV-7.

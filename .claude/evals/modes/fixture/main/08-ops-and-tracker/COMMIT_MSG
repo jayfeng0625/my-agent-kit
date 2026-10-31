@@ -1,4 +1,0 @@
-Add the ops CLI and the local issue tracker
-
-The team moved ticket status into a tracker and runs every environment
-through one CLI, so agents and people read the same records.

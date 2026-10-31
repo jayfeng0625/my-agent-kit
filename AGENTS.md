@@ -59,8 +59,6 @@ Repo-only skills live in `.claude/skills/`, with their scripts beside them. The 
 
 Repo checks that are not skills live in `.claude/checks/` as `*.test.ts` files, which `npm test` runs.
 
-The behavior eval for the `-mode` skills lives in `.claude/evals/modes/` (see its README). Its runs spend model tokens, so each one needs the user's yes; results go to the ignored `.claude/hillclimb/`.
-
 Node runs the TypeScript directly, with no build step; `tsconfig.json` allows erasable syntax only. Check with `npm test` and `npm run typecheck`.
 
 ## Agent skills

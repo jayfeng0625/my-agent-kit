@@ -1,9 +1,0 @@
-{
-  "customer": "Contoso",
-  "region": "NY",
-  "discountPct": 10,
-  "lines": [
-    { "sku": "DESK-2", "description": "Standing desk", "qty": 2, "unitPrice": 349 },
-    { "sku": "LAMP-9", "description": "Desk lamp, \"warm\" bulb", "qty": 4, "unitPrice": 24.75 }
-  ]
-}
