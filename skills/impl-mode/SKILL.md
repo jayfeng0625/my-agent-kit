@@ -8,7 +8,7 @@ metadata:
 
 # Impl mode
 
-Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy and message rules, and points to the subagent rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
+Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy, message and comment rules and the code delegate report, and points to the subagent rules. Playbooks live in `playbooks/` beside this file. Put this file's absolute path in every `mode-agent` prompt.
 
 ## Playbooks
 

@@ -19,7 +19,8 @@ merge_guidance: |
   Sub-coordinator lines drop. SKILL-level triggers land in mode-core (first message) and mode-subagents (background
   steer and resume, effort fallback), and the blocking rule lives in Roles and context.
   The Reviewer bullet's "whatever its size" is local: impl-mode's Verify item 3 lets a diff of at
-  most 15 changed lines skip its review, and a lane never does.
+  most 15 changed lines skip its review, and a lane never does. The runner spawns it so it runs
+  in a context independent of the lane.
   Orchestrate supervises through worker notifications and branch heads, with PR state and Monitor
   only under the `prs` grant, and its wording follows AGENTS.md's Writing rules. Autonomous run's
   side branches get a verifier, and its land.sh lists the run and side branches.
