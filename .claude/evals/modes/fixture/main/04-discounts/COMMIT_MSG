@@ -1,0 +1,4 @@
+Add invoice-level percentage discounts (INV-9)
+
+An invoice may carry discountPct. Each line's discount is rounded to
+the cent, and totals carry the discount alongside gross and tax.
