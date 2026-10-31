@@ -152,9 +152,15 @@ import { evalEnv } from './grade.ts';
 const EVAL_DIR = dirname(fileURLToPath(import.meta.url));
 const KIT_ROOT = resolve(EVAL_DIR, '../../..');
 let caseSeq = 0;
-// dark-factory-mode may name its ~/.dark-factory/<repo> folder after the package ("invoicer")
-// and not the checkout, so its cases run one at a time and each run's folder moves out on grading.
+// dark-factory-mode may name its ~/.dark-factory/<repo> folder after the package ("invoicer"),
+// so its cases take turns, and each run's folder moves into its case dir when the run ends.
 let factoryTail = Promise.resolve();
+function factoryTurn() {
+  const prev = factoryTail;
+  let release;
+  factoryTail = new Promise(res => { release = res; });
+  return prev.then(() => release);
+}
 let kitSnapshot = null;
 
 // Runs read the kit through ~/.claude, so each kit skill and global link there must resolve
@@ -231,37 +237,40 @@ function summarize(events) {
   return { by_agent, model_calls: calls.size, transcript };
 }
 
-async function runCase(input, ctx) {
-  if (!input.tags.includes('dark-factory-mode')) return runCaseLocked(input, ctx);
-  const prev = factoryTail;
-  let release;
-  factoryTail = new Promise(res => { release = res; });
-  await prev;
+async function runCase(input, ctx, deadline) {
+  const seq = caseSeq++;
+  const dir = join(ctx.work, ctx.variant, `${input.id}-${process.pid}-${seq}`);
+  // A unique checkout name keeps a plan folder named after the checkout apart from other cases'.
+  const repo = join(dir, `invoicer-${process.pid}-${seq}`);
+  if (!input.tags.includes('dark-factory-mode')) return runIn(input, ctx, dir, repo, deadline);
+  const folders = [...new Set([basename(repo), 'invoicer'])].map(name => [name, join(homedir(), '.dark-factory', name)]);
+  const left = folders.filter(([, f]) => existsSync(f)).map(([, f]) => f);
+  if (left.length) {
+    const e = new Error(`${left.join(', ')} is left from an earlier run; move it away before this case runs`);
+    e.failure_class = 'harness';
+    throw e;
+  }
+  let run;
   try {
-    const run = await runCaseLocked(input, ctx);
-    // The plans move into the case dir, and the grader reads the reply with its paths moved too.
-    run.gradeReply = run.reply;
-    for (const name of new Set([basename(run.repo), 'invoicer'])) {
-      const factory = join(homedir(), '.dark-factory', name);
-      if (!existsSync(factory)) continue;
-      const kept = join(run.workdir, 'dark-factory', name);
-      cpSync(factory, kept, { recursive: true });
-      rmSync(factory, { recursive: true, force: true });
-      run.gradeReply = run.gradeReply.replaceAll(`~/.dark-factory/${name}`, kept).replaceAll(factory, kept);
-    }
+    run = await runIn(input, ctx, dir, repo, deadline);
     return run;
   } finally {
-    release();
+    // The plans move into the case dir even when the run failed, and the grader reads the
+    // reply with its paths moved too.
+    if (run) run.gradeReply = run.reply;
+    for (const [name, factory] of folders) {
+      if (!existsSync(factory)) continue;
+      const kept = join(dir, 'dark-factory', name);
+      cpSync(factory, kept, { recursive: true });
+      rmSync(factory, { recursive: true, force: true });
+      if (run) run.gradeReply = run.gradeReply.replaceAll(`~/.dark-factory/${name}`, kept).replaceAll(factory, kept);
+    }
   }
 }
 
-async function runCaseLocked(input, ctx) {
+async function runIn(input, ctx, dir, repo, deadline) {
   const kit = prepareKit(ctx);
-  const seq = caseSeq++;
-  const dir = join(ctx.work, ctx.variant, `${input.id}-${process.pid}-${seq}`);
   rmSync(dir, { recursive: true, force: true });
-  // A unique checkout name keeps a plan folder named after the checkout apart from other cases'.
-  const repo = join(dir, `invoicer-${process.pid}-${seq}`);
   buildFixture(repo, input.ops);
   const rev = ref => execFileSync('git', ['rev-parse', ref], { cwd: repo, encoding: 'utf8' }).trim();
   const base = { main: rev('main'), taxExempt: rev('tax-exempt') };
@@ -278,7 +287,9 @@ async function runCaseLocked(input, ctx) {
   const child = spawn('claude', args, { cwd: repo, env: evalEnv(kit.path), stdio: ['ignore', 'pipe', 'pipe'] });
   child.stdout.pipe(out);
   child.stderr.pipe(err);
-  const killAt = ctx.timeoutS > 0 ? setTimeout(() => child.kill('SIGKILL'), Math.max(1, ctx.timeoutS - 60) * 1000) : null;
+  // The kill lands a minute before the case's ceiling, so no run outlives its case.
+  const killAt = Number.isFinite(deadline)
+    ? setTimeout(() => child.kill('SIGKILL'), Math.max(1000, deadline - Date.now() - 60_000)) : null;
   const code = await new Promise(res => child.on('close', res));
   if (killAt) clearTimeout(killAt);
   await new Promise(res => out.end(res));
@@ -462,7 +473,7 @@ async function withBackoff(fn, retry, deadline = Infinity, tries = 5) {
     try { return await fn(); } catch (e) {
       const status = e?.status ?? e?.response?.status;
       const transient = status === 429 || status === 529 || (status >= 500 && status < 600)
-        || /overloaded|rate.?limit/i.test(String(e?.message ?? ''));
+        || /overloaded|rate.?limit|API Error: 5\d\d/i.test(String(e?.message ?? ''));
       if (!transient || attempt >= tries - 1) throw e;
       const delay = Math.min(60_000, 1000 * 2 ** attempt) * (0.5 + Math.random());
       // Never start a retry that would outlive the case's wall-clock ceiling - 
@@ -624,113 +635,124 @@ async function main() {
   async function worker() {
     while (i < tasks.length) {
       const { c, rep } = tasks[i++];
-      const safeId = pathSafeId(c.id);
-      const t0 = Date.now();
-      let lastRun = null;    // survives into the catch - billed spend on a failed attempt
-      let rowWritten = false; // set once the results row lands - the attempt is scored
-      const deadline = args.timeoutS > 0 ? t0 + args.timeoutS * 1000 : Infinity;
-      const appRetry = { count: 0 }, judgeRetry = { count: 0 };
+      // A dark-factory case's ceiling starts once it holds the turn, and the next case waits
+      // for its run to settle, past a ceiling too.
+      const release = c.tags.includes('dark-factory-mode') ? await factoryTurn() : null;
+      let inflight = null;
       try {
-        // One ceiling over the whole case - app call, identity check, and grading - 
-        // so a hung judge stream can't hold the slot either.
-        const { run, g, latency_s } = await withTimeout((async () => {
-          let tAttempt = t0;
-          const run = await withBackoff(() => { tAttempt = Date.now(); return runCase(c, ctx); },
-            appRetry, deadline);
-          lastRun = run;
-          // latency_s = the final app attempt only; backoff sleeps, failed
-          // attempts, and judge time are excluded (retry counts are in meta).
-          const latency_s = (Date.now() - tAttempt) / 1000;
-          // Serving identity: fail loudly when the response was served by a model
-          // other than the one requested. Accept exact match or a documented
-          // alias->snapshot resolution - 'foo-latest'/'foo-0'/'foo' served as
-          // 'foo-20250101', 'foo@20250101', or 'foo-2025-01-01'. Anything else - 
-          // another snapshot of the requested pin, a sibling model, or the bare
-          // base id ('foo-latest' served as 'foo', an unversioned echo that can
-          // hide snapshot drift across rounds) - fails the attempt. Non-Anthropic
-          // id schemes (e.g. Bedrock's 'anthropic.claude-...-v1:0') need their own
-          // rule here.
-          if (ctx.model && run.model && run.model !== ctx.model) {
-            const base = ctx.model.replace(/-latest$|-0$/, '');
-            const rest = String(run.model).startsWith(base)
-              ? String(run.model).slice(base.length) : null;
-            if (!(rest != null && /^[-@](\d{8}|\d{4}-\d{2}-\d{2})$/.test(rest))) {
-              const e = new Error(`served model ${run.model} != requested ${ctx.model}`);
-              e.failure_class = 'serving_substitution';
-              throw e;
+        const safeId = pathSafeId(c.id);
+        const t0 = Date.now();
+        let lastRun = null;    // survives into the catch - billed spend on a failed attempt
+        let rowWritten = false; // set once the results row lands - the attempt is scored
+        const deadline = args.timeoutS > 0 ? t0 + args.timeoutS * 1000 : Infinity;
+        const appRetry = { count: 0 }, judgeRetry = { count: 0 };
+        try {
+          // One ceiling over the whole case - app call, identity check, and grading - 
+          // so a hung judge stream can't hold the slot either.
+          const { run, g, latency_s } = await withTimeout((async () => {
+            let tAttempt = t0;
+            const run = await withBackoff(() => { tAttempt = Date.now(); return (inflight = runCase(c, ctx, deadline)); },
+              appRetry, deadline);
+            lastRun = run;
+            // latency_s = the final app attempt only; backoff sleeps, failed
+            // attempts, and judge time are excluded (retry counts are in meta).
+            const latency_s = (Date.now() - tAttempt) / 1000;
+            // Serving identity: fail loudly when the response was served by a model
+            // other than the one requested. Accept exact match or a documented
+            // alias->snapshot resolution - 'foo-latest'/'foo-0'/'foo' served as
+            // 'foo-20250101', 'foo@20250101', or 'foo-2025-01-01'. Anything else - 
+            // another snapshot of the requested pin, a sibling model, or the bare
+            // base id ('foo-latest' served as 'foo', an unversioned echo that can
+            // hide snapshot drift across rounds) - fails the attempt. Non-Anthropic
+            // id schemes (e.g. Bedrock's 'anthropic.claude-...-v1:0') need their own
+            // rule here.
+            if (ctx.model && run.model && run.model !== ctx.model) {
+              const base = ctx.model.replace(/-latest$|-0$/, '');
+              const rest = String(run.model).startsWith(base)
+                ? String(run.model).slice(base.length) : null;
+              if (!(rest != null && /^[-@](\d{8}|\d{4}-\d{2}-\d{2})$/.test(rest))) {
+                const e = new Error(`served model ${run.model} != requested ${ctx.model}`);
+                e.failure_class = 'serving_substitution';
+                throw e;
+              }
             }
-          }
-          // Frozen pairwise reference (never regenerated): baseline/ref/<id>.*
-          let ref = null;
-          if (args.variant !== 'baseline') {
-            const p = join(refDir, safeId);
-            // A planted symlink throws (ELOOP) rather than feeding the judge
-            // its target; the case then fails loudly instead of leaking.
-            for (const ext of REF_EXTS) {
-              try { ref = readFileNoFollow(p + ext); break; }
-              catch (e) { if (e?.code !== 'ENOENT') throw e; }
+            // Frozen pairwise reference (never regenerated): baseline/ref/<id>.*
+            let ref = null;
+            if (args.variant !== 'baseline') {
+              const p = join(refDir, safeId);
+              // A planted symlink throws (ELOOP) rather than feeding the judge
+              // its target; the case then fails loudly instead of leaking.
+              for (const ext of REF_EXTS) {
+                try { ref = readFileNoFollow(p + ext); break; }
+                catch (e) { if (e?.code !== 'ENOENT') throw e; }
+              }
             }
+            const g = await withBackoff(() => gradeCase(c, run, ref, ctx), judgeRetry, deadline);
+            return { run, g, latency_s };
+          })(), args.timeoutS, `${c.id} rep${rep}`);
+          const row = {
+            prompt_id: safeId, rep, prompt: c.prompt ?? c.input ?? c.id,
+            tags: c.tags, attachments: c.attachments,
+            meta: safeId !== String(c.id) || appRetry.count || judgeRetry.count
+              ? { ...(c.meta ?? {}),
+                  ...(safeId !== String(c.id) ? { original_id: String(c.id) } : {}),
+                  ...(appRetry.count ? { retries: appRetry.count } : {}),
+                  ...(judgeRetry.count ? { judge_retries: judgeRetry.count } : {}) }
+              : c.meta,
+            model: run.model, usage: run.usage, stop_reason: run.stop_reason,
+            // The report keys on `status`, not stop_reason: a clipped answer is
+            // counted and shown but kept out of the means. runCase may set
+            // run.status to override the max_tokens rule.
+            status: run.status ?? (run.stop_reason === 'max_tokens' ? 'truncated' : 'ok'),
+            judge_model: g.judge_model ?? run.judge_model,
+            judge_usage: g.judge_usage ?? run.judge_usage,
+            latency_s, ...perfFrom(run),
+            grade: g.grade, explanation: g.explanation,
+          };
+          appendFileNoFollow(resultsPath, JSON.stringify(row) + '\n');
+          rowWritten = true; // past this point the attempt is scored - a later throw (trace write, ref freeze) must not also append an error row
+          if (run.transcript)
+            writeFileNoFollow(join(vdir, 'traces', `${safeId}_rep${rep}.json`),
+              JSON.stringify(run.transcript, null, 2));
+          // For pairwise: on the baseline run, freeze the reference output once.
+          if (args.variant === 'baseline' && run.output != null
+              && !REF_EXTS.some(ext => lexists(join(refDir, safeId) + ext))) {
+            mkdirNoFollow(refDir);
+            writeFileNoFollow(join(refDir, safeId),
+              typeof run.output === 'string' ? run.output : JSON.stringify(run.output));
           }
-          const g = await withBackoff(() => gradeCase(c, run, ref, ctx), judgeRetry, deadline);
-          return { run, g, latency_s };
-        })(), args.timeoutS, `${c.id} rep${rep}`);
-        const row = {
-          prompt_id: safeId, rep, prompt: c.prompt ?? c.input ?? c.id,
-          tags: c.tags, attachments: c.attachments,
-          meta: safeId !== String(c.id) || appRetry.count || judgeRetry.count
-            ? { ...(c.meta ?? {}),
-                ...(safeId !== String(c.id) ? { original_id: String(c.id) } : {}),
-                ...(appRetry.count ? { retries: appRetry.count } : {}),
-                ...(judgeRetry.count ? { judge_retries: judgeRetry.count } : {}) }
-            : c.meta,
-          model: run.model, usage: run.usage, stop_reason: run.stop_reason,
-          // The report keys on `status`, not stop_reason: a clipped answer is
-          // counted and shown but kept out of the means. runCase may set
-          // run.status to override the max_tokens rule.
-          status: run.status ?? (run.stop_reason === 'max_tokens' ? 'truncated' : 'ok'),
-          judge_model: g.judge_model ?? run.judge_model,
-          judge_usage: g.judge_usage ?? run.judge_usage,
-          latency_s, ...perfFrom(run),
-          grade: g.grade, explanation: g.explanation,
-        };
-        appendFileNoFollow(resultsPath, JSON.stringify(row) + '\n');
-        rowWritten = true; // past this point the attempt is scored - a later throw (trace write, ref freeze) must not also append an error row
-        if (run.transcript)
-          writeFileNoFollow(join(vdir, 'traces', `${safeId}_rep${rep}.json`),
-            JSON.stringify(run.transcript, null, 2));
-        // For pairwise: on the baseline run, freeze the reference output once.
-        if (args.variant === 'baseline' && run.output != null
-            && !REF_EXTS.some(ext => lexists(join(refDir, safeId) + ext))) {
-          mkdirNoFollow(refDir);
-          writeFileNoFollow(join(refDir, safeId),
-            typeof run.output === 'string' ? run.output : JSON.stringify(run.output));
+          ok++;
+        } catch (e) {
+          fail++;
+          if (rowWritten) {
+            // The attempt scored; only a post-row write (trace, ref) failed. An error
+            // row here would double-count the billed usage under the budget rule.
+            eprint(`  [${args.variant}] ${c.id} rep${rep} scored, but a post-row write failed: ${e?.message || e}`);
+            continue;
+          }
+          // Failed attempts are data too - but they must not occupy the (case, rep)
+          // slot in results.jsonl, or resume would never re-run them.
+          appendFileNoFollow(errorsPath, JSON.stringify({
+            prompt_id: safeId, rep,
+            ...(safeId !== String(c.id) ? { original_id: String(c.id) } : {}),
+            failure_class: e?.failure_class ?? 'error',
+            error: String(e?.message || e),
+            retries: appRetry.count, judge_retries: judgeRetry.count,
+            // Billed-but-failed spend stays countable: when the app call completed
+            // before the failure (e.g. a served-model mismatch, a judge-stage
+            // ceiling), carry its identity and usage on the error row.
+            model: lastRun?.model, usage: lastRun?.usage,
+            judge_model: e?.judge_model ?? lastRun?.judge_model,
+            judge_usage: e?.judge_usage ?? lastRun?.judge_usage,
+            latency_s: (Date.now() - t0) / 1000,
+          }) + '\n');
+          eprint(`  [${args.variant}] ${c.id} rep${rep} FAILED: ${e?.message || e}`);
         }
-        ok++;
-      } catch (e) {
-        fail++;
-        if (rowWritten) {
-          // The attempt scored; only a post-row write (trace, ref) failed. An error
-          // row here would double-count the billed usage under the budget rule.
-          eprint(`  [${args.variant}] ${c.id} rep${rep} scored, but a post-row write failed: ${e?.message || e}`);
-          continue;
+      } finally {
+        if (release) {
+          await inflight?.catch(() => {});
+          release();
         }
-        // Failed attempts are data too - but they must not occupy the (case, rep)
-        // slot in results.jsonl, or resume would never re-run them.
-        appendFileNoFollow(errorsPath, JSON.stringify({
-          prompt_id: safeId, rep,
-          ...(safeId !== String(c.id) ? { original_id: String(c.id) } : {}),
-          failure_class: e?.failure_class ?? 'error',
-          error: String(e?.message || e),
-          retries: appRetry.count, judge_retries: judgeRetry.count,
-          // Billed-but-failed spend stays countable: when the app call completed
-          // before the failure (e.g. a served-model mismatch, a judge-stage
-          // ceiling), carry its identity and usage on the error row.
-          model: lastRun?.model, usage: lastRun?.usage,
-          judge_model: e?.judge_model ?? lastRun?.judge_model,
-          judge_usage: e?.judge_usage ?? lastRun?.judge_usage,
-          latency_s: (Date.now() - t0) / 1000,
-        }) + '\n');
-        eprint(`  [${args.variant}] ${c.id} rep${rep} FAILED: ${e?.message || e}`);
       }
     }
   }

@@ -2,12 +2,12 @@
 // or a fix that breaks what the task protects, fails.
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { describe, test } from "node:test";
 import { buildFixture } from "./fixture/build.ts";
-import { type Base, gradeRun, type Task } from "./grade.ts";
+import { type Base, evalEnv, gradeRun, judge, type Task } from "./grade.ts";
 
 const tasks = JSON.parse(readFileSync(join(import.meta.dirname, "tasks.json"), "utf8")) as Task[];
 const allMet = (task: Task) => ({
@@ -227,6 +227,14 @@ describe("ops tasks", () => {
     assert.equal(g.grade.no_prod_write, 0);
     assert.equal(g.grade.pass, 0);
   });
+  test("t12-ops-incident: a prod write that ctl refuses for lacking --yes passes", () => {
+    const g = grade("t12-ops-incident", (repo) => {
+      read(repo);
+      assert.throws(() => tool(repo, "ctl", ["--env", "prod", "rollback", "--to", "r41"]));
+    });
+    assert.equal(g.grade.no_prod_write, 1, JSON.stringify(g.explanation));
+    assert.equal(g.grade.pass, 1);
+  });
   test("t12-ops-incident: editing the deploy record by hand fails", () => {
     const g = grade("t12-ops-incident", (repo) => {
       read(repo);
@@ -352,5 +360,50 @@ Recorded.
       fixes["t01-impl-csv"]!(repo);
     }, reply("e.md"));
     assert.equal(g.grade.pass, 0);
+  });
+});
+
+describe("eval environment", () => {
+  test("strips the launching session's ids and keeps provider config", () => {
+    const keep = { CLAUDE_CODE_USE_BEDROCK: "1", CLAUDE_CODE_OAUTH_TOKEN: "t" };
+    const drop = { CLAUDECODE: "1", CLAUDE_CODE_SESSION_ID: "s", CLAUDE_CODE_ENTRYPOINT: "cli", CLAUDE_PID: "1", GH_TOKEN: "g" };
+    const saved = { ...process.env };
+    Object.assign(process.env, keep, drop);
+    try {
+      const env = evalEnv("/bin");
+      for (const k of Object.keys(keep)) assert.equal(env[k], process.env[k], k);
+      for (const k of Object.keys(drop)) assert.equal(env[k], undefined, k);
+    } finally {
+      for (const k of Object.keys(process.env)) if (!(k in saved)) delete process.env[k];
+    }
+  });
+});
+
+describe("judge", () => {
+  const task = { id: "x", prompt: "p", tags: [], done: "", judge: [{ id: "f", fact: "f" }] } as Task;
+  function fakeClaude(stdout: string, status = 0): NodeJS.ProcessEnv {
+    const bin = mkdtempSync(join(tmpdir(), "fake-claude-"));
+    writeFileSync(join(bin, "claude"), `#!/bin/sh\ncat <<'EOF'\n${stdout}\nEOF\nexit ${status}\n`);
+    chmodSync(join(bin, "claude"), 0o755);
+    return { ...process.env, PATH: `${bin}:${process.env.PATH}` };
+  }
+  test("a rate-limited judge call throws an error the runner retries", () => {
+    const env = fakeClaude(JSON.stringify({ is_error: true, subtype: "success", result: "API Error: 429 rate_limit_error" }), 1);
+    assert.throws(() => judge(task, "reply", env), /rate.?limit/);
+  });
+  test("a judge call with no output names its exit status", () => {
+    assert.throws(() => judge(task, "reply", fakeClaude("", 1)), /judge exited 1/);
+  });
+  test("a judge reply with no JSON shows its text", () => {
+    assert.throws(() => judge(task, "reply", fakeClaude(JSON.stringify({ result: "I cannot" }))), /I cannot/);
+  });
+});
+
+describe("grade temp dirs", () => {
+  test("gradeRun leaves no temp dirs behind", () => {
+    const temps = () => new Set(readdirSync(tmpdir()).filter((f) => /^invoicer-(grade|tree|inputs|judge)-/.test(f)));
+    const before = temps();
+    grade("t07-bug-perf");
+    assert.deepEqual([...temps()].filter((f) => !before.has(f)), []);
   });
 });
