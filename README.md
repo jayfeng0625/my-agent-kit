@@ -25,8 +25,8 @@ If `~/.claude/` already has a `CLAUDE.md`, `references/`, `pstack-models.md`, or
 Clone the repo, then link its `global/` files into `~/.claude/`:
 
 ```sh
-git clone git@github.com:jayfeng0625/my-agent-kit.git ~/D/my-agent-kit
-for f in CLAUDE.md references pstack-models.md agents; do ln -sfn ~/D/my-agent-kit/global/$f ~/.claude/$f; done
+git clone git@github.com:jayfeng0625/my-agent-kit.git ~/D/portfolio/my-agent-kit
+for f in CLAUDE.md references pstack-models.md agents; do ln -sfn ~/D/portfolio/my-agent-kit/global/$f ~/.claude/$f; done
 ```
 
 Restart Claude Code to load the new `CLAUDE.md` and subagents. The links point at the clone, so keep it on `main`.
