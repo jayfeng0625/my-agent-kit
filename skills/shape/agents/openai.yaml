@@ -1,0 +1,5 @@
+interface:
+  display_name: "Shape"
+  short_description: "Shape what to build and how, then write BRIEF.md"
+policy:
+  allow_implicit_invocation: false
