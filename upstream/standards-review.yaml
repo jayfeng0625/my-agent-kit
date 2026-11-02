@@ -5,7 +5,10 @@ author: Matt Pocock
 license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
-  Renamed from code-review (folder, `name:`, `display_name`) so it stops shadowing the built-in /code-review; rename new upstream references in pulled skills.
-  The description is local: it triggers only on checking a diff against standards or spec, so plain "review this branch/PR" requests reach the built-in.
+  Renamed from code-review (folder, `name:`, `display_name`) to avoid shadowing the built-in
+  /code-review; rename new upstream references to the old name.
+  The description is local and triggers only on checking a diff against standards or spec; keep it narrow.
   `/setup-matt-pocock-skills` becomes `/setup-issue-tracker`.
-  Local edits pass the user's words verbatim, keep orchestrator-derived requirements in a separate list, report intent-dependent verdicts as judgement calls, and pin uncommitted work and unchecked-out PRs.
+  Keep these SKILL.md edits: pass the user's words verbatim to both sub-agents, keep
+  orchestrator-derived requirements in a separate `Proposed by the orchestrator` list, report
+  intent-dependent verdicts as judgement calls, and pin uncommitted work and unchecked-out PRs.

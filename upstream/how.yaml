@@ -5,12 +5,14 @@ author: Lauren Tan
 license: MIT
 tags: [pstack, explain]
 merge_guidance: |
-  Claude Code port. Role lines come from ~/.claude/pstack-models.md when the user has one (this repo drops setup-pstack).
-  `how explorer` and `how explainer` default to `opus` (the user's choice); `inherit` replaces `auto` and `inherit-parent`; a
-  rejected model runs on `inherit`. Task became the Agent tool, `generalPurpose` became
-  `general-purpose`, and `readonly: true` became a brief that says the subagent edits no files. Upstream's
-  "reasoning level and fast or standard speed" becomes "effort", and its slug-fallback
-  sentence is dropped.
-  Local User Proposal section in the explainer prompt carries the user's plan verbatim; the explainer judges it within the user's constraints and labels any orchestrator alternative.
-  Simple path: the main thread explores and explains in one pass, with no explainer spawn. The complex path keeps upstream's explorers and explainer.
-  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`".
+  Claude Code port. Keep the spawn paragraph in SKILL.md: `general-purpose` Agent subagents whose brief
+  says they edit no files; role lines from `~/.claude/pstack-models.md`, defaulting to `opus`, each value
+  a model plus an optional effort (unset when none); `inherit` replaces `auto` and `inherit-parent`; a
+  rejected model runs on `inherit`; upstream's slug fallback is dropped; "reasoning level and fast or
+  standard speed" becomes "effort", set per the Match the effort to the job rule in
+  `~/.claude/references/mode-subagents.md` (upstream: poteto-mode's Subagents section).
+  Keep the local User Proposal section in the explainer prompt and the intro line that drops it when the
+  user brought no plan: it carries the user's plan verbatim, the explainer judges it within the user's
+  constraints, and the orchestrator labels any alternative of its own.
+  Keep the simple path with no subagents (the main thread explores and explains in one pass) and the
+  step 4 wording that presents the explainer's output only on the complex path.

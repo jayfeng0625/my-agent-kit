@@ -5,6 +5,6 @@ author: Lauren Tan
 license: MIT
 tags: [pstack, verification]
 merge_guidance: |
-  Claude Code port: generated skills go to .claude/skills/verify-<app>/ in place of
-  .cursor/skills/.
-  Local edits ask the user which surface they work on, and drop launcher setup steps that reset a shared container, table or data directory.
+  Keep .claude/skills/ where upstream writes .cursor/skills/ in the generated skill's paths.
+  Keep the Surface edit that asks the user which surface they work on, and the Isolate edit that drops
+  launcher setup steps resetting a shared container, table or data directory.

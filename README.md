@@ -22,11 +22,11 @@ To get changes after they merge, run `npx skills update -g`.
 
 If `~/.claude/` already has a `CLAUDE.md`, `references/`, `pstack-models.md`, or `agents/`, move it out first. `ln -sfn` replaces a file at the link path, and puts the link inside a directory that is already there.
 
-Clone the repo, then link its `global/` files into `~/.claude/`:
+Clone the repo anywhere, then link its `global/` files into `~/.claude/` from the clone:
 
 ```sh
-git clone git@github.com:jayfeng0625/my-agent-kit.git ~/D/my-agent-kit
-for f in CLAUDE.md references pstack-models.md agents; do ln -sfn ~/D/my-agent-kit/global/$f ~/.claude/$f; done
+git clone git@github.com:jayfeng0625/my-agent-kit.git && cd my-agent-kit
+for f in CLAUDE.md references pstack-models.md agents; do ln -sfn "$PWD/global/$f" ~/.claude/$f; done
 ```
 
 Restart Claude Code to load the new `CLAUDE.md` and subagents. The links point at the clone, so keep it on `main`.

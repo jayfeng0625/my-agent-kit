@@ -5,7 +5,7 @@
 1. Read the ticket per the Ticket first trigger. Write each requirement as the ticket sentence it comes from.
 2. `how` over the affected subsystem when you have not read it.
 3. Name the data shape per the Any code trigger. If the change crosses a function boundary, run the Function boundary trigger too.
-4. Write the throughput checkpoint as four todo items. A dimension that does not apply keeps its item with `n/a: <reason>`:
+4. For work too large for the main thread per Scope, write the throughput checkpoint as four todo items. A dimension that does not apply keeps its item with `n/a: <reason>`:
    - **Blocking first steps.** Gates that run before any fan-out.
    - **Independent workstreams.** Disjoint files, services or layers run in parallel lanes. Shared writes serialize.
    - **Shared mutable state.** Split the target first (**principle-separate-before-serializing-shared-state**). Serialize only for a real invariant.

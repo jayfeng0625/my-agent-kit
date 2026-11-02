@@ -5,4 +5,5 @@ author: Matt Pocock
 license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
-  Local edit: check existing GLOSSARY.md behaviour claims against the code.
+  Keep the added SKILL.md paragraph "Check each behaviour claim already in `GLOSSARY.md`..." after the
+  code-contradiction check.

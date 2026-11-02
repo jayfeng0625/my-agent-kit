@@ -23,15 +23,15 @@ Read the source and whatever wires or cites it. Sort it into one kind, and read 
 
 Plain knowledge (domain docs, recipes), skills, subagents and setup scripts stay as they are; say so and stop when the source is one of those. Port a source that mixes kinds one piece at a time. A hook that enforces a prose rule ports as a hook, since its answers are the sharper oracle.
 
-Invoke the `plugin-authoring` skill. Its folder for new mods does not apply here: a port writes into the mods folder of step 2.
+Invoke the `plugin-authoring` skill. Its folder for new mods does not apply here: a port writes into the mods repo of step 2.
 
 Map each behaviour to one event with the kind file's table. Read each event's declaration, and each `$` call you plan to use, in the declarations file. Skip the read for an event the target mod already hooks; its registration shows the shape.
 
 Done when the source has one kind and each behaviour maps to one event.
 
-## 2. Find the mods folder
+## 2. Find the mods repo
 
-The mods folder is the directory `CLAUDE_CODE_PLUGIN_DIRS` names in the `env` block of `~/.claude/settings.json`; Claude Code loads each child folder that holds `.claude-plugin/plugin.json`. When the folder has `bin/new` and `bin/check`, scaffold with `bin/new <name>` and check with `bin/check <name>`. Otherwise lay out the files and run the checks `plugin-authoring` names. With no such folder, ask the user where mods live.
+The mods repo is the parent of the `dist` folder that the `mods` entry under `extraKnownMarketplaces` in `~/.claude/settings.json` names as its `path`. Claude Code installs mods from that `dist` marketplace, so an edit in the repo reaches the session only after a deploy. When the repo has `bin/mods`, scaffold with `bin/mods new <name>`, check with `bin/mods check <name>`, and install with `bin/mods deploy-local <name>`. Otherwise lay out the files and run the checks `plugin-authoring` names. With no `mods` marketplace entry, ask the user where mods live.
 
 Port into an existing mod when one already hooks the same tool and event. There each rule is a file of its own, and the rule list names every rule. Its order picks the reason a verdict shows when two rules agree. Separate settings hooks give no order to copy, so place the new rule on purpose and pin the reason with a test. A new mod with one rule keeps its pure decide function in one module beside the registration.
 
@@ -62,8 +62,8 @@ Run a headless session with the mod and a control without it, using inputs whose
 
 1. Retire the source as the kind file says.
 2. Find every other copy of what you retired: other checkouts of the same repository (worktrees), and any script that provisions a checkout's settings. Report each copy and how it converges: a provisioning script that copies the main checkout's entry fixes it at the next provision, and until then both answer.
-3. Run the live input once more in a default session, with no flags, from the directory the mod applies to, once the mod sits in the mods folder and the source is retired. Done when the mod's effect shows.
-4. Format the mod's changed files. A mods folder may have no formatter of its own; then use the host repository's formatter through stdin, so its ignore rules do not skip the file.
+3. Run the live input once more in a default session, with no flags, from the directory the mod applies to, once the mod is deployed and the source is retired. Done when the mod's effect shows.
+4. Format the mod's changed files. A mods repo may have no formatter of its own; then use the host repository's formatter through stdin, so its ignore rules do not skip the file.
 5. Commit the mod in its repository. When the file you edited to retire the source is git-ignored, the host repository has nothing to commit; say so in the report.
 
 Report the proof and live evidence, each case you pinned, each copy of the source, and anything you did not verify.

@@ -5,5 +5,7 @@ author: Matt Pocock
 license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
-  `/setup-matt-pocock-skills` becomes `/setup-issue-tracker` (see setup-issue-tracker).
-  Local edits count an issue named by a handoff or brief as a reference, read recorded decisions on parent and related tickets, and drop criteria a recorded user decision declined.
+  Keep `/setup-issue-tracker` where upstream says `/setup-matt-pocock-skills`.
+  Keep the extra sentences in step 1: an issue named by a handoff or brief counts as a reference, read
+  decisions recorded on its parent and related tickets, and leave out any criterion or step that a
+  recorded user decision declined.

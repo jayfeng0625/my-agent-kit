@@ -5,10 +5,12 @@ author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
 merge_guidance: |
-  Claude Code port: upstream's "reasoning level and fast or standard speed" becomes "effort".
-  This repo drops architect and arena (2026-10-18). Phase B's one-way-door bullet points to
-  DESIGN-IT-TWICE.md in codebase-design, and its harness bullet adds create-verification-skill;
-  keep both on each merge. Principle references use full names (`**principle-<name>** skill`)
-  where upstream writes `**<name>** principle skill`; convert new ones the same way.
-  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`".
-  The Start todo reads the description of each principle-* skill, in place of poteto-mode's Principles section.
+  Keep these local edits on each merge. Phase B's one-way-door bullet runs design-it-twice per
+  DESIGN-IT-TWICE.md in the codebase-design skill (upstream: architect and arena, absent here),
+  and says "second round" for "second arena". Its harness bullet adds create-verification-skill.
+  Its subagent bullet says "effort" for "reasoning level and fast or standard speed" and points to
+  the Match the effort to the job rule in `~/.claude/references/mode-subagents.md` (upstream: the
+  Subagents section of poteto-mode). Principle references use full names (`**principle-<name>**
+  skill`) where upstream writes `**<name>** principle skill`; convert new ones the same way. The
+  Start todo reads the description of each principle-* skill (upstream: poteto-mode's Principles
+  section).

@@ -12,21 +12,22 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 ## Playbooks
 
-- **Feature** (`playbooks/feature.md`). New or changed behavior from a ticket. A batch of tickets runs one lane per ticket, each lane this playbook, under mode-subagents' Fan-out rule.
+- **Feature** (`playbooks/feature.md`). New or changed behavior from a ticket. A batch of tickets runs one lane per ticket, each lane this playbook, under mode-subagents' Fan-out rule. A ticket's lane starts once every ticket blocking it has passed Verify, in a worktree off its blockers' branches (merged when there are several). Recompute the ready tickets as each lane finishes. A lane meets Verify items 1 and 2 and reports; you run item 3 on its branch, since a delegate cannot spawn the fresh review.
 - **Refactoring** (`playbooks/refactoring.md`). A behavior-preserving change to structure: rename, extract, inline, dedupe, move, or a migration held to visual parity.
 - **Trim** (`playbooks/trim.md`). Simplify or review an existing diff or PR down to what the ticket and the proof need.
 - **Prototype** (`playbooks/prototype.md`). A throwaway sketch that settles a design or behavior fork by observing it. mode-core's Observe forks runs through it.
 
 ## Triggers
 
-- **Ticket first.** Read the ticket, the decisions on its parent and related tickets, and the threads on linked PRs, verbatim. With no ticket, ask where the requirement lives. Each plan item maps to a ticket sentence. A capability the ticket does not ask for goes to the user as an option, and no brief asks for it until the user accepts it.
+- **Ticket first.** Read the ticket, the decisions on its parent and related tickets, and the threads on linked PRs, verbatim. With no ticket, the user's message is the ticket when it states the requirement; otherwise ask where the requirement lives. Each plan item maps to a ticket sentence. A capability the ticket does not ask for goes to the user as an option, and no brief asks for it until the user accepts it.
 - **Any code.** Name the data shape first and pick its organizing structure per **principle-model-the-domain**. Use the plainest type that holds it.
 - **Function boundary.** Code crossing a function boundary takes the **codebase-design** skill before implementing.
 - **`.ts` or `.tsx`.** The **typescript-best-practices** skill.
 - **Any test.** The **tdd** skill, plus **Tests** below.
 - **A bug surfaced mid-task.** The **diagnosing-bugs** skill's red loop and minimal repro before any fix. The fix then follows Feature, with the red loop as its test.
 - **Large or cross-cutting effort** (a migration across many call sites, an ambitious multi-part change). The **figure-it-out** skill.
-- **Contested design.** The **grilling** skill before shipping.
+- **Contested design.** Before shipping, a fresh `mode-agent` in the `judgment and prose` role attacks the design from the ticket, the data shape and the diff. Fix accepted findings. The **grilling** skill runs only for a product or preference call no experiment can settle.
+- **A number you measured** (a speedup, a regression, a latency, a size). The **benchmark-checklist** skill before you report or act on it.
 - **A slice that needs a migration.** The migration ships in the slice, built with the project's migration tooling under **Make Operations Idempotent** and **Outcome-Oriented Execution**: a dry run, resumable, and a parity check that prints its target. Prove it locally, and ask when the project names no way to. Commit its runbook with the code; its environment runs go through `/ops-mode` Migration. The contract phase is a later slice while old and new code run side by side during rollout, and joins this slice when the deploy is atomic.
 - **Prose.** The **unslop** skill. Docs and commit messages also take `/technical-writing`. PR bodies take the **pr** skill alone.
 - **Before commit.** `/deslop` over the diff.
@@ -51,6 +52,8 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 - **Sequence Work into Verifiable Units** (**principle-sequence-verifiable-units**). Ordering commits and lanes.
 - **Separate Before Serializing Shared State.** Lanes that might write the same file, branch or key.
 - **Exhaust the Design Space.** A decision with no precedent: 2 or 3 sketches before committing.
+- **Never Block on the Human.** Tempted to ask "should I do X?" on reversible work: do it, show the result, and let the user correct course.
+- **Explain the Number.** Before you measure, and before you trust, report or act on a number you measured: find what limits it, and rule out that it measured other work.
 
 ## Scope
 
@@ -78,9 +81,9 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 
 Done means all four hold.
 
-1. **One real proof.** Run the change on the real artifact the ticket names, with the verify or drive tooling the project context names; ask which surface and tool if it names none. Behavior tests count only when the change has no runnable surface. One proof that would go red if the change were wrong, then stop. An inconclusive result, or a proof on the wrong surface, is a fail to flag.
+1. **One real proof.** Run the change on the real artifact the ticket names, with the verify or drive tooling the project context names; ask which surface and tool if it names none. Behavior tests count only when the change has no runnable surface. One proof that would go red if the change were wrong, then stop. A red proof goes to the A bug surfaced mid-task trigger, then Verify restarts at item 1. After two failed fixes, apply **Attack the Premise**; a third failed fix is a fail to flag. An inconclusive result, or a proof on the wrong surface, is a fail to flag.
 2. **Tests proven red.** Each new or changed test went red under a break.
-3. **Fresh review.** A diff of at most 15 changed lines outside tests, with no added comment or suppression, skips this item, and the Reply says so. For any other diff, run `/code-review` over the diff yourself; it reviews in its own forked context. Then flag each comment the diff adds that mode-core's **Comments** rule cuts, and each lint or type suppression whose rule guards correctness. Fix accepted findings. Run another round only after fixing a correctness finding, at most 3 rounds; a correctness finding still open after round 3 is a fail to flag.
-4. **Hand-off.** A committed branch, reviewed per item 3, and a PR body written with the **pr** skill. The user pushes and opens the PR.
+3. **Fresh review.** A diff of at most 15 changed lines outside tests, with no added comment or suppression, skips this item, and the Reply says so. For any other diff, run `/code-review` over the diff yourself; it reviews in its own forked context. Run `/standards-review` alongside, with the ticket text as its spec; a missing or wrong requirement is a correctness finding, and scope creep goes back through `playbooks/trim.md`. Then flag each comment the diff adds that mode-core's **Comments** rule cuts, and each lint or type suppression whose rule guards correctness. Fix accepted findings. Run another round only after fixing a correctness finding, at most 3 rounds; a correctness finding still open after round 3 is a fail to flag.
+4. **Hand-off.** A committed branch, reviewed per item 3, and a PR body written with the **pr** skill. The user pushes and opens the PR. Lanes built on blockers hand off as a stack, listed in blocker order, each PR based on its blocker's branch.
 
 **Reply:** what you built and for whom, what you chose and why, the diff stat, a VERIFIED list (ran it, saw the output) and a REASONED list (read it, believe it), and a Deferred list of improvements you noticed and skipped.

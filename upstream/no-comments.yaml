@@ -7,12 +7,11 @@ tags: [pstack, workflow]
 extra_files:
   subagents/comment-sicko.md: pstack/agents/comment-sicko.md
 merge_guidance: |
-  subagents/comment-sicko.md tracks pstack/agents/comment-sicko.md through extra_files.
-  Local edits there: `model: opus`, `effort: low` (the user's choice, 2026-10-18). This repo drops setup-pstack and architect (2026-10-18):
-  global/agents/comment-sicko.md links the subagent into ~/.claude/agents/, and step 1's
-  fallback names that link. Step 3's `/architect` sentence and step 6's "architect sketch"
-  are cut; keep them out on each merge. Upstream dropped step 1's missing-type fallback;
-  keep it here, since the link it names is manual. Upstream's "reasoning level and fast or
-  standard speed" becomes "effort".
-  Step 1 spawns it with the Agent tool by `subagent_type: "comment-sicko"`.
-  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`".
+  Keep these SKILL.md edits. Step 1 spawns with `Agent` (upstream `Task`), picks the subagent's
+  "effort" (upstream: "reasoning level and fast or standard speed") per the Match the effort to
+  the job rule in `~/.claude/references/mode-subagents.md` (upstream: the Subagents section of
+  poteto-mode), and ends with a fallback telling the user to link `subagents/comment-sicko.md`
+  into `~/.claude/agents/` when the Agent tool offers no `comment-sicko` type. Setup-pstack and
+  architect are not ported: keep step 3's `/architect` sentence and step 6's "architect sketch"
+  cut. subagents/comment-sicko.md tracks pstack/agents/comment-sicko.md through extra_files; keep
+  its `model: opus` and `effort: low`.
