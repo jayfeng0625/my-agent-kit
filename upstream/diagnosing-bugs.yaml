@@ -5,8 +5,8 @@ author: Matt Pocock
 license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
-  Local pointers to installed skills (2026-10-18), kept on each merge: loop 3 names
-  control-cli, loop 4 names control-ui, the perf branch links benchmark-checklist, and Phase 5's
-  "Flag this for the next phase" (no later phase takes it) becomes "Flag it in the final report
-  and suggest `/improve-codebase-architecture` to the user".
-  Local edits trigger on a failed CI run or a flaky test, and read job annotations before the failed log.
+  Keep the local pointers: item 3 of Phase 1's loop list names control-cli, item 4 names control-ui,
+  the perf branch links benchmark-checklist, and Phase 5's "Flag this for the next phase" reads "Flag
+  it in the final report and suggest `/improve-codebase-architecture` to the user".
+  Keep the CI and flaky-test triggers in the description, and the "A failed CI job" section (read job
+  annotations before the failed log).

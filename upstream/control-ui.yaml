@@ -5,5 +5,4 @@ author: Eric Zakariasson
 license: MIT
 tags: [cursor-team-kit, verification]
 merge_guidance: |
-  "evidence for `verify-this`" becomes "evidence for a project's `verify-<app>` skill"
-  (2026-10-18): verify-this is not in this repo, and create-verification-skill makes verify-<app>.
+  Keep "evidence for a project's `verify-<app>` skill" where upstream says "evidence for `verify-this`".

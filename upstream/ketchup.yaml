@@ -5,6 +5,5 @@ author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
 merge_guidance: |
-  Claude Code port. pstack's bro skill is not ported, so the `/bro` voice sentence states the
-  voice directly. Cursor's `/visualize` has no skill in this repo, so a chart stays
-  unnamed.
+  Keep the `/bro` link removed (the bro skill is not ported): the voice sentence states the voice
+  directly. Keep `/visualize` removed (no such skill here): say "chart" in both places it appears.

@@ -5,5 +5,5 @@ author: Lauren Tan
 license: MIT
 tags: [pstack, code]
 merge_guidance: |
-  Upstream's `disable-model-invocation: true` is dropped (2026-10-18): Claude Code honours
-  `paths` only for a skill the model can invoke, so the skill now loads on .ts and .tsx work.
+  Keep `disable-model-invocation: true` dropped from SKILL.md: Claude Code applies `paths` only to a
+  skill the model can invoke.

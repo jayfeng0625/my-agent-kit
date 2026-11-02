@@ -5,13 +5,13 @@ author: Lauren Tan
 license: MIT
 tags: [pstack, explain]
 merge_guidance: |
-  Claude Code port. Role lines come from ~/.claude/pstack-models.md when the user has one (this repo drops setup-pstack);
-  `why investigators` and `why synthesizer` default to `opus`, and
-  a rejected model runs on `inherit`. MCP discovery reads `mcp__<server>__<tool>` names
-  from the session's tools, in place of Cursor's tools map and `mcps/` directory. Upstream's
-  `readonly: false` notes became "the `general-purpose` type carries the session's MCP tools" (it omits `tools`); Claude
-  Code's read-only agent types keep MCP tools, so the Cursor warning about Ask mode does not
-  carry over. "cursor location" on line 25 means the editor cursor and stays. Upstream's
-  "reasoning level and fast or standard speed" becomes "effort", and its slug-fallback
-  sentence is dropped, since a rejected model already runs on `inherit`.
-  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`".
+  Claude Code port. Role lines come from `~/.claude/pstack-models.md` (this repo drops setup-pstack and
+  the `.mdc` rule) as `<model> [effort]`. Spawns set `model` and `effort` from the line, a rejected model
+  runs on `inherit`, and the `why investigators` and `why synthesizer` defaults are `opus`. Keep the
+  Agent tool where upstream names the Task tool, drop upstream's slug-fallback sentence, and keep
+  "effort" for "reasoning level and fast or standard speed", picked per the Match the effort to the job
+  rule in `~/.claude/references/mode-subagents.md` (upstream: poteto-mode's Subagents section). MCP
+  discovery reads `mcp__<server>__<tool>` names from the session's tools, deferred tools included.
+  Spawns use the `general-purpose` type, which carries the session's MCP tools, so upstream's
+  `generalPurpose`, `readonly: false` note and Ask-mode warning stay dropped. "cursor location" on line
+  25 means the editor cursor and stays.

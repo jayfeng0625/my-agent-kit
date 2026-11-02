@@ -5,4 +5,4 @@ author: Matt Pocock
 license: MIT
 tags: [mattpocock, engineering]
 merge_guidance: |
-  `/setup-matt-pocock-skills` becomes `/setup-issue-tracker` (see setup-issue-tracker).
+  Keep `/setup-issue-tracker` where upstream says `/setup-matt-pocock-skills`.

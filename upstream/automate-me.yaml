@@ -5,15 +5,14 @@ author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
 merge_guidance: |
-  Claude Code port. Cursor's built-in `create-skill` became Anthropic's `skill-creator`
-  (skill-creator plugin) throughout, including the description. Skill paths moved to
-  .claude/skills/ and ~/.claude/skills/. Personal category folders
-  (.claude/skills/<handle>/<handle>-mode/) were dropped: Claude Code discovers skills only at
-  .claude/skills/<skill-name>/SKILL.md (code.claude.com/docs/en/skills, "Where skills live").
-  AskQuestion became AskUserQuestion, which takes 2-4 options and `multiSelect`. Transcripts
-  are ~/.claude/projects/<project>/<session-id>.jsonl.
-  Upstream's "reasoning level and fast or standard speed" becomes "effort".
-  The intro and step 5 add the **writing-for-agents** skill beside skill-creator (2026-10-18),
-  since the user's global CLAUDE.md routes skill writing through it. Keep it on each merge.
-  This repo drops poteto-mode (2026-10-29): "per the Subagents section of the poteto-mode skill" becomes "per the Match the effort to the job rule in `~/.claude/references/mode-subagents.md`".
-  The shape example is impl-mode with mode-core, in place of poteto-mode.
+  Claude Code port; keep each adaptation below on every merge.
+  Cursor's `create-skill` becomes `skill-creator` (skill-creator plugin) throughout, including the
+  description, and the intro and step 5 add the **writing-for-agents** skill beside it.
+  Skill paths use .claude/skills/ and ~/.claude/skills/ with no personal category folders (Claude
+  Code finds skills only at .claude/skills/<skill-name>/SKILL.md); transcripts live in
+  ~/.claude/projects/<project>/<session-id>.jsonl.
+  `AskQuestion` becomes `AskUserQuestion`, which takes 2-4 options and `multiSelect`.
+  Upstream's "reasoning level and fast or standard speed" becomes "effort", per the Match the effort
+  to the job rule in `~/.claude/references/mode-subagents.md` (upstream: poteto-mode's Subagents
+  section).
+  The shape example is impl-mode plus `~/.claude/references/mode-core.md` (upstream: poteto-mode).

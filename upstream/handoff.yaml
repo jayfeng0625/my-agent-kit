@@ -5,4 +5,6 @@ author: Matt Pocock
 license: MIT
 tags: [mattpocock, productivity]
 merge_guidance: |
-  Local edits record durable findings where the next session looks, and list user-only skills as /name.
+  Keep the added sentence in the suggested-skills paragraph: a skill with `disable-model-invocation: true`
+  is listed apart as `/<name>`. Keep the added paragraph that tells the writer to record each durable
+  finding where the next session looks and to reference it from the handoff.

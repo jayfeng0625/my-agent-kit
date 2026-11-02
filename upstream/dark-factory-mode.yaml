@@ -7,27 +7,40 @@ tags: [pstack, workflow]
 extra_files:
   playbooks/plan.md: pstack/skills/poteto-mode/playbooks/multi-phase-plan.md
 merge_guidance: |
-  A partial port, so `diff` shows every upstream file the port leaves out as deleted; read only
-  SKILL.md, playbooks/orchestrate.md, playbooks/autonomous-run.md, playbooks/multi-phase-plan.md
-  (local playbooks/plan.md), playbooks/autopilot-full.md and autopilot-stack.md (folded into
-  playbooks/run.md), playbooks/babysit.md, playbooks/pause-safely.md (the User stop trigger in SKILL.md),
-  and scripts/check-plan.mjs (tests at .claude/checks/check-plan.test.ts).
-  Cursor's `Task` is `Agent`, poteto-agent is mode-agent, "reasoning level and fast or standard
-  speed" is effort per mode-subagents, cloud VMs are worktrees, the Project tracker and store are the
-  tracker per Ticket states and the run directory, PR and CI subscriptions are the `Monitor` tool.
-  Merges, pushes and `gh` writes stay with the user and the runner per Gates, so owners rebase
-  and report in place of pushing or merging. No sub-coordinators: a mode-agent cannot spawn.
-  Sub-coordinator lines drop. SKILL-level triggers land in mode-core (first message) and mode-subagents (background
-  steer and resume, effort fallback), and the blocking rule lives in Roles and context.
-  The Reviewer bullet's "whatever its size" is local: impl-mode's Verify item 3 lets a diff of at
-  most 15 changed lines skip its review, and a lane never does. The runner spawns it so it runs
-  in a context independent of the lane.
+  A partial port: `diff` shows every upstream file the port leaves out as deleted. Read only the routed files at the end, SKILL.md,
+  playbooks/orchestrate.md, autonomous-run.md, babysit.md, references/bugbot-triage.md (folded into
+  Babysit steps 4 and 7), pause-safely.md (the User stop trigger), multi-phase-plan.md (plan.md),
+  autopilot-full.md and autopilot-stack.md (run.md), and scripts/check-plan.mjs (tests at
+  .claude/checks/check-plan.test.ts).
+  Keep these renames: `Task` is `Agent`, poteto-agent is mode-agent, "reasoning level and fast or
+  standard speed" is effort per mode-subagents, cloud VMs are worktrees, the Project tracker and store
+  are the tracker per Ticket states and the run directory, and PR and CI subscriptions, watch-pr and
+  Origin are `gh` (or the project's forge) and the `Monitor` tool.
+  Merges, pushes and `gh` writes stay with the user and the runner per Gates, so owners rebase and
+  report. A mode-agent cannot spawn, so sub-coordinator lines drop.
+  SKILL.md keeps its local sections (Ticket states, Roles and context, Triggers, Run directory, Gates,
+  the six-entry Principles list, Verify) and its five-entry Playbooks list. Upstream's SKILL-level
+  triggers land in mode-core (first message) and mode-subagents (background steer and resume, effort
+  fallback), and the blocking rule lives in Roles and context.
+  The Reviewer bullet's "whatever its size" is local: impl-mode's Verify item 3 lets a diff of at most
+  15 changed lines skip its review, and the runner spawns a reviewer for every lane head.
   Orchestrate supervises through worker notifications and branch heads, with PR state and Monitor
-  only under the `prs` grant, and its wording follows AGENTS.md's Writing rules. Autonomous run's
-  side branches get a verifier, and its land.sh lists the run and side branches.
-  Babysit uses `gh` (or the project's forge) and Monitor in place of watch-pr and Origin, drops the `check`
-  mode (research-mode's Investigation) and `background`, folds bugbot-triage.md into its steps 4 and 7,
-  sends each fix through a lane and Run step 7, and pushes under the `babysit` grant in Gates.
-  Pause safely is the User stop trigger: the tracker and run directory replace the resume note.
-  Upstream's Eval playbook lives in the local hillclimb skill's Judged metrics, and Visual parity
-  in impl-mode's Refactoring playbook; neither skill has a manifest.
+  only under the `prs` grant.
+  Autonomous run keeps its start gate, run-directory state, kept-or-reset steps and closing verifier
+  verdict, and its side branches get a verifier and a `land.sh` line.
+  Babysit drops the `check` mode (research-mode's Investigation) and `background`, sends each fix
+  through a lane and Run step 7, and pushes under the `babysit` grant in Gates.
+  Plan and check-plan.mjs work per ticket: one section per ticket published to the tracker, the Arm
+  the program, Tickets, Verdict and Boot recipe headings, "Land." for "Merge.", a live block of at
+  least 2 lanes at the ticket head, and a `--ticket` mode for Run step 1. Keep the script, the plan.md
+  skeleton and the check-plan test in step.
+  This pin also covers ports in skills with no manifest. Port a change to these upstream files into
+  the named skill before bumping commit:
+  - playbooks/hillclimb.md and eval.md: hillclimb (its steps, and Judged metrics for eval.md).
+  - playbooks/feature.md, refactoring.md and prototype.md: impl-mode's playbooks of the same names;
+    visual-parity.md: the Visual parity paragraph of impl-mode's Refactoring playbook.
+  - playbooks/bug-fix.md, perf-issue.md, runtime-forensics.md and trace-forensics.md: bug-hunting-mode's
+    playbooks of the same names.
+  - playbooks/investigation.md and session-pickup.md: research-mode's playbooks of the same names. Its
+    Session pickup checks the prior trail's done claims against the real artifact, where upstream
+    trusts the trail; keep that.
