@@ -1,0 +1,5 @@
+Cache tax-rate lookups in an LRU
+
+Rates are moving to the pricing service (INV-5). Until then fetchRate
+reads the local table, but callers already go through rateFor so the
+cache is in place when the service lands. Cache size comes from config.

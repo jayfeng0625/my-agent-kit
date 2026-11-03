@@ -1,0 +1,4 @@
+Reject invoices that list a SKU twice (INV-10)
+
+The warehouse picks one line per SKU, so a repeated SKU shipped short.
+Parsing now fails with the first repeated SKU.

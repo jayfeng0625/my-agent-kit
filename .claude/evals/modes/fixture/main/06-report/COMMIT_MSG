@@ -1,0 +1,4 @@
+Print a plain-text report by default
+
+The CLI now prints one row per line and the totals. --summary keeps the
+old one-line total for scripts that parse it.

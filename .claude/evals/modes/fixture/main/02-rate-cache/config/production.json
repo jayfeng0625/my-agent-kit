@@ -1,0 +1,6 @@
+{
+  "currency": "USD",
+  "cache": {
+    "maxEntries": 50
+  }
+}
