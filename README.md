@@ -54,6 +54,32 @@ A skill with supporting files ends with a line naming its folder in the clone, s
 
 The package runs as TypeScript through the link, on Node 22.18 or later. A TypeScript project that imports it sets `allowImportingTsExtensions`.
 
+### Ticket tracker
+
+Six skills say the issue tracker should have been provided: `implement-spec`, `standards-review`, `to-spec`, `to-tickets`, `triage` and `wayfinder`. Pass them a tracker and its documents follow the skill text:
+
+```ts
+import { github, toTickets } from "my-agent-kit";
+
+const prompt = toTickets({ ticketTracker: github() });
+```
+
+`github()`, `gitlab()` and `local()` read the templates in `skills/setup-issue-tracker/`. Any other tracker is an object of the same shape, which another package can export:
+
+```ts
+import { checkTicketTracker, type TicketTracker } from "my-agent-kit";
+
+const linear: TicketTracker = {
+  name: "Linear",
+  issueTracker: "...", // what docs/agents/issue-tracker.md holds
+  triageLabels: "...", // what docs/agents/triage-labels.md holds
+};
+
+checkTicketTracker(linear); // lists the sections and triage roles the skills call on that the documents lack
+```
+
+A skill throws when its tracker fails that check. A skill that names no tracker takes no argument.
+
 ## Change a skill
 
 `AGENTS.md` has the rules: the skill folder standard, the manifest format, and the writing rules.

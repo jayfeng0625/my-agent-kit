@@ -9,11 +9,12 @@ import * as kit from "./index.ts";
 const root = join(import.meta.dirname, "..");
 const folders = readdirSync(join(root, "skills")).sort();
 const exportName = (folder: string) => folder.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
-const skills = kit as Record<string, () => string>;
+const trackerExports = ["checkTicketTracker", "github", "gitlab", "local", "triageRoles"];
+const skills = kit as unknown as Record<string, () => string>;
 const render = (folder: string) => skills[exportName(folder)]?.() ?? "";
 
 test("every skill folder has one export, named for the folder in camelCase", () => {
-  assert.deepEqual(Object.keys(kit).sort(), folders.map(exportName).sort());
+  assert.deepEqual(Object.keys(kit).sort(), [...folders.map(exportName), ...trackerExports].sort());
 });
 
 for (const folder of folders) {
