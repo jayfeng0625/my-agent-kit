@@ -7,6 +7,7 @@ Agent skills, and the global Claude Code setup that goes with them.
 - `skills/`: the skills, each installable through the [skills CLI](https://github.com/vercel-labs/skills) for Claude Code, Codex, and other agents.
 - `global/`: the files that link into `~/.claude/`: `CLAUDE.md`, the shared `references/` the `-mode` skills load, `pstack-models.md` (the model per subagent role), and `agents/`.
 - `upstream/`: one manifest per skill pulled from another repo, naming its source, the commit it was last merged from, and any local changes the next merge must keep.
+- `src/`: the skills as functions that return prompt text, for scripts on the same machine.
 
 ## Install the skills
 
@@ -30,6 +31,28 @@ for f in CLAUDE.md references pstack-models.md agents; do ln -sfn "$PWD/global/$
 ```
 
 Restart Claude Code to load the new `CLAUDE.md` and subagents. The links point at the clone, so keep it on `main`.
+
+## Use the skills from code
+
+The repo is an unpublished Node package. From the project that needs it, install the clone by path:
+
+```sh
+npm install ~/path/to/my-agent-kit
+```
+
+npm links the clone, so the package follows whatever the clone has checked out. To hold a project on one version, link a second checkout that sits at a tag.
+
+Each skill is a function, named for its folder in camelCase, that returns the body of `SKILL.md` as prompt text:
+
+```ts
+import { toTickets } from "my-agent-kit";
+
+const prompt = toTickets();
+```
+
+A skill with supporting files ends with a line naming its folder in the clone, so the agent can read the paths the skill references.
+
+The package runs as TypeScript through the link, on Node 22.18 or later. A TypeScript project that imports it sets `allowImportingTsExtensions`.
 
 ## Change a skill
 

@@ -21,6 +21,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": [".claude/**/*"],
+  "include": [".claude/**/*", "src/**/*"],
   "exclude": [".claude/worktrees"]
 }

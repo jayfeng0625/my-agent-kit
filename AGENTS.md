@@ -8,6 +8,7 @@ The repo is public on GitHub and installs through the skills CLI (`npx skills`, 
 
 - Each skill lives at `skills/<name>/`, the layout the CLI discovers.
 - A change reaches installed copies only after it is pushed and the user runs `npx skills update`. The CLI updates GitHub-sourced installs only; a local-path install is a one-off copy.
+- The repo is also a Node package that stays unpublished (`private: true`). A project on the same machine installs the clone by path, which links it, so the package follows the clone's checkout. `src/index.ts` exports one function per skill, named for the folder in camelCase, that returns the `SKILL.md` body as prompt text. Adding or removing a skill folder means changing its export line; `npm test` fails until the two match.
 - `global/` holds the user's global Claude Code files, symlinked into `~/.claude/`: `CLAUDE.md`, `references/` (including `mode-core.md`, the shared rules every `-mode` skill loads, and the `mode-*.md` files it points to), `pstack-models.md` (the per-role models that pstack skills and `-mode` skills read), and `agents/` (the subagents that skills spawn by `subagent_type`: `mode-agent` lives here, and no-comments' `comment-sicko` is a link). The output rule and em-dash line in `CLAUDE.md`, and `references/read-before-implementation.md`, adapt Mari Luukkainen's lisbeth718/agent-setup; credit stays here, out of the loaded files.
 
 ## Skill folder standard
@@ -58,6 +59,8 @@ These rules apply to prose authored in this repo. Commands, code, identifiers, a
 Repo-only skills live in `.claude/skills/`, with their scripts beside them. The CLI scans that folder too, so each one sets `metadata.internal: true` to stay out of installs.
 
 Repo checks that are not skills live in `.claude/checks/` as `*.test.ts` files, which `npm test` runs.
+
+The package source lives in `src/`, with its tests beside it as `*.test.ts`.
 
 Node runs the TypeScript directly, with no build step; `tsconfig.json` allows erasable syntax only. Check with `npm test` and `npm run typecheck`.
 
