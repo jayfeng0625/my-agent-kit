@@ -1,17 +1,6 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/why
-commit: f9be7aa00c2b2bf4b13562143a6918445e06b99d
+commit: fbb86c09bbb4a25e490aaed136899ced1e9140e4
 author: Lauren Tan
 license: MIT
 tags: [pstack, explain]
-merge_guidance: |
-  Claude Code port. Role lines come from `~/.claude/pstack-models.md` (this repo drops setup-pstack and
-  the `.mdc` rule) as `<model> [effort]`. Spawns set `model` and `effort` from the line, a rejected model
-  runs on `inherit`, and the `why investigators` and `why synthesizer` defaults are `opus`. Keep the
-  Agent tool where upstream names the Task tool, drop upstream's slug-fallback sentence, and keep
-  "effort" for "reasoning level and fast or standard speed", picked per the Match the effort to the job
-  rule in `~/.claude/references/mode-subagents.md` (upstream: poteto-mode's Subagents section). MCP
-  discovery reads `mcp__<server>__<tool>` names from the session's tools, deferred tools included.
-  Spawns use the `general-purpose` type, which carries the session's MCP tools, so upstream's
-  `generalPurpose`, `readonly: false` note and Ask-mode warning stay dropped. "cursor location" on line
-  25 means the editor cursor and stays.

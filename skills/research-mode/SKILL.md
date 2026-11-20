@@ -21,7 +21,7 @@ Read `~/.claude/references/mode-core.md` first; it holds the todolist, autonomy,
 ## Triggers
 
 - **Read-only.** Research changes no tracked file. The files a routed skill writes as its output (a research file, triage's out-of-scope notes, a glossary or ADR edit during grilling) and mode-core's broken-skill fix are the only exceptions. The reply lists each out-of-scope note for the user to commit, and a posted comment links one only after the user pushes it. A PR checkout, a build or a test run goes in a worktree outside the repo.
-- **Routing a question.** A how question takes the **how** skill, a motivation question the **why** skill, and docs, APIs or specs outside the repo the **research** skill. A question that spans two of them takes both, and the deliverable carries both outputs.
+- **Routing a question.** A how question takes a trace of the code it is about, a motivation question the **why** skill, and docs, APIs or specs outside the repo the **research** skill. A question that spans two of them takes both, and the deliverable carries both outputs.
 - **User-named source.** When the user names a source or a section, open the answer with what it offers for their question.
 - **Explaining code.** Reuse the names and diagrams the code already uses, and map each new term to them the first time you use it.
 - **Empirical fork.** mode-core's Observe forks runs here as the smallest script that shows the answer, in a scratch dir outside the repo, with its output cited.

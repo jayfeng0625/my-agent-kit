@@ -1,6 +1,6 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/automate-me
-commit: f9be7aa00c2b2bf4b13562143a6918445e06b99d
+commit: fbb86c09bbb4a25e490aaed136899ced1e9140e4
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
@@ -12,7 +12,7 @@ merge_guidance: |
   Code finds skills only at .claude/skills/<skill-name>/SKILL.md); transcripts live in
   ~/.claude/projects/<project>/<session-id>.jsonl.
   `AskQuestion` becomes `AskUserQuestion`, which takes 2-4 options and `multiSelect`.
-  Upstream's "reasoning level and fast or standard speed" becomes "effort", per the Match the effort
+  Upstream's "reasoning level" becomes "effort", per the Match the effort
   to the job rule in `~/.claude/references/mode-subagents.md` (upstream: poteto-mode's Subagents
   section).
   The shape example is impl-mode plus `~/.claude/references/mode-core.md` (upstream: poteto-mode).

@@ -1,6 +1,6 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/show-me-your-work
-commit: f9be7aa00c2b2bf4b13562143a6918445e06b99d
+commit: fbb86c09bbb4a25e490aaed136899ced1e9140e4
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
@@ -8,6 +8,8 @@ merge_guidance: |
   Keep the end-of-run audit reading ~/.claude/projects/<project>/${CLAUDE_SESSION_ID}.jsonl with the
   Read tool (no glob), where upstream reads Cursor's agent-transcripts/ directory and warns about
   ~/.cursor/projects/.
-  Upstream's "reasoning level and fast or standard speed" becomes "effort", and "per the Subagents
+  Upstream's "reasoning level" becomes "effort", and "per the Subagents
   section of the **poteto-mode** skill" becomes "per the Match the effort to the job rule in
   `~/.claude/references/mode-subagents.md`".
+  Upstream's "another vendor's model" stays "a different model family", since the Agent tool spawns
+  Claude models only.

@@ -1,6 +1,6 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/how
-commit: f9be7aa00c2b2bf4b13562143a6918445e06b99d
+commit: fbb86c09bbb4a25e490aaed136899ced1e9140e4
 author: Lauren Tan
 license: MIT
 tags: [pstack, explain]
@@ -8,11 +8,14 @@ merge_guidance: |
   Claude Code port. Keep the spawn paragraph in SKILL.md: `general-purpose` Agent subagents whose brief
   says they edit no files; role lines from `~/.claude/pstack-models.md`, defaulting to `opus`, each value
   a model plus an optional effort (unset when none); `inherit` replaces `auto` and `inherit-parent`; a
-  rejected model runs on `inherit`; upstream's slug fallback is dropped; "reasoning level and fast or
-  standard speed" becomes "effort", set per the Match the effort to the job rule in
+  rejected model runs on `inherit`; upstream's slug fallback is dropped; "reasoning level" becomes
+  "effort", set per the Match the effort to the job rule in
   `~/.claude/references/mode-subagents.md` (upstream: poteto-mode's Subagents section).
   Keep the local User Proposal section in the explainer prompt and the intro line that drops it when the
   user brought no plan: it carries the user's plan verbatim, the explainer judges it within the user's
   constraints, and the orchestrator labels any alternative of its own.
   Keep the simple path with no subagents (the main thread explores and explains in one pass) and the
   step 4 wording that presents the explainer's output only on the complex path.
+  Upstream now spawns one read-only subagent that explores and explains in one pass, with an inline
+  brief, and has deleted both files under references/. The local copy keeps its two paths, both prompt
+  templates and the `how explorer` and `how explainer` role lines, so `diff` lists them as local edits.

@@ -1,6 +1,6 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/no-comments
-commit: f9be7aa00c2b2bf4b13562143a6918445e06b99d
+commit: fbb86c09bbb4a25e490aaed136899ced1e9140e4
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
@@ -8,7 +8,7 @@ extra_files:
   subagents/comment-sicko.md: pstack/agents/comment-sicko.md
 merge_guidance: |
   Keep these SKILL.md edits. Step 1 spawns with `Agent` (upstream `Task`), picks the subagent's
-  "effort" (upstream: "reasoning level and fast or standard speed") per the Match the effort to
+  "effort" (upstream: "reasoning level") per the Match the effort to
   the job rule in `~/.claude/references/mode-subagents.md` (upstream: the Subagents section of
   poteto-mode), and ends with a fallback telling the user to link `subagents/comment-sicko.md`
   into `~/.claude/agents/` when the Agent tool offers no `comment-sicko` type. Setup-pstack and

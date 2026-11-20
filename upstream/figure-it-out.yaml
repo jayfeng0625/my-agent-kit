@@ -1,6 +1,6 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/figure-it-out
-commit: f9be7aa00c2b2bf4b13562143a6918445e06b99d
+commit: fbb86c09bbb4a25e490aaed136899ced1e9140e4
 author: Lauren Tan
 license: MIT
 tags: [pstack, workflow]
@@ -8,7 +8,7 @@ merge_guidance: |
   Keep these local edits on each merge. Phase B's one-way-door bullet runs design-it-twice per
   DESIGN-IT-TWICE.md in the codebase-design skill (upstream: architect and arena, absent here),
   and says "second round" for "second arena". Its harness bullet adds create-verification-skill.
-  Its subagent bullet says "effort" for "reasoning level and fast or standard speed" and points to
+  Its subagent bullet says "effort" for "reasoning level" and points to
   the Match the effort to the job rule in `~/.claude/references/mode-subagents.md` (upstream: the
   Subagents section of poteto-mode). Principle references use full names (`**principle-<name>**
   skill`) where upstream writes `**<name>** principle skill`; convert new ones the same way. The

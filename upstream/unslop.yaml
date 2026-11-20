@@ -1,9 +1,9 @@
 repo: https://github.com/cursor/plugins
 path: pstack/skills/unslop
-commit: f9be7aa00c2b2bf4b13562143a6918445e06b99d
+commit: fbb86c09bbb4a25e490aaed136899ced1e9140e4
 author: Lauren Tan
 license: MIT
 tags: [pstack, writing]
 merge_guidance: |
-  Keep rule 13 allowing parentheses: "Use periods, commas, or parentheses" where upstream says "Use
-  periods or commas only (no parentheses, ...)".
+  Keep rule 13 allowing parentheses: it ends "Use a period, a comma, or parentheses." where upstream
+  says "and no parentheses in their place. Use a period or a comma."

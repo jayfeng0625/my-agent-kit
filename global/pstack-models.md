@@ -9,5 +9,3 @@ fan-out routine: sonnet high
 fan-out investigate: opus medium
 how explorer: opus low
 how explainer: opus medium
-why investigators: opus medium
-why synthesizer: opus medium
